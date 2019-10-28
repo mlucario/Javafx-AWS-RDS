@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXPasswordField?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="474.0" prefWidth="597.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.quy.controllers.SignInController">
+   <top>
+      <HBox alignment="CENTER_RIGHT" onMouseDragged="#dragged" onMousePressed="#pressed" style="-fx-background-color: #dfe4ea;" BorderPane.alignment="CENTER">
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+         <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </padding>
+         <children>
+            <FontAwesomeIconView fill="#ff4757" fontSmoothingType="LCD" glyphName="CLOSE" onMouseClicked="#close" size="2.8em">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor></FontAwesomeIconView>
+         </children>
+      </HBox>
+   </top>
+   <center>
+      <VBox alignment="TOP_CENTER" prefHeight="417.0" prefWidth="601.0" style="-fx-background-color: #dfe4ea;" BorderPane.alignment="CENTER">
+         <children>
+            <Text fill="#3742fa" rotate="-4.0" stroke="#a4b0be" strokeType="OUTSIDE" text="Bizcom Electronics Inc">
+               <font>
+                  <Font name="Calibri Bold" size="35.0" />
+               </font>
+            </Text>
+            <Text fill="#ff4757" stroke="#f2f2f0" strokeType="OUTSIDE" strokeWidth="0.0" text="Please Sign In To Start Application">
+               <font>
+                  <Font size="25.0" />
+               </font>
+               <VBox.margin>
+                  <Insets top="20.0" />
+               </VBox.margin>
+            </Text>
+            <HBox alignment="CENTER">
+               <children>
+                  <FontAwesomeIconView fill="DODGERBLUE" glyphName="DRIVERS_LICENSE" size="35" HBox.hgrow="ALWAYS" />
+                  <JFXTextField fx:id="txtUsername" focusColor="#3742fa" labelFloat="true" promptText="Username" HBox.hgrow="ALWAYS">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                     <padding>
+                        <Insets left="20.0" />
+                     </padding>
+                  </JFXTextField>
+               </children>
+               <VBox.margin>
+                  <Insets bottom="20.0" left="60.0" right="60.0" top="30.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox alignment="CENTER">
+               <children>
+                  <FontAwesomeIconView fill="DODGERBLUE" glyphName="KEY" size="35" HBox.hgrow="ALWAYS" />
+                  <JFXPasswordField fx:id="txtPassword" focusColor="#3742fa" labelFloat="true" onKeyPressed="#signInAction" promptText="Password" HBox.hgrow="ALWAYS">
+                     <padding>
+                        <Insets left="20.0" />
+                     </padding>
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </JFXPasswordField>
+               </children>
+               <VBox.margin>
+                  <Insets bottom="20.0" left="60.0" right="60.0" top="20.0" />
+               </VBox.margin>
+            </HBox>
+            <JFXButton fx:id="btnSignIn" alignment="CENTER" contentDisplay="CENTER" onAction="#signInAction" prefWidth="250.0" ripplerFill="#70a1ff" style="-fx-background-color: #5352ed; -fx-background-radius: 100px;" text="SIGN IN" textFill="#f8f8f8">
+               <font>
+                  <Font name="System Bold" size="22.0" />
+               </font>
+               <VBox.margin>
+                  <Insets top="20.0" />
+               </VBox.margin>
+            </JFXButton>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <Text fill="#2f3542" strokeType="OUTSIDE" strokeWidth="0.0" text="Need An Account? Sign Up" textAlignment="CENTER">
+                     <font>
+                        <Font name="System Bold" size="17.0" />
+                     </font>
+                  </Text>
+                  <FontAwesomeIconView fill="#2f3542" glyphName="HAND_ALT_RIGHT" size="25">
+                     <HBox.margin>
+                        <Insets left="15.0" right="15.0" />
+                     </HBox.margin>
+                  </FontAwesomeIconView>
+                  <JFXButton onAction="#signUpPressed" ripplerFill="#70a1ff" style="-fx-background-color: #1e90ff; -fx-background-radius: 25px;" text="SIGN UP" textFill="#f6f4f4">
+                     <font>
+                        <Font name="System Bold" size="15.0" />
+                     </font>
+                  </JFXButton>
+               </children>
+            </HBox>
+         </children>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding></VBox>
+   </center>
+</BorderPane>
