@@ -9,17 +9,17 @@
       <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
    </padding>
    <children>
-      <FontAwesomeIconView fill="#ffa502" glyphName="MINUS_CIRCLE" onMouseClicked="#minimize" size="17">
+      <FontAwesomeIconView fill="#ffa502" glyphName="MINUS_CIRCLE" onMouseClicked="#minimize" size="25">
          <HBox.margin>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </HBox.margin>
       </FontAwesomeIconView>
-      <FontAwesomeIconView fill="#3742fa" glyphName="EXTERNAL_LINK_SQUARE" onMouseClicked="#maximize" size="17">
+      <FontAwesomeIconView fill="#3742fa" glyphName="EXTERNAL_LINK_SQUARE" onMouseClicked="#maximize" size="25">
          <HBox.margin>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </HBox.margin>
       </FontAwesomeIconView>
-      <FontAwesomeIconView fill="#ff4757" glyphName="CLOSE" onMouseClicked="#close" size="17">
+      <FontAwesomeIconView fill="#ff4757" glyphName="CLOSE" onMouseClicked="#close" size="25">
          <HBox.margin>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </HBox.margin>

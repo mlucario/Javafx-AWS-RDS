@@ -13,28 +13,28 @@ public class DBHandler {
 	
 	public Connection getConnection() {
 
-		 System.out.println("----MySQL JDBC Connection Testing -------");
+//		 System.out.println("----MySQL JDBC Connection Testing -------");
 		    
 		    try {
 		        Class.forName("com.mysql.jdbc.Driver");
 		    } catch (ClassNotFoundException e) {
-		        System.out.println("Where is your MySQL JDBC Driver?");
+//		        System.out.println("Where is your MySQL JDBC Driver?");
 		        e.printStackTrace();
 		        return null;
 		    }
 
-		    System.out.println("MySQL JDBC Driver Registered!");
+//		    System.out.println("MySQL JDBC Driver Registered!");
 		  
 
 		    try {
 		    	dbconnection = DriverManager.
 		                getConnection("jdbc:mysql://" +  Configs.dbHost + ":3306/bizcom", "admin", "1202Amazon");
 		    } catch (SQLException e) {
-		        System.out.println("Connection Failed!:\n" + e.getMessage());
+//		        System.out.println("Connection Failed!:\n" + e.getMessage());
 		    }
 
 		    if (dbconnection != null) {
-		        System.out.println("SUCCESS!!!! You made it, take control     your database now!");
+		        System.out.println("SUCCESS!!!! You made it, take control your database now!");
 		    } else {
 		        System.out.println("FAILURE! Failed to make connection!");
 		    }
@@ -42,33 +42,10 @@ public class DBHandler {
 
 	}
 	
-	public static void connectJDBCToAWSEC2() {
-
-	    System.out.println("----MySQL JDBC Connection Testing -------");
-	    
-	    try {
-	        Class.forName("com.mysql.jdbc.Driver");
-	    } catch (ClassNotFoundException e) {
-	        System.out.println("Where is your MySQL JDBC Driver?");
-	        e.printStackTrace();
-	        return;
-	    }
-
-	    System.out.println("MySQL JDBC Driver Registered!");
-	    Connection connection = null;
-
-	    try {
-	        connection = DriverManager.
-	                getConnection("jdbc:mysql://" +  Configs.dbHost + ":3306/bizcom", "admin", "1202Amazon");
-	    } catch (SQLException e) {
-	        System.out.println("Connection Failed!:\n" + e.getMessage());
-	    }
-
-	    if (connection != null) {
-	        System.out.println("SUCCESS!!!! You made it, take control     your database now!");
-	    } else {
-	        System.out.println("FAILURE! Failed to make connection!");
-	    }
-
+	
+	public boolean login(String username, String password) {
+		boolean result = false;
+		
+		
 	}
 }

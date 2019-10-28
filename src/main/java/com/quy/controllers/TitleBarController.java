@@ -14,7 +14,6 @@ public class TitleBarController implements Initializable{
   
     @FXML
     void close(MouseEvent event) {
-    	System.out.println("Close ?");
     	 Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 		stage.close();
     }
@@ -22,7 +21,12 @@ public class TitleBarController implements Initializable{
     @FXML
     void maximize(MouseEvent event) {
     	 Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-    	stage.setFullScreen(true);
+    	 if(stage.isFullScreen()) {
+    		 stage.setFullScreen(false);
+    	 }else {
+    		 stage.setFullScreen(true);
+    	 }
+    	
     }
 
     @FXML
