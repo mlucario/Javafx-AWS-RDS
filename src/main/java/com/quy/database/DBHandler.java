@@ -2,6 +2,8 @@ package com.quy.database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 
@@ -10,7 +12,7 @@ public class DBHandler {
 //	jdbc:driver://hostname:port/dbName?user=userName&password=password
 	
 	private Connection dbconnection;
-	
+	private PreparedStatement pst;
 	public Connection getConnection() {
 
 //		 System.out.println("----MySQL JDBC Connection Testing -------");
@@ -46,6 +48,40 @@ public class DBHandler {
 	public boolean login(String username, String password) {
 		boolean result = false;
 		
-		
+		String query = "SELECT * from users where Username=? and UserPassword=?";
+		try {
+			dbconnection = getConnection();
+			pst = dbconnection.prepareStatement(query);
+			pst.setString(1, username);
+			pst.setString(2, password);
+
+			ResultSet rs = pst.executeQuery();
+
+			int count = 0;
+
+			while (rs.next()) {
+				count = count + 1;
+			}
+
+			if (count == 1) {
+				result = true;
+			} else {
+				result = false;
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+
+			try {
+				pst.close();
+				dbconnection.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		}
+
+		return result;
 	}
 }
