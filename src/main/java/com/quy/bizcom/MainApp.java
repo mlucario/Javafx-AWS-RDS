@@ -1,4 +1,4 @@
-package com.quy.javafx;
+package com.quy.bizcom;
 
 import com.quy.database.DBHandler;
 
@@ -11,10 +11,23 @@ import javafx.stage.StageStyle;
 
 
 public class MainApp extends Application {
+//	private double x, y;
 
+//	@FXML
+//	void dragged(MouseEvent event) {
+//		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+//		stage.setX(event.getScreenX() - x);
+//		stage.setY(event.getScreenY() - y);
+//	}
+//
+//	@FXML
+//	void pressed(MouseEvent event) {
+//		x = event.getSceneX();
+//		y = event.getSceneY();
+//	}
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/fxml/SignUpScene.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/fxml/SignInScene.fxml"));
         
         Scene scene = new Scene(root);
 //        scene.getStylesheets().add("/styles/Styles.css");
@@ -26,17 +39,10 @@ public class MainApp extends Application {
         stage.show();
     }
 
-    /**
-     * The main() method is ignored in correctly deployed JavaFX application.
-     * main() serves only as fallback in case the application can not be
-     * launched through deployment artifacts, e.g., in IDEs with limited FX
-     * support. NetBeans ignores main().
-     *
-     * @param args the command line arguments
-     */
+
     public static void main(String[] args) {
     	DBHandler db = new DBHandler();
-    	 db.getConnection();
+    	 db.getConnectionAWS();
         launch(args);
     }
 
