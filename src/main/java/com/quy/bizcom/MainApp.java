@@ -1,7 +1,5 @@
 package com.quy.bizcom;
 
-import com.quy.database.DBHandler;
-
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -30,9 +28,9 @@ public class MainApp extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("/fxml/SignInScene.fxml"));
         
         Scene scene = new Scene(root);
-//        scene.getStylesheets().add("/styles/Styles.css");
+        scene.getStylesheets().add("/styles/Styles.css");
         
-        stage.setTitle("JavaFX and Maven");
+        stage.setTitle("SMC Controller Management");
         stage.setScene(scene);
         stage.initStyle(StageStyle.TRANSPARENT);
 //        stage.setResizable(false);
@@ -41,8 +39,7 @@ public class MainApp extends Application {
 
 
     public static void main(String[] args) {
-    	DBHandler db = new DBHandler();
-    	 db.getConnectionAWS();
+
         launch(args);
     }
 

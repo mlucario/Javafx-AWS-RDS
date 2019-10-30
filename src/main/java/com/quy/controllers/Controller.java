@@ -1,17 +1,28 @@
 package com.quy.controllers;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.Date;
+import java.util.Optional;
+
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.validation.RequiredFieldValidator;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -31,7 +42,14 @@ public class Controller {
 	// List of scene
 	protected final String LOGIN_SCENE = "SignInScene";
 	protected final String SIGNUP_SCENE = "SignUpScene";
-	protected final String DASHBOARD_SCENE = "DashboardScene";
+	protected final String USER_DASHBOARD_SCENE = "UserDashboardScene";
+	protected final String ADMIN_DASHBOARD_SCENE = "AdminDashboardScene";
+
+	// Hashing Password
+	private static final SecureRandom RAND = new SecureRandom();
+	private static final int ITERATIONS = 65536;
+	private static final int KEY_LENGTH = 512;
+	private static final String ALGORITHM = "PBKDF2WithHmacSHA512";
 
 	public void textFieldFormat(JFXTextField txt, String warning, boolean isUpperCase) {
 		txt.setStyle("-fx-text-inner-color: #8e44ad;");
@@ -63,6 +81,12 @@ public class Controller {
 		});
 	}
 
+	// Close application
+	public void close(ActionEvent event) {
+		 Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+		 stage.close();
+	}
+	// Show warning alert 
 	public void warningAlert(String msm) {
 		Alert alert = new Alert(AlertType.ERROR);
 		alert.setTitle("Error");
@@ -99,5 +123,49 @@ public class Controller {
 
 			e1.printStackTrace();
 		}
+	}
+
+	// Password hash
+	public Optional<String> generateSalt(final int length) {
+
+		if (length < 1) {
+			System.err.println("error in generateSalt: length must be > 0");
+			return Optional.empty();
+		}
+
+		byte[] salt = new byte[length];
+		RAND.nextBytes(salt);
+
+		return Optional.of(Base64.getEncoder().encodeToString(salt));
+	}
+
+	public Optional<String> hashPassword(String password, String salt) {
+
+		char[] chars = password.toCharArray();
+		byte[] bytes = salt.getBytes();
+
+		PBEKeySpec spec = new PBEKeySpec(chars, bytes, ITERATIONS, KEY_LENGTH);
+
+		Arrays.fill(chars, Character.MIN_VALUE);
+
+		try {
+			SecretKeyFactory fac = SecretKeyFactory.getInstance(ALGORITHM);
+			byte[] securePassword = fac.generateSecret(spec).getEncoded();
+			return Optional.of(Base64.getEncoder().encodeToString(securePassword));
+
+		} catch (NoSuchAlgorithmException | InvalidKeySpecException ex) {
+			System.err.println("Exception encountered in hashPassword()");
+			return Optional.empty();
+
+		} finally {
+			spec.clearPassword();
+		}
+	}
+
+	public boolean verifyPassword(String password, String key, String salt) {
+		Optional<String> optEncrypted = hashPassword(password, salt);
+		if (!optEncrypted.isPresent())
+			return false;
+		return optEncrypted.get().equals(key);
 	}
 }
