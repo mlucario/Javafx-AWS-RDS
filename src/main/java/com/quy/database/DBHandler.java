@@ -84,4 +84,37 @@ public class DBHandler {
 
 		return result;
 	}
+	
+	public boolean signUp(String username, String password, String time ) {
+		boolean result = false;
+		
+		String query = "INSERT INTO users (username,password,user_type,create_at) VALUES (?,?,?,?)";
+		try {
+			dbconnection = getConnection();
+			pst = dbconnection.prepareStatement(query);
+			pst.setString(1, username);
+			pst.setString(2, password);
+			pst.setString(3, "user");
+			pst.setString(4,time);
+			pst.executeUpdate();
+
+			result = true;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			result = false;
+		} finally {
+
+			try {
+				pst.close();
+				dbconnection.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+
+		return result;
+	}
 }
