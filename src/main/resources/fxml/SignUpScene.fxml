@@ -15,7 +15,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="700.0" style="-fx-background-color: transparent;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.quy.controllers.SignUpController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseDragged="#dragged" onMousePressed="#pressed" prefHeight="600.0" prefWidth="700.0" style="-fx-background-color: transparent;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.quy.controllers.SignUpController">
    <children>
       <StackPane AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
          <effect>
@@ -95,7 +95,7 @@
                               <Insets bottom="20.0" left="50.0" right="50.0" top="20.0" />
                            </VBox.margin>
                         </HBox>
-                        <JFXButton onAction="#signUpAction" prefHeight="35.0" prefWidth="200.0" ripplerFill="#70a1ff" style="-fx-background-color: #5352ed; -fx-background-radius: 100px;" text="SIGN UP" textFill="WHITE">
+                        <JFXButton fx:id="btnSignUp" onAction="#signUpAction" prefHeight="35.0" prefWidth="200.0" ripplerFill="#70a1ff" style="-fx-background-color: #5352ed; -fx-background-radius: 100px;" text="SIGN UP" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="22.0" />
                            </font>
@@ -110,7 +110,7 @@
                                     <Font name="System Bold" size="16.0" />
                                  </font>
                               </Text>
-                              <JFXButton onAction="#signInPressed" ripplerFill="#70a1ff" style="-fx-background-color: #1e90ff; -fx-background-radius: 25;" text="Sign In" textFill="WHITE">
+                              <JFXButton fx:id="btnSignIn" onAction="#signInPressed" ripplerFill="#70a1ff" style="-fx-background-color: #1e90ff; -fx-background-radius: 25;" text="Sign In" textFill="WHITE">
                                  <font>
                                     <Font name="System Bold" size="16.0" />
                                  </font>
