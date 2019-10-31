@@ -1,19 +1,325 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.image.ImageView?>
+<?import com.jfoenix.controls.JFXBadge?>
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="600.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="800.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <VBox style="-fx-background-color: #ecf0f1;">
+      <VBox alignment="TOP_CENTER" prefHeight="600.0" prefWidth="204.0" style="-fx-background-color: #ecf0f1;" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+            <JFXBadge position="CENTER" prefHeight="80.0" style="-fx-background-color: #57606f;">
+               <children>
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <FontAwesomeIconView fill="WHITE" glyphName="FLASH" size="50" />
+                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Bizcom">
+                           <font>
+                              <Font name="System Bold" size="35.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets left="15.0" />
+                           </HBox.margin>
+                        </Text>
+                     </children>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </HBox>
+               </children>
+            </JFXBadge>
+            <Text fill="#3742fa" strokeType="OUTSIDE" strokeWidth="0.0" text="Hi User">
+               <font>
+                  <Font name="System Bold" size="35.0" />
+               </font>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </Text>
+            <JFXButton prefHeight="51.0" prefWidth="242.0" style="-fx-background-color: #a4b0be; -fx-background-radius: 0;" text="Receiving" textFill="WHITE">
+               <graphic>
+                  <FontAwesomeIconView fill="WHITE" glyphName="CART_PLUS" size="35" />
+               </graphic>
+               <font>
+                  <Font name="System Bold" size="22.0" />
+               </font>
+               <VBox.margin>
+                  <Insets bottom="5.0" top="30.0" />
+               </VBox.margin>
+            </JFXButton>
+            <JFXButton prefHeight="51.0" prefWidth="242.0" style="-fx-background-color: #a4b0be; -fx-background-radius: 0;" text="Assembly" textFill="WHITE">
+               <graphic>
+                  <FontAwesomeIconView fill="WHITE" glyphName="COGS" size="35" />
+               </graphic>
+               <font>
+                  <Font name="System Bold" size="22.0" />
+               </font>
+               <VBox.margin>
+                  <Insets bottom="5.0" />
+               </VBox.margin>
+            </JFXButton>
+            <JFXButton prefHeight="51.0" prefWidth="242.0" style="-fx-background-color: #a4b0be; -fx-background-radius: 0;" text="Burn-In" textFill="WHITE">
+               <graphic>
+                  <FontAwesomeIconView fill="WHITE" glyphName="FIRE" size="35" translateX="-10.0" />
+               </graphic>
+               <font>
+                  <Font name="System Bold" size="22.0" />
+               </font>
+               <VBox.margin>
+                  <Insets bottom="5.0" />
+               </VBox.margin>
+            </JFXButton>
+            <JFXButton prefHeight="51.0" prefWidth="242.0" style="-fx-background-color: #a4b0be; -fx-background-radius: 0;" text="Test Result" textFill="WHITE">
+               <graphic>
+                  <FontAwesomeIconView fill="WHITE" glyphName="CHECK_SQUARE_ALT" size="35" />
+               </graphic>
+               <font>
+                  <Font name="System Bold" size="22.0" />
+               </font>
+               <VBox.margin>
+                  <Insets bottom="5.0" />
+               </VBox.margin>
+            </JFXButton>
+            <JFXButton prefHeight="51.0" prefWidth="242.0" style="-fx-background-color: #a4b0be; -fx-background-radius: 0;" text="Packing" textFill="WHITE">
+               <graphic>
+                  <FontAwesomeIconView fill="WHITE" glyphName="CUBES" size="35" />
+               </graphic>
+               <font>
+                  <Font name="System Bold" size="22.0" />
+               </font>
+               <VBox.margin>
+                  <Insets bottom="5.0" />
+               </VBox.margin>
+            </JFXButton>
+            <JFXButton prefHeight="51.0" prefWidth="242.0" style="-fx-background-color: #a4b0be; -fx-background-radius: 0;" text="Repair" textFill="WHITE">
+               <graphic>
+                  <FontAwesomeIconView fill="WHITE" glyphName="WRENCH" size="35" />
+               </graphic>
+               <font>
+                  <Font name="System Bold" size="22.0" />
+               </font>
+               <VBox.margin>
+                  <Insets bottom="5.0" />
+               </VBox.margin>
+            </JFXButton>
+            <JFXButton prefHeight="51.0" prefWidth="242.0" style="-fx-background-color: #a4b0be; -fx-background-radius: 0;" text="Shipping" textFill="WHITE">
+               <graphic>
+                  <FontAwesomeIconView fill="WHITE" glyphName="TRUCK" size="35" />
+               </graphic>
+               <font>
+                  <Font name="System Bold" size="22.0" />
+               </font>
+               <VBox.margin>
+                  <Insets bottom="5.0" />
+               </VBox.margin>
+            </JFXButton>
+            <JFXButton prefHeight="51.0" prefWidth="242.0" style="-fx-background-color: #a4b0be; -fx-background-radius: 0;" text="Log Out" textFill="RED">
+               <graphic>
+                  <FontAwesomeIconView fill="RED" glyphName="POWER_OFF" size="35" />
+               </graphic>
+               <font>
+                  <Font name="System Bold" size="22.0" />
+               </font>
+               <VBox.margin>
+                  <Insets bottom="5.0" />
+               </VBox.margin>
+            </JFXButton>
+            <JFXBadge position="BOTTOM_CENTER" prefWidth="204.0" VBox.vgrow="ALWAYS">
+               <VBox.margin>
+                  <Insets bottom="15.0" />
+               </VBox.margin>
+               <children>
+                  <VBox alignment="BOTTOM_CENTER" prefHeight="200.0" prefWidth="100.0">
+                     <children>
+                        <Label text="Today" textFill="DODGERBLUE" textOverrun="CLIP">
+                           <font>
+                              <Font name="System Bold" size="35.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets bottom="20.0" />
+                           </VBox.margin>
+                        </Label>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="12/10/2018">
+                           <VBox.margin>
+                              <Insets bottom="20.0" />
+                           </VBox.margin>
+                           <font>
+                              <Font name="System Bold" size="30.0" />
+                           </font>
+                        </Text>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="12:59:00">
+                           <VBox.margin>
+                              <Insets bottom="20.0" />
+                           </VBox.margin>
+                           <font>
+                              <Font name="System Bold" size="30.0" />
+                           </font>
+                        </Text>
+                     </children>
+                  </VBox>
+               </children>
+            </JFXBadge>
          </children>
       </VBox>
-      <HBox layoutX="227.0" style="-fx-background-color: grey;" />
+      <VBox alignment="TOP_RIGHT" layoutX="204.0" prefHeight="600.0" prefWidth="496.0" style="-fx-background-color: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="205.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+       <children>
+                  
+                  <fx:include source="TitleBar.fxml" />
+                  </children>
+         <children>
+            <StackPane prefWidth="480.0">
+               <VBox.margin>
+                  <Insets bottom="10.0" left="5.0" right="10.0" top="30.0" />
+               </VBox.margin>
+               <children>
+                  <VBox fx:id="vboxReceiving" alignment="TOP_CENTER" visible="false" StackPane.alignment="TOP_CENTER">
+                     <children>
+                        <Text fill="DODGERBLUE" strokeType="OUTSIDE" strokeWidth="0.0" text="Receiving Station">
+                           <font>
+                              <Font name="System Bold" size="75.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets bottom="100.0" />
+                           </VBox.margin>
+                        </Text>
+                        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                           <children>
+                              <FontAwesomeIconView fill="#3742fa" glyphName="EDIT" size="100">
+                                 <HBox.margin>
+                                    <Insets right="20.0" />
+                                 </HBox.margin>
+                              </FontAwesomeIconView>
+                              <JFXTextField focusColor="#3742fa" labelFloat="true" prefHeight="75.0" prefWidth="627.0" promptText="Enter Model" unFocusColor="#2f3542">
+                                 <font>
+                                    <Font name="System Bold" size="35.0" />
+                                 </font>
+                              </JFXTextField>
+                           </children>
+                           <VBox.margin>
+                              <Insets bottom="40.0" />
+                           </VBox.margin>
+                        </HBox>
+                        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                           <children>
+                              <FontAwesomeIconView fill="#3742fa" glyphName="BARCODE" size="100">
+                                 <HBox.margin>
+                                    <Insets right="20.0" />
+                                 </HBox.margin>
+                              </FontAwesomeIconView>
+                              <JFXTextField focusColor="#3742fa" labelFloat="true" prefHeight="75.0" prefWidth="627.0" promptText="Box Barcode" unFocusColor="#2f3542">
+                                 <font>
+                                    <Font name="System Bold" size="35.0" />
+                                 </font>
+                              </JFXTextField>
+                           </children>
+                           <VBox.margin>
+                              <Insets bottom="40.0" />
+                           </VBox.margin>
+                        </HBox>
+                        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                           <children>
+                              <FontAwesomeIconView fill="#3742fa" glyphName="BARCODE" size="100">
+                                 <HBox.margin>
+                                    <Insets right="20.0" />
+                                 </HBox.margin>
+                              </FontAwesomeIconView>
+                              <JFXTextField focusColor="#3742fa" labelFloat="true" prefHeight="75.0" prefWidth="627.0" promptText="Controller Barcode" unFocusColor="#2f3542">
+                                 <font>
+                                    <Font name="System Bold" size="35.0" />
+                                 </font>
+                              </JFXTextField>
+                           </children>
+                           <VBox.margin>
+                              <Insets bottom="40.0" />
+                           </VBox.margin>
+                        </HBox>
+                        <JFXButton buttonType="RAISED" prefHeight="75.0" prefWidth="493.0" ripplerFill="#3742fa" style="-fx-background-color: #1e90ff; -fx-background-radius: 100px;" text="Add" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="35.0" />
+                           </font>
+                        </JFXButton>
+                     </children></VBox>
+                  <VBox alignment="TOP_CENTER" visible="false">
+                     <children>
+                        <Text fill="DODGERBLUE" strokeType="OUTSIDE" strokeWidth="0.0" text="Assembly Station">
+                           <font>
+                              <Font name="System Bold" size="75.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets bottom="100.0" />
+                           </VBox.margin>
+                        </Text>
+                        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                           <children>
+                              <FontAwesomeIconView fill="#3742fa" glyphName="BARCODE" size="100">
+                                 <HBox.margin>
+                                    <Insets right="20.0" />
+                                 </HBox.margin>
+                              </FontAwesomeIconView>
+                              <JFXTextField focusColor="#3742fa" labelFloat="true" prefHeight="75.0" prefWidth="627.0" promptText="Controller Barcode" unFocusColor="#2f3542">
+                                 <font>
+                                    <Font name="System Bold" size="35.0" />
+                                 </font>
+                              </JFXTextField>
+                           </children>
+                           <VBox.margin>
+                              <Insets bottom="40.0" />
+                           </VBox.margin>
+                        </HBox>
+                        <JFXButton buttonType="RAISED" prefHeight="75.0" prefWidth="493.0" ripplerFill="#3742fa" style="-fx-background-color: #1e90ff; -fx-background-radius: 100px;" text="Add" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="35.0" />
+                           </font>
+                        </JFXButton>
+                     </children>
+                  </VBox>
+                  <VBox alignment="TOP_CENTER">
+                     <children>
+                        <Text fill="DODGERBLUE" strokeType="OUTSIDE" strokeWidth="0.0" text="Burn-In Station">
+                           <font>
+                              <Font name="System Bold" size="75.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets bottom="100.0" />
+                           </VBox.margin>
+                        </Text>
+                        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                           <children>
+                              <FontAwesomeIconView fill="#3742fa" glyphName="BARCODE" size="100">
+                                 <HBox.margin>
+                                    <Insets right="20.0" />
+                                 </HBox.margin>
+                              </FontAwesomeIconView>
+                              <JFXTextField focusColor="#3742fa" labelFloat="true" prefHeight="75.0" prefWidth="627.0" promptText="Controller Barcode" unFocusColor="#2f3542">
+                                 <font>
+                                    <Font name="System Bold" size="35.0" />
+                                 </font>
+                              </JFXTextField>
+                           </children>
+                           <VBox.margin>
+                              <Insets bottom="40.0" />
+                           </VBox.margin>
+                        </HBox>
+                        <JFXButton buttonType="RAISED" prefHeight="75.0" prefWidth="493.0" ripplerFill="#3742fa" style="-fx-background-color: #1e90ff; -fx-background-radius: 100px;" text="Add" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="35.0" />
+                           </font>
+                        </JFXButton>
+                        <JFXButton />
+                     </children>
+                  </VBox>
+               </children>
+            </StackPane>
+         </children>
+      </VBox>
    </children>
 </AnchorPane>
