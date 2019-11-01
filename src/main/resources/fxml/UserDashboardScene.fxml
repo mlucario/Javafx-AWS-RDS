@@ -4,6 +4,8 @@
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXRadioButton?>
 <?import com.jfoenix.controls.JFXTextField?>
+<?import com.jfoenix.controls.JFXTreeTableColumn?>
+<?import com.jfoenix.controls.JFXTreeTableView?>
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
@@ -18,7 +20,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="1065.0" prefWidth="1287.0" style="-fx-background-color: transparent;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="900.0" prefWidth="1300.0" style="-fx-background-color: transparent;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <StackPane style="-fx-background-color: #ffffff;" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
          <effect>
@@ -27,7 +29,7 @@
          <children>
             <VBox alignment="TOP_RIGHT" prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: #f1f2f6;">
                <children>
-                  <HBox alignment="BASELINE_RIGHT">
+                  <HBox alignment="BASELINE_RIGHT" style="-fx-background-color: #ffffff;">
                      <children>
                         <Label fx:id="txtUsername" alignment="CENTER" prefHeight="36.0" prefWidth="184.0" text="User: A1956" textFill="RED">
                            <font>
@@ -199,7 +201,7 @@
                         </StackPane>
                      </children>
                   </VBox>
-                  <VBox alignment="TOP_CENTER" prefHeight="550.0" HBox.hgrow="ALWAYS">
+                  <VBox alignment="TOP_CENTER" prefHeight="550.0" style="-fx-background-color: #ffffff;" HBox.hgrow="ALWAYS">
                      <HBox.margin>
                         <Insets />
                      </HBox.margin>
@@ -217,63 +219,7 @@
                               <Insets bottom="5.0" left="5.0" right="5.0" top="40.0" />
                            </VBox.margin>
                            <children>
-                              <VBox fx:id="vBox01" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
-                                 <children>
-                                    <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
-                                       <children>
-                                          <JFXTextField fx:id="txtModel" focusColor="#8e44ad" labelFloat="true" prefHeight="65.0" prefWidth="600.0" promptText="Enter Model" unFocusColor="#2f3542">
-                                             <font>
-                                                <Font name="System Bold" size="30.0" />
-                                             </font>
-                                          </JFXTextField>
-                                          <FontAwesomeIconView fill="DODGERBLUE" glyphName="INFO_CIRCLE" size="50" />
-                                       </children>
-                                       <VBox.margin>
-                                          <Insets bottom="40.0" top="10.0" />
-                                       </VBox.margin>
-                                    </HBox>
-                                    <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
-                                       <children>
-                                          <JFXTextField fx:id="txtBoxBarcode" focusColor="#8e44ad" labelFloat="true" prefHeight="65.0" prefWidth="600.0" promptText="Enter Box Barcode" unFocusColor="#2f3542">
-                                             <font>
-                                                <Font name="System Bold" size="30.0" />
-                                             </font>
-                                          </JFXTextField>
-                                          <FontAwesomeIconView fill="DODGERBLUE" glyphName="BARCODE" size="50" />
-                                       </children>
-                                       <VBox.margin>
-                                          <Insets bottom="40.0" top="10.0" />
-                                       </VBox.margin>
-                                    </HBox>
-                                    <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
-                                       <children>
-                                          <JFXTextField fx:id="txtControllerBarcode" focusColor="#8e44ad" labelFloat="true" prefHeight="65.0" prefWidth="600.0" promptText="Enter Controller Barcode" unFocusColor="#2f3542">
-                                             <font>
-                                                <Font name="System Bold" size="30.0" />
-                                             </font>
-                                          </JFXTextField>
-                                          <FontAwesomeIconView fill="DODGERBLUE" glyphName="BARCODE" size="50" />
-                                       </children>
-                                       <VBox.margin>
-                                          <Insets bottom="40.0" top="10.0" />
-                                       </VBox.margin>
-                                    </HBox>
-                                    <JFXButton fx:id="btnAddReceiving" buttonType="RAISED" prefHeight="54.0" prefWidth="220.0" style="-fx-background-color: #3498db; -fx-background-radius: 50;" text="Add" textFill="WHITE">
-                                       <font>
-                                          <Font name="System Bold" size="25.0" />
-                                       </font>
-                                    </JFXButton>
-                                    <HBox prefHeight="100.0" prefWidth="200.0">
-                                       <children>
-                                          <ImageView fx:id="imgViewGuide" fitHeight="350.0" fitWidth="350.0" pickOnBounds="true" preserveRatio="true" />
-                                       </children>
-                                       <VBox.margin>
-                                          <Insets top="30.0" />
-                                       </VBox.margin>
-                                    </HBox>
-                                 </children>
-                              </VBox>
-                              <VBox fx:id="vboxBurnIn" prefHeight="200.0" prefWidth="100.0" />
+                              <VBox fx:id="vboxBurnIn" prefHeight="874.0" prefWidth="822.0" />
                               <VBox fx:id="vboxResult" alignment="TOP_CENTER" visible="false">
                                  <children>
                                     <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Select One Option Below" textAlignment="CENTER" underline="true">
@@ -324,6 +270,84 @@
                                     </JFXButton>
                                  </children>
                               </VBox>
+                              <HBox alignment="TOP_CENTER">
+                                 <children>
+                                    <VBox fx:id="vBox01" alignment="TOP_CENTER" prefHeight="654.0" prefWidth="677.0">
+                                       <children>
+                                          <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                                             <children>
+                                                <JFXTextField fx:id="txtModel" focusColor="#8e44ad" labelFloat="true" prefHeight="65.0" prefWidth="600.0" promptText="Enter Model" unFocusColor="#2f3542">
+                                                   <font>
+                                                      <Font name="System Bold" size="30.0" />
+                                                   </font>
+                                                </JFXTextField>
+                                                <FontAwesomeIconView fill="DODGERBLUE" glyphName="INFO_CIRCLE" size="50" />
+                                             </children>
+                                             <VBox.margin>
+                                                <Insets bottom="40.0" top="10.0" />
+                                             </VBox.margin>
+                                          </HBox>
+                                          <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                                             <children>
+                                                <JFXTextField fx:id="txtBoxBarcode" focusColor="#8e44ad" labelFloat="true" prefHeight="65.0" prefWidth="600.0" promptText="Enter Box Barcode" unFocusColor="#2f3542">
+                                                   <font>
+                                                      <Font name="System Bold" size="30.0" />
+                                                   </font>
+                                                </JFXTextField>
+                                                <FontAwesomeIconView fill="DODGERBLUE" glyphName="BARCODE" size="50" />
+                                             </children>
+                                             <VBox.margin>
+                                                <Insets bottom="40.0" top="10.0" />
+                                             </VBox.margin>
+                                          </HBox>
+                                          <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                                             <children>
+                                                <JFXTextField fx:id="txtControllerBarcode" focusColor="#8e44ad" labelFloat="true" prefHeight="65.0" prefWidth="600.0" promptText="Enter Controller Barcode" unFocusColor="#2f3542">
+                                                   <font>
+                                                      <Font name="System Bold" size="30.0" />
+                                                   </font>
+                                                </JFXTextField>
+                                                <FontAwesomeIconView fill="DODGERBLUE" glyphName="BARCODE" size="50" />
+                                             </children>
+                                             <VBox.margin>
+                                                <Insets bottom="40.0" top="10.0" />
+                                             </VBox.margin>
+                                          </HBox>
+                                          <JFXButton fx:id="btnAddReceiving" buttonType="RAISED" prefHeight="54.0" prefWidth="220.0" style="-fx-background-color: #3498db; -fx-background-radius: 50;" text="Add" textFill="WHITE">
+                                             <font>
+                                                <Font name="System Bold" size="25.0" />
+                                             </font>
+                                          </JFXButton>
+                                       </children>
+                                    </VBox>
+                                    <VBox alignment="TOP_CENTER">
+                                       <children>
+                                          <ImageView fx:id="imgViewGuide" fitHeight="350.0" fitWidth="350.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../images/loading.gif" />
+                                             </image>
+                                          </ImageView>
+                                          <JFXTreeTableView currentItemsCount="1">
+                                             <columns>
+                                                <JFXTreeTableColumn fx:id="colControllerBarcode" prefWidth="200.0" resizable="false" text="Controller Barcode">
+                                                   <graphic>
+                                                      <FontAwesomeIconView fill="DODGERBLUE" glyphName="BARCODE" size="17" />
+                                                   </graphic>
+                                                </JFXTreeTableColumn>
+                                                <JFXTreeTableColumn fx:id="colDate" prefWidth="150.0" resizable="false" text="Date">
+                                                   <graphic>
+                                                      <FontAwesomeIconView fill="DODGERBLUE" glyphName="CALENDAR" size="17" />
+                                                   </graphic>
+                                                </JFXTreeTableColumn>
+                                             </columns>
+                                          </JFXTreeTableView>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                                 <padding>
+                                    <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                                 </padding>
+                              </HBox>
                            </children>
                         </StackPane>
                      </children>

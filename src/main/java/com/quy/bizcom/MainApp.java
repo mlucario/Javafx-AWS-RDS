@@ -1,5 +1,6 @@
 package com.quy.bizcom;
 
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -28,12 +29,13 @@ public class MainApp extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("/fxml/SignInScene.fxml"));
         
         Scene scene = new Scene(root);
-        scene.getStylesheets().add("/styles/Styles.css");
-        
+//        scene.getStylesheets().add(MainApp.class.getResource("/resources/styles/Styles.css").toExternalForm());
         stage.setTitle("SMC Controller Management");
         stage.setScene(scene);
         stage.initStyle(StageStyle.TRANSPARENT);
 //        stage.setResizable(false);
+		stage.setMinWidth(700);
+		stage.setMinHeight(800);
         stage.show();
     }
 
