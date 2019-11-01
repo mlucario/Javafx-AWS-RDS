@@ -29,8 +29,8 @@ public class DBHandler {
 //		    System.out.println("MySQL JDBC Driver Registered!");
 
 		try {
-			dbconnection = DriverManager.getConnection("jdbc:mysql://" + Configs.dbHost + ":3306/bizcom", "admin",
-					"bizcom1171");
+			dbconnection = DriverManager.getConnection("jdbc:mysql://" + Configs.dbHost + ":"+Configs.dbPort+"/"+Configs.dbName, Configs.dbUsername,
+					Configs.dbPassword);
 		} catch (SQLException e) {
 //		        System.out.println("Connection Failed!:\n" + e.getMessage());
 		}
