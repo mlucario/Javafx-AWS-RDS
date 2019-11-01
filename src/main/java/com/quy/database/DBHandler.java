@@ -30,7 +30,7 @@ public class DBHandler {
 
 		try {
 			dbconnection = DriverManager.getConnection("jdbc:mysql://" + Configs.dbHost + ":3306/bizcom", "admin",
-					"1202Amazon");
+					"bizcom1171");
 		} catch (SQLException e) {
 //		        System.out.println("Connection Failed!:\n" + e.getMessage());
 		}
