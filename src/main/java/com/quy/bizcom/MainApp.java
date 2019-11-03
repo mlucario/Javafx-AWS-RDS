@@ -27,15 +27,17 @@ public class MainApp extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("/fxml/SignInScene.fxml"));
+//        Parent root = FXMLLoader.load(getClass().getResource("/fxml/UserDashboardScene.fxml"));
         
         Scene scene = new Scene(root);
-//        scene.getStylesheets().add(MainApp.class.getResource("/resources/styles/Styles.css").toExternalForm());
+//        scene.getStylesheets().add("Styles.css");
         stage.setTitle("SMC Controller Management");
         stage.setScene(scene);
         stage.initStyle(StageStyle.TRANSPARENT);
 //        stage.setResizable(false);
 		stage.setMinWidth(700);
 		stage.setMinHeight(800);
+//		stage.setAlwaysOnTop(true);
         stage.show();
     }
 

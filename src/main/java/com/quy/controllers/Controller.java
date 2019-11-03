@@ -116,8 +116,10 @@ public class Controller {
 				home.setY(bounds.getMinY());
 				home.setWidth(bounds.getWidth());
 				home.setHeight(bounds.getHeight());
+				
 			}
-			home.show();
+//			home.setAlwaysOnTop(true);
+	home.show();
 
 		} catch (IOException e1) {
 
