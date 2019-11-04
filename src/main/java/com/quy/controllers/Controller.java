@@ -116,10 +116,15 @@ public class Controller {
 				home.setY(bounds.getMinY());
 				home.setWidth(bounds.getWidth());
 				home.setHeight(bounds.getHeight());
+<<<<<<< HEAD
 				
 			}
 //			home.setAlwaysOnTop(true);
 	home.show();
+=======
+			}
+			home.show();
+>>>>>>> parent of 8af343a... Merge branch 'master' of https://github.com/mlucario88/Javafx-AWS-RDS
 
 		} catch (IOException e1) {
 
