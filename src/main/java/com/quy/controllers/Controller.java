@@ -1,5 +1,6 @@
 package com.quy.controllers;
 
+import java.awt.Toolkit;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -27,7 +28,11 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextFormatter;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -44,6 +49,9 @@ public class Controller {
 	protected final String SIGNUP_SCENE = "SignUpScene";
 	protected final String USER_DASHBOARD_SCENE = "UserDashboardScene";
 	protected final String ADMIN_DASHBOARD_SCENE = "AdminDashboardScene";
+	protected final String RECEIVING_STATION_SCENE = "/fxml/ui/users/ReceivingStationScene.fxml";
+	protected final String ASSEMBLY_STATION_SCENE = "/fxml/ui/users/AssemblyStationScene.fxml";
+	protected final String BURN_IN_STATION_SCENE = "/fxml/ui/users/BurnInStationScene.fxml";
 
 	// Hashing Password
 	private static final SecureRandom RAND = new SecureRandom();
@@ -51,8 +59,20 @@ public class Controller {
 	private static final int KEY_LENGTH = 512;
 	private static final String ALGORITHM = "PBKDF2WithHmacSHA512";
 
+	// List Resource Path
+	protected final String IMAGE_PATH = "/images/";
+
+	// List Stations
+	protected final String RECEIVING_STATION = "Receiving Station";
+	protected final String ASSEMBLY_STATION = "Assembly Station";
+	protected final String BURN_IN_STATION = "Burn In Station";
+	protected final String RESULT_STATION = "Set Result Station";
+	protected final String REPAIR_STATION = "Repair Station";
+	protected final String PACKING_STATION = "Packing Station";
+	protected final String SHIPPING_STATION = "Shipping Station";
+
 	public void textFieldFormat(JFXTextField txt, String warning, boolean isUpperCase) {
-		txt.setStyle("-fx-text-inner-color: #8e44ad;");
+//		txt.setStyle("-fx-text-inner-color: #8e44ad;");
 		if (isUpperCase) {
 			// This code will change all text to Upper Case
 			txt.setTextFormatter(new TextFormatter<>((change) -> {
@@ -83,15 +103,26 @@ public class Controller {
 
 	// Close application
 	public void close(ActionEvent event) {
-		 Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-		 stage.close();
+		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+		stage.close();
 	}
-	// Show warning alert 
+
+	// Show warning alert
 	public void warningAlert(String msm) {
 		Alert alert = new Alert(AlertType.ERROR);
 		alert.setTitle("Error");
 		alert.setHeaderText(null);
 		alert.setContentText(msm);
+
+		final Runnable runnable = (Runnable) Toolkit.getDefaultToolkit().getDesktopProperty("win.sound.exclamation");
+		if (runnable != null)
+			runnable.run();
+
+		alert.getButtonTypes().clear();
+		alert.getButtonTypes().add(ButtonType.CLOSE);
+		Button closeButton = (Button) alert.getDialogPane().lookupButton(ButtonType.CLOSE);
+		closeButton.setDefaultButton(false);
+
 		alert.show();
 	}
 
@@ -116,7 +147,9 @@ public class Controller {
 				home.setY(bounds.getMinY());
 				home.setWidth(bounds.getWidth());
 				home.setHeight(bounds.getHeight());
+
 			}
+//			home.setAlwaysOnTop(true);
 			home.show();
 
 		} catch (IOException e1) {
@@ -167,5 +200,12 @@ public class Controller {
 		if (!optEncrypted.isPresent())
 			return false;
 		return optEncrypted.get().equals(key);
+	}
+
+	public void setImage(String filename, ImageView imgGuide) {
+		Image image = new Image(getClass().getResource(IMAGE_PATH + filename).toString());
+		imgGuide.setFitHeight(250);
+		imgGuide.setFitWidth(250);
+		imgGuide.setImage(image);
 	}
 }
