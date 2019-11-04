@@ -1,159 +1,86 @@
 package com.quy.controllers;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import javafx.fxml.Initializable;
 import com.jfoenix.controls.JFXButton;
-import com.quy.database.DBHandler;
+import com.jfoenix.controls.JFXTextField;
+import com.jfoenix.controls.JFXTreeTableColumn;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
 
-public class UserDashboardController extends Controller implements Initializable {
 
-	@FXML
-	private Label txtUsername;
+public class UserDashboardController extends Controller implements Initializable{
 
-	@FXML
-	private JFXButton btnReceiving;
+    @FXML
+    private Label txtUsername;
 
-	@FXML
-	private JFXButton btnAssembly;
+    @FXML
+    private JFXButton btnReceiving;
 
-	@FXML
-	private JFXButton btnBurnIn;
+    @FXML
+    private Text txtTitleStation;
 
-	@FXML
-	private JFXButton btnResult;
+    @FXML
+    private VBox resultView;
 
-	@FXML
-	private JFXButton btnRepair;
+    @FXML
+    private JFXTextField txtControllerBarcode1;
 
-	@FXML
-	private JFXButton btnPacking;
+    @FXML
+    private JFXButton btnAddReceiving1;
 
-	@FXML
-	private JFXButton btnShipping;
+    @FXML
+    private HBox receivingView;
 
-	@FXML
-	private JFXButton btnLogout;
+    @FXML
+    private VBox vBox01;
 
-	@FXML
-	private Text txtTitleStation;
+    @FXML
+    private JFXTextField txtModelReceiving;
 
-	@FXML
-	private AnchorPane loadPane;
-	@FXML
-	private StackPane paneIntro;
+    @FXML
+    private JFXTextField txtBoxBarcodeReceiving;
 
-	@FXML
-	private ImageView imgIntro;
+    @FXML
+    private HBox txtControllerBarcodeReceiving;
 
-	private DBHandler dbHandler;
-	private double x, y;
-	private AnchorPane tempPane;
+    @FXML
+    private JFXTextField txtControllerBarcode;
 
-	@FXML
-	void assemblyOnClick(ActionEvent event) {
+    @FXML
+    private JFXButton btnAddReceiving;
 
-		switchScence(ASSEMBLY_STATION_SCENE, ASSEMBLY_STATION);
+    @FXML
+    private Text txtCompletedStatus;
 
-	}
+    @FXML
+    private ImageView imgViewGuide;
 
-	@FXML
-	void burnInOnClick(ActionEvent event) {
-		switchScence(BURN_IN_STATION_SCENE, BURN_IN_STATION);
-	}
+    @FXML
+    private JFXTreeTableColumn<?, ?> colControllerBarcode;
 
-	@FXML
-	void logout(ActionEvent event) {
+    @FXML
+    void addToReceivingStock(ActionEvent event) {
 
-	}
+    }
 
-	@FXML
-	void packingOnClick(ActionEvent event) {
+    @FXML
+    void receivingOnClick(ActionEvent event) {
 
-	}
-
-	@FXML
-	void receivingOnClick(ActionEvent event) {
-		switchScence(RECEIVING_STATION_SCENE, RECEIVING_STATION);
-	}
-
-	@FXML
-	void repairOnClick(ActionEvent event) {
-
-	}
-
-	@FXML
-	void resultOnClick(ActionEvent event) {
-
-	}
-
-	@FXML
-	void shippingOnClick(ActionEvent event) {
-
-	}
-
-	@FXML
-	void dragged(MouseEvent event) {
-		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-		stage.setX(event.getScreenX() - x);
-		stage.setY(event.getScreenY() - y);
-	}
-
-	@FXML
-	void pressed(MouseEvent event) {
-//    	System.out.println("Clicked");
-		x = event.getSceneX();
-		y = event.getSceneY();
-	}
-
-	@FXML
-	void submit(ActionEvent event) {
-
-	}
+    }
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		dbHandler = new DBHandler();
-		txtTitleStation.setText("Select Station Follow Diagram");
-		// Load Image Diagram
-		imgIntro.setImage(new Image(getClass().getResource(IMAGE_PATH + "diagram.png").toString()));
-		tempPane = new AnchorPane();
+		// TODO Auto-generated method stub
+		
 	}
 
-	public void hideIntroView() {
-		imgIntro.setVisible(false);
-	}
-
-	// Switch to scene when user click on button
-	public void switchScence(String scene, String station) {
-		System.out.println("Show " + station);
-		txtTitleStation.setText(station);
-		// Hide diagram and view
-		hideIntroView();
-		tempPane.getChildren().clear();
-		// Load fxml into loadPane
-		try {
-			tempPane = FXMLLoader.load(getClass().getResource(scene));
-			paneIntro.getChildren().add(tempPane);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			warningAlert("Cannot Run Scene. Please Contact Admin");
-			e.printStackTrace();
-		}
-	}
 }
