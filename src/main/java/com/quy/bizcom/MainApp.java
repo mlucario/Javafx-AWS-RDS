@@ -27,26 +27,17 @@ public class MainApp extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("/fxml/SignInScene.fxml"));
-<<<<<<< HEAD
 //        Parent root = FXMLLoader.load(getClass().getResource("/fxml/UserDashboardScene.fxml"));
         
         Scene scene = new Scene(root);
 //        scene.getStylesheets().add("Styles.css");
-=======
-        
-        Scene scene = new Scene(root);
-//        scene.getStylesheets().add(MainApp.class.getResource("/resources/styles/Styles.css").toExternalForm());
->>>>>>> parent of 8af343a... Merge branch 'master' of https://github.com/mlucario88/Javafx-AWS-RDS
         stage.setTitle("SMC Controller Management");
         stage.setScene(scene);
         stage.initStyle(StageStyle.TRANSPARENT);
 //        stage.setResizable(false);
 		stage.setMinWidth(700);
 		stage.setMinHeight(800);
-<<<<<<< HEAD
 //		stage.setAlwaysOnTop(true);
-=======
->>>>>>> parent of 8af343a... Merge branch 'master' of https://github.com/mlucario88/Javafx-AWS-RDS
         stage.show();
     }
 
