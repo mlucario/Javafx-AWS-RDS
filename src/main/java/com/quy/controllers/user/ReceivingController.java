@@ -55,15 +55,14 @@ public class ReceivingController extends Controller implements Initializable {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		dbHandler = new DBHandler();
-		listModels = new ArrayList<>();
 		textFieldFormat(txtBoxBarcode, "Box barcode is required", true);
 		textFieldFormat(txtControllerBarcode, "Controller barcode is required", true);
-
+		listModels = new ArrayList<>();
 		// create executor that uses daemon threads:
+
 		exec = Executors.newCachedThreadPool(runnable -> {
 			Thread t = new Thread(runnable);
 			t.setDaemon(true);
@@ -84,13 +83,14 @@ public class ReceivingController extends Controller implements Initializable {
 		});
 
 		getModelsTask.setOnSucceeded(e -> {
+
 			System.out.println("get all models");
 			listModels.addAll(getModelsTask.getValue());
-			// set for JFXComboBox
 			comboModel.getItems().addAll(listModels);
 		});
 
 		exec.execute(getModelsTask);
+
 		comboModel.setOnAction(e -> {
 			txtBoxBarcode.requestFocus();
 		});
@@ -109,7 +109,7 @@ public class ReceivingController extends Controller implements Initializable {
 		// setup tree view
 		JFXTreeTableColumn<SMCController, String> controlBarcode = new JFXTreeTableColumn<>("Controller Barcode");
 
-		controlBarcode.prefWidthProperty().bind(treeView.widthProperty().multiply(0.97));
+		controlBarcode.prefWidthProperty().bind(treeView.widthProperty().multiply(0.95));
 		controlBarcode.setResizable(false);
 		controlBarcode.setSortable(false);
 

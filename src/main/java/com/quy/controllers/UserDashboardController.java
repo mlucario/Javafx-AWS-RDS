@@ -3,7 +3,11 @@ package com.quy.controllers;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalTime;
+import java.util.HashSet;
 import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import com.jfoenix.controls.JFXButton;
 import com.quy.database.DBHandler;
@@ -11,6 +15,7 @@ import com.quy.database.DBHandler;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -22,6 +27,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -59,8 +65,6 @@ public class UserDashboardController extends Controller implements Initializable
 	private Text txtTitleStation;
 
 	@FXML
-	private AnchorPane loadPane;
-	@FXML
 	private StackPane paneIntro;
 
 	@FXML
@@ -71,10 +75,14 @@ public class UserDashboardController extends Controller implements Initializable
 	@FXML
 	private Text txtTime;
 
+	@FXML
+	private VBox vboxLoad;
+
 	private String currentStation;
-	private DBHandler dbHandler;
 	private double x, y;
 	private AnchorPane tempPane;
+	private Executor exec;
+	private DBHandler dbHandler;
 
 	@FXML
 	void assemblyOnClick(ActionEvent event) {
@@ -141,7 +149,7 @@ public class UserDashboardController extends Controller implements Initializable
 	public void initialize(URL location, ResourceBundle resources) {
 		dbHandler = new DBHandler();
 		currentStation = "";
-		txtTitleStation.setText("Select Station Follow Diagram");
+
 		// Load Image Diagram
 		imgIntro.setImage(new Image(getClass().getResource(IMAGE_PATH + "diagram.png").toString()));
 		tempPane = new AnchorPane();
@@ -158,6 +166,38 @@ public class UserDashboardController extends Controller implements Initializable
 		clock.setCycleCount(Animation.INDEFINITE);
 		clock.play();
 		// =========================
+
+		// Fetch all barcode
+		// =========================
+		listBarcode = new HashSet<>();
+		exec = Executors.newCachedThreadPool(runnable -> {
+			Thread t = new Thread(runnable);
+			t.setDaemon(true);
+			return t;
+		});
+
+		Task<Set<String>> getBarcodesTask = new Task<Set<String>>() {
+			@Override
+			public Set<String> call() throws Exception {
+				return dbHandler.getAllBarcode();
+			}
+		};
+
+		getBarcodesTask.setOnFailed(e -> {
+			getBarcodesTask.getException().printStackTrace();
+
+			warningAlert("Cannot fetch all barcode");
+		});
+
+		getBarcodesTask.setOnSucceeded(e -> {
+			System.out.println("get all barcode");
+			listBarcode.addAll(getBarcodesTask.getValue());
+		});
+
+		exec.execute(getBarcodesTask);
+
+		// =========================
+
 	}
 
 	public void hideIntroView() {
@@ -175,7 +215,8 @@ public class UserDashboardController extends Controller implements Initializable
 			// Load fxml into loadPane
 			try {
 				tempPane = FXMLLoader.load(getClass().getResource(scene));
-				paneIntro.getChildren().add(tempPane);
+				vboxLoad.getChildren().add(tempPane);
+//				paneIntro.getChildren().add(tempPane);
 				currentStation = station;
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

@@ -6,12 +6,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class DBHandler {
 
 	private Connection dbconnection;
 	private PreparedStatement pst;
+	private ResultSet rs;
 	private final String STANDARD_USER = "user";
 
 	public Connection getConnectionAWS() {
@@ -80,7 +83,7 @@ public class DBHandler {
 			dbconnection = getConnectionAWS();
 			pst = dbconnection.prepareStatement(query);
 			pst.setString(1, username);
-			ResultSet rs = pst.executeQuery();
+			rs = pst.executeQuery();
 
 			while (rs.next()) {
 				result.add(rs.getString("salt_key"));
@@ -95,7 +98,8 @@ public class DBHandler {
 
 			try {
 				pst.close();
-				dbconnection.close();
+				rs.close();
+				shutdown();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -127,7 +131,7 @@ public class DBHandler {
 
 			try {
 				pst.close();
-				dbconnection.close();
+				shutdown();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -147,7 +151,7 @@ public class DBHandler {
 			pst = dbconnection.prepareStatement(query);
 			pst.setString(1, username);
 
-			ResultSet rs = pst.executeQuery();
+			rs = pst.executeQuery();
 
 			if (rs.next()) {
 				result = true;
@@ -160,7 +164,8 @@ public class DBHandler {
 
 			try {
 				pst.close();
-				dbconnection.close();
+				rs.close();
+				shutdown();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -170,7 +175,76 @@ public class DBHandler {
 		return result;
 	}
 
-	// Fetch all model controllers from database
+	// Check if barcode is exist in database
+	public boolean isBarcodeExist(String barcode) {
+		boolean result = false;
+
+		String query = "SELECT controller_barcode FROM controllers WHERE controller_barcode=?";
+		try {
+			dbconnection = getConnectionAWS();
+			pst = dbconnection.prepareStatement(query);
+			pst.setString(1, barcode);
+
+			rs = pst.executeQuery();
+
+			if (rs.next()) {
+				result = true;
+				System.out.println(barcode + " is exist!.");
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+
+			try {
+
+				pst.close();
+				rs.close();
+				shutdown();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		}
+
+		return result;
+	}
+
+	// Insert new barcode into database
+	public String addNewController(String model, String controller_barcode, String timestamp) {
+		String result = "";
+
+		String query = "INSERT INTO controllers(model,controller_barcode,current_station,timestamp) VALUES (?,?,?,?)";
+		try {
+			dbconnection = getConnectionAWS();
+			pst = dbconnection.prepareStatement(query);
+			pst.setString(1, model);
+			pst.setString(2, controller_barcode);
+			pst.setString(3, "Receiving Station");
+			pst.setString(4, timestamp);
+			pst.executeUpdate();
+			result = controller_barcode;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			result = "Cannot add to database. Please as manager to help";
+		} finally {
+
+			try {
+				pst.close();
+				shutdown();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+		return result;
+	}
+
+	// =============FETCH DATA==================
+
+	// Fetch all model
 	public List<String> getAllModels() {
 
 		String query = "SELECT Model FROM models";
@@ -178,7 +252,7 @@ public class DBHandler {
 		try {
 			dbconnection = getConnectionAWS();
 			pst = dbconnection.prepareStatement(query);
-			ResultSet rs = pst.executeQuery();
+			rs = pst.executeQuery();
 
 			while (rs.next()) {
 				result.add(rs.getString("Model").trim().replaceAll(" +", " ").toUpperCase());
@@ -190,7 +264,8 @@ public class DBHandler {
 
 			try {
 				pst.close();
-				dbconnection.close();
+				rs.close();
+				shutdown();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -198,5 +273,49 @@ public class DBHandler {
 		}
 
 		return result;
+	}
+
+	// Fetch all controller_barcode
+	public Set<String> getAllBarcode() {
+
+		String query = "SELECT controller_barcode FROM controllers";
+		Set<String> result = new HashSet<>();
+		try {
+			dbconnection = getConnectionAWS();
+			pst = dbconnection.prepareStatement(query);
+			rs = pst.executeQuery();
+
+			while (rs.next()) {
+				result.add(rs.getString("controller_barcode").trim().replaceAll(" +", " ").toUpperCase());
+			}
+
+			System.out.println("All barcode is fetched");
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+
+			try {
+				pst.close();
+				rs.close();
+				shutdown();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		}
+
+		return result;
+	}
+
+	public void shutdown() {
+		try {
+			dbconnection.close();
+			System.out.println("====Database close====");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 }

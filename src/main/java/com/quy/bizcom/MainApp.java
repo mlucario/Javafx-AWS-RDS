@@ -25,8 +25,8 @@ public class MainApp extends Application {
 	@Override
 	public void start(Stage stage) throws Exception {
 
-//        Parent root = FXMLLoader.load(getClass().getResource("/fxml/SignInScene.fxml"));
-		Parent root = FXMLLoader.load(getClass().getResource("/fxml/UserDashboardScene.fxml"));
+		Parent root = FXMLLoader.load(getClass().getResource("/fxml/SignInScene.fxml"));
+//		Parent root = FXMLLoader.load(getClass().getResource("/fxml/UserDashboardScene.fxml"));
 
 		Scene scene = new Scene(root);
 //		scene.getStylesheets().add(MainApp.class.getResource("/styles/fonts.css").toExternalForm());

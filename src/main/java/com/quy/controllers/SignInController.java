@@ -3,7 +3,10 @@ package com.quy.controllers;
 import java.net.URL;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXPasswordField;
@@ -13,6 +16,7 @@ import com.quy.database.DBHandler;
 
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -50,7 +54,7 @@ public class SignInController extends Controller implements Initializable {
 	private DBHandler dbHandler;
 	private double x, y;
 	private int count;
-
+	private Executor exec;
 	private static SignInController instance;
 
 	public SignInController() {
@@ -84,12 +88,11 @@ public class SignInController extends Controller implements Initializable {
 				if (verifyPassword(password, result.get(1), result.get(0))) {
 					// Go to dashboard
 					String type = result.get(2);
-					if(type.equalsIgnoreCase("admin")) {
-						goToScene(ADMIN_DASHBOARD_SCENE, btnSignIn, true);	
-					}else {
-						goToScene(USER_DASHBOARD_SCENE, btnSignIn, true);	
+					if (type.equalsIgnoreCase("admin")) {
+						goToScene(ADMIN_DASHBOARD_SCENE, btnSignIn, true);
+					} else {
+						goToScene(USER_DASHBOARD_SCENE, btnSignIn, true);
 					}
-					
 
 				} else {
 					count++;
@@ -132,6 +135,9 @@ public class SignInController extends Controller implements Initializable {
 		textFieldFormat(txtUsername, "Username is required!", false);
 		textFieldFormat(txtPassword, "Password is required!");
 
+		// TODO : implement load all model here
+//		fetchData();
+
 		// Loading Screen Until Connected To Database
 
 		PauseTransition pt = new PauseTransition();
@@ -173,7 +179,6 @@ public class SignInController extends Controller implements Initializable {
 			login(e);
 		});
 
-		
 	}
 
 	public void loadingScreen() {
@@ -194,9 +199,50 @@ public class SignInController extends Controller implements Initializable {
 		txtSuccess.setVisible(true);
 		txtLoading.setVisible(false);
 		txtSpinner.setVisible(false);
-		
+
 		txtUsername.setText("a1956");
 		txtPassword.setText("1234567Aa");
+
+	}
+
+	public void fetchData() {
+		System.out.println("Fetch models, error symptom, list barcode...");
+
+		// create executor that uses daemon threads:
+		exec = Executors.newCachedThreadPool(runnable -> {
+			Thread t = new Thread(runnable);
+			t.setDaemon(true);
+			return t;
+		});
+
+		Task<List<String>> getModelsTask = new Task<List<String>>() {
+			@Override
+			public List<String> call() throws Exception {
+				return dbHandler.getAllModels();
+			}
+		};
+
+		getModelsTask.setOnFailed(e -> {
+			getModelsTask.getException().printStackTrace();
+
+			warningAlert("Cannot fetch models");
+		});
+
+		getModelsTask.setOnSucceeded(e -> {
+			System.out.println("get all models");
+//			listModels.addAll(getModelsTask.getValue());
+
+		});
+
+		exec.execute(getModelsTask);
+
+//		Thread barcodeThread = new Thread("Fetch Barcodes") {
+//			public void run() {
+//				listBarcode.addAll(dbHandler.getAllBarcode());
+//			}
+//		};
+//
+//		barcodeThread.start();
 
 	}
 }

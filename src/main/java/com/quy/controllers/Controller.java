@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
@@ -70,6 +71,10 @@ public class Controller {
 	protected final String REPAIR_STATION = "Repair Station";
 	protected final String PACKING_STATION = "Packing Station";
 	protected final String SHIPPING_STATION = "Shipping Station";
+
+	// List controller
+
+	protected Set<String> listBarcode;
 
 	public void textFieldFormat(JFXTextField txt, String warning, boolean isUpperCase) {
 //		txt.setStyle("-fx-text-inner-color: #8e44ad;");
@@ -147,9 +152,11 @@ public class Controller {
 				home.setY(bounds.getMinY());
 				home.setWidth(bounds.getWidth());
 				home.setHeight(bounds.getHeight());
+				home.setMinWidth(1100);
+				home.setMinHeight(600);
 
 			}
-//			home.setAlwaysOnTop(true);
+			home.setAlwaysOnTop(true);
 			home.show();
 
 		} catch (IOException e1) {
