@@ -5,7 +5,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 public class MainApp extends Application {
 //	private double x, y;
@@ -34,10 +33,11 @@ public class MainApp extends Application {
 		scene.getStylesheets().add(MainApp.class.getResource("/styles/Styles.css").toExternalForm());
 		stage.setTitle("SMC Controller Management");
 		stage.setScene(scene);
-		stage.initStyle(StageStyle.TRANSPARENT);
+//		stage.initStyle(StageStyle.TRANSPARENT);
+//		stage.setMaximized(true);
 //        stage.setResizable(false);
-		stage.setMinWidth(700);
-		stage.setMinHeight(800);
+//		stage.setMinWidth(700);
+//		stage.setMinHeight(800);
 //		stage.setAlwaysOnTop(true);
 		stage.show();
 

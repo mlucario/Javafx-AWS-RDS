@@ -2,11 +2,15 @@ package com.quy.controllers;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalTime;
 import java.util.ResourceBundle;
 
 import com.jfoenix.controls.JFXButton;
 import com.quy.database.DBHandler;
 
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -20,6 +24,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 public class UserDashboardController extends Controller implements Initializable {
 
@@ -60,7 +65,13 @@ public class UserDashboardController extends Controller implements Initializable
 
 	@FXML
 	private ImageView imgIntro;
+	@FXML
+	private Text txtDate;
 
+	@FXML
+	private Text txtTime;
+
+	private String currentStation;
 	private DBHandler dbHandler;
 	private double x, y;
 	private AnchorPane tempPane;
@@ -129,10 +140,24 @@ public class UserDashboardController extends Controller implements Initializable
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		dbHandler = new DBHandler();
+		currentStation = "";
 		txtTitleStation.setText("Select Station Follow Diagram");
 		// Load Image Diagram
 		imgIntro.setImage(new Image(getClass().getResource(IMAGE_PATH + "diagram.png").toString()));
 		tempPane = new AnchorPane();
+
+		// Setup Date and Time
+		// =========================
+
+		txtDate.setText(getDate());
+		Timeline clock = new Timeline(new KeyFrame(Duration.ZERO, e -> {
+			LocalTime currentTime = LocalTime.now();
+			String value = currentTime.format(dtf);
+			txtTime.setText(value);
+		}), new KeyFrame(Duration.seconds(1)));
+		clock.setCycleCount(Animation.INDEFINITE);
+		clock.play();
+		// =========================
 	}
 
 	public void hideIntroView() {
@@ -141,19 +166,23 @@ public class UserDashboardController extends Controller implements Initializable
 
 	// Switch to scene when user click on button
 	public void switchScence(String scene, String station) {
-		System.out.println("Show " + station);
-		txtTitleStation.setText(station);
-		// Hide diagram and view
-		hideIntroView();
-		tempPane.getChildren().clear();
-		// Load fxml into loadPane
-		try {
-			tempPane = FXMLLoader.load(getClass().getResource(scene));
-			paneIntro.getChildren().add(tempPane);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			warningAlert("Cannot Run Scene. Please Contact Admin");
-			e.printStackTrace();
+		if (!currentStation.equalsIgnoreCase(station)) {
+			System.out.println("Show " + station);
+			txtTitleStation.setText(station);
+			// Hide diagram and view
+			hideIntroView();
+			tempPane.getChildren().clear();
+			// Load fxml into loadPane
+			try {
+				tempPane = FXMLLoader.load(getClass().getResource(scene));
+				paneIntro.getChildren().add(tempPane);
+				currentStation = station;
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				warningAlert("Cannot Run Scene. Please Contact Admin");
+				e.printStackTrace();
+			}
 		}
+
 	}
 }

@@ -1,3 +1,4 @@
+
 package com.quy.controllers.user;
 
 import java.net.URL;
@@ -25,7 +26,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
-import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 
 public class ReceivingController extends Controller implements Initializable {
@@ -40,9 +40,6 @@ public class ReceivingController extends Controller implements Initializable {
 
 	@FXML
 	private JFXTextField txtControllerBarcode;
-
-	@FXML
-	private ImageView imgGuide;
 
 	@FXML
 	private JFXTreeTableView<SMCController> treeView;
@@ -65,7 +62,6 @@ public class ReceivingController extends Controller implements Initializable {
 		listModels = new ArrayList<>();
 		textFieldFormat(txtBoxBarcode, "Box barcode is required", true);
 		textFieldFormat(txtControllerBarcode, "Controller barcode is required", true);
-		setImage("model.JPG", imgGuide);
 
 		// create executor that uses daemon threads:
 		exec = Executors.newCachedThreadPool(runnable -> {

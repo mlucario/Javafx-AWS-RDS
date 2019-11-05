@@ -9,7 +9,7 @@
    <children>
       <FontAwesomeIconView fill="#ffa502" glyphName="MINUS_CIRCLE" onMouseClicked="#minimize" size="35" strokeType="INSIDE" strokeWidth="0.0" HBox.hgrow="ALWAYS">
          <HBox.margin>
-            <Insets left="10.0" right="10.0" />
+            <Insets right="10.0" />
          </HBox.margin>
          <cursor>
             <Cursor fx:constant="HAND" />
@@ -25,14 +25,11 @@
       </FontAwesomeIconView>
       <FontAwesomeIconView fill="#ff4757" glyphName="CLOSE" onMouseClicked="#close" size="35" strokeWidth="0.0" HBox.hgrow="ALWAYS">
          <HBox.margin>
-            <Insets left="10.0" right="10.0" />
+            <Insets left="10.0" right="2.0" />
          </HBox.margin>
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor>
       </FontAwesomeIconView>
    </children>
-   <padding>
-      <Insets top="5.0" />
-   </padding>
 </HBox>

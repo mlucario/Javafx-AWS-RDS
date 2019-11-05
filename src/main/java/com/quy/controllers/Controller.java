@@ -40,9 +40,9 @@ import javafx.stage.StageStyle;
 public class Controller {
 	protected final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
 	protected final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
-	protected final Date date = new Date();
-	protected final java.sql.Date sqlDate = new java.sql.Date(date.getTime());
-	protected final java.sql.Timestamp sqlTime = new java.sql.Timestamp(date.getTime());
+	protected Date date;
+	protected java.sql.Date sqlDate;
+	protected java.sql.Timestamp sqlTime;
 
 	// List of scene
 	protected final String LOGIN_SCENE = "SignInScene";
@@ -208,4 +208,17 @@ public class Controller {
 		imgGuide.setFitWidth(250);
 		imgGuide.setImage(image);
 	}
+
+	public String getDate() {
+		date = new Date();
+		sqlDate = new java.sql.Date(date.getTime());
+		return formatter.format(sqlDate);
+	}
+
+	public String getCurrentTimeStamp() {
+		date = new Date();
+		sqlTime = new java.sql.Timestamp(date.getTime());
+		return sqlTime.toString();
+	}
+
 }
