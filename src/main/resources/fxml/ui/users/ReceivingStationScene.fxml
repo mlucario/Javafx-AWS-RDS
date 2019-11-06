@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
-<?import com.jfoenix.controls.JFXComboBox?>
 <?import com.jfoenix.controls.JFXTextField?>
 <?import com.jfoenix.controls.JFXTreeTableView?>
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.Cursor?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
@@ -22,22 +20,15 @@
                      <children>
                         <HBox alignment="CENTER">
                            <children>
-                              <JFXComboBox fx:id="comboModel" focusColor="#105c82" labelFloat="true" prefHeight="60.0" prefWidth="551.0" promptText="Select Model" style="-fx-font-size: 2em; -fx-font-family: Roboto; -fx-font-weight: Bold;" unFocusColor="#50514f">
-                                 <cursor>
-                                    <Cursor fx:constant="HAND" />
-                                 </cursor>
-                                 <HBox.margin>
-                                    <Insets />
-                                 </HBox.margin>
-                              </JFXComboBox>
+                              <JFXTextField fx:id="txtModel" focusColor="#105c82" labelFloat="true" prefHeight="60.0" prefWidth="549.0" promptText="Enter Controller Model" style="-fx-font-size: 2em; -fx-font-family: Roboto; -fx-font-weight: Bold;" unFocusColor="#50514f" />
                            </children>
                            <VBox.margin>
-                              <Insets top="40.0" />
+                              <Insets top="20.0" />
                            </VBox.margin>
                         </HBox>
                         <HBox alignment="CENTER">
                            <VBox.margin>
-                              <Insets top="55.0" />
+                              <Insets top="70.0" />
                            </VBox.margin>
                            <children>
                               <JFXTextField fx:id="txtBoxBarcode" focusColor="#105c82" labelFloat="true" prefHeight="60.0" prefWidth="501.0" promptText="Enter Box Barcode" style="-fx-font-size: 2em; -fx-font-family: Roboto; -fx-font-weight: Bold;" unFocusColor="#50514f">
@@ -56,7 +47,7 @@
                               <FontAwesomeIconView fill="#105c82" glyphName="BARCODE" size="55" />
                            </children>
                            <VBox.margin>
-                              <Insets top="55.0" />
+                              <Insets top="70.0" />
                            </VBox.margin>
                         </HBox>
                         <JFXButton onAction="#submit" prefHeight="60.0" prefWidth="300.0" ripplerFill="#105c82" style="-fx-font-size: 2em; -fx-font-family: Roboto; -fx-font-weight: Bold; -fx-background-color: #2B98C6; -fx-background-radius: 100px;" text="Submit" textFill="WHITE">

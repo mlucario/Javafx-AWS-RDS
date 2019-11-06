@@ -5,7 +5,6 @@
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -23,16 +22,6 @@
             <VBox alignment="TOP_RIGHT" prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: white;">
                <children>
                   <JFXToolbar>
-                     <center>
-                        <Label fx:id="txtUsername" alignment="CENTER" text="Current User: A1956" textFill="RED" translateX="50.0" BorderPane.alignment="CENTER">
-                           <font>
-                              <Font name="Roboto Medium" size="23.0" />
-                           </font>
-                           <graphic>
-                              <FontAwesomeIconView fill="#0d00ff" glyphName="USER" size="30" />
-                           </graphic>
-                        </Label>
-                     </center>
                      <right>
                         
                                     <fx:include source="TitleBar.fxml" />
@@ -44,6 +33,21 @@
                            </font>
                         </Text>
                      </left>
+                     <center>
+                        <HBox alignment="CENTER" BorderPane.alignment="CENTER">
+                           <children>
+                              <FontAwesomeIconView glyphName="USER" size="30" />
+                              <Text fx:id="txtUsername" fill="#e00000" strokeType="OUTSIDE" strokeWidth="0.0" text="Current user: A">
+                                 <font>
+                                    <Font name="Roboto Bold" size="20.0" />
+                                 </font>
+                                 <HBox.margin>
+                                    <Insets left="15.0" />
+                                 </HBox.margin>
+                              </Text>
+                           </children>
+                        </HBox>
+                     </center>
                   </JFXToolbar>
                   <HBox>
                      <children>

@@ -176,20 +176,20 @@ public class DBHandler {
 	}
 
 	// Check if barcode is exist in database
-	public boolean isBarcodeExist(String barcode) {
+	public boolean isBarcodeExist(String controller_barcode) {
 		boolean result = false;
 
 		String query = "SELECT controller_barcode FROM controllers WHERE controller_barcode=?";
 		try {
 			dbconnection = getConnectionAWS();
 			pst = dbconnection.prepareStatement(query);
-			pst.setString(1, barcode);
+			pst.setString(1, controller_barcode);
 
 			rs = pst.executeQuery();
 
 			if (rs.next()) {
 				result = true;
-				System.out.println(barcode + " is exist!.");
+				System.out.println(controller_barcode + " is exist!.");
 			}
 
 		} catch (SQLException e) {
@@ -222,8 +222,48 @@ public class DBHandler {
 			pst.setString(2, controller_barcode);
 			pst.setString(3, "Receiving Station");
 			pst.setString(4, timestamp);
-			pst.executeUpdate();
-			result = controller_barcode;
+			if (pst.executeUpdate() == 1) {
+				result = controller_barcode;
+			} else {
+				result = "Cannot add to database. Please as manager to help";
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			result = "Cannot add to database. Please as manager to help";
+		} finally {
+
+			try {
+				pst.close();
+				shutdown();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+		return result;
+	}
+
+	// Insert to history record
+	public String addToHistoryRecord(String tester, String station_tested, String time, String controller_barcode,
+			String note) {
+		String result = "";
+
+		String query = "INSERT INTO history(tester,station_tested,time,controller_barcode,note) VALUES (?,?,?,?,?)";
+		try {
+			dbconnection = getConnectionAWS();
+			pst = dbconnection.prepareStatement(query);
+			pst.setString(1, tester);
+			pst.setString(2, station_tested);
+			pst.setString(3, time);
+			pst.setString(4, controller_barcode);
+			pst.setString(5, note);
+			if (pst.executeUpdate() == 1) {
+				result = controller_barcode;
+			} else {
+				result = "Cannot add to database. Please as manager to help";
+			}
 
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -247,7 +287,7 @@ public class DBHandler {
 	// Fetch all model
 	public List<String> getAllModels() {
 
-		String query = "SELECT Model FROM models";
+		String query = "SELECT model FROM controllers GROUP BY model";
 		List<String> result = new ArrayList<>();
 		try {
 			dbconnection = getConnectionAWS();
@@ -318,4 +358,5 @@ public class DBHandler {
 		}
 
 	}
+
 }

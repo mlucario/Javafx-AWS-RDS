@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Optional;
-import java.util.Set;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
@@ -44,6 +43,8 @@ public class Controller {
 	protected Date date;
 	protected java.sql.Date sqlDate;
 	protected java.sql.Timestamp sqlTime;
+	protected final String PATTERN_MODEL = "(SMC-)\\w+\\s{1}\\w+";
+	protected final String PATTERN_BARCODE = "(30N0)\\d{8}";
 
 	// List of scene
 	protected final String LOGIN_SCENE = "SignInScene";
@@ -71,10 +72,6 @@ public class Controller {
 	protected final String REPAIR_STATION = "Repair Station";
 	protected final String PACKING_STATION = "Packing Station";
 	protected final String SHIPPING_STATION = "Shipping Station";
-
-	// List controller
-
-	protected Set<String> listBarcode;
 
 	public void textFieldFormat(JFXTextField txt, String warning, boolean isUpperCase) {
 //		txt.setStyle("-fx-text-inner-color: #8e44ad;");
@@ -112,6 +109,9 @@ public class Controller {
 		stage.close();
 	}
 
+	// Alert Style
+
+	// =============================================
 	// Show warning alert
 	public void warningAlert(String msm) {
 		Alert alert = new Alert(AlertType.ERROR);
@@ -130,6 +130,32 @@ public class Controller {
 
 		alert.show();
 	}
+
+	// Comfirm warning
+	public boolean warningComfirmAlert(String headerText, String contentText) {
+		Alert alert = new Alert(AlertType.CONFIRMATION);
+		alert.setTitle("Confirmation alert");
+		alert.setHeaderText(null);
+		alert.setHeaderText(headerText);
+		alert.setContentText(contentText);
+		final Runnable runnable = (Runnable) Toolkit.getDefaultToolkit().getDesktopProperty("win.sound.exclamation");
+		if (runnable != null)
+			runnable.run();
+
+		alert.getButtonTypes().clear();
+		alert.getButtonTypes().add(ButtonType.OK);
+		alert.getButtonTypes().add(ButtonType.CLOSE);
+		Button okButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+		okButton.setDefaultButton(false);
+
+		Optional<javafx.scene.control.ButtonType> result = alert.showAndWait();
+		if (result.get() == javafx.scene.control.ButtonType.OK) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	// =============================================
 
 	// GotoScene method will take user go to other scene
 	// buttonOfCurentScene a button of current scene
@@ -152,11 +178,12 @@ public class Controller {
 				home.setY(bounds.getMinY());
 				home.setWidth(bounds.getWidth());
 				home.setHeight(bounds.getHeight());
+				home.setTitle("SMC Controller Management");
 				home.setMinWidth(1100);
 				home.setMinHeight(600);
 
 			}
-			home.setAlwaysOnTop(true);
+//			home.setAlwaysOnTop(true);
 			home.show();
 
 		} catch (IOException e1) {
@@ -226,6 +253,14 @@ public class Controller {
 		date = new Date();
 		sqlTime = new java.sql.Timestamp(date.getTime());
 		return sqlTime.toString();
+	}
+
+	public boolean isBarcodeValid(String controller_barcode) {
+		return controller_barcode.matches(PATTERN_BARCODE);
+	}
+
+	public boolean isModelValid(String model) {
+		return model.matches(PATTERN_MODEL);
 	}
 
 }
