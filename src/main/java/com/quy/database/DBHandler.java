@@ -214,7 +214,7 @@ public class DBHandler {
 	public String addNewController(String model, String controller_barcode, String timestamp) {
 		String result = "";
 
-		String query = "INSERT INTO controllers(model,controller_barcode,current_station,timestamp) VALUES (?,?,?,?)";
+		String query = "INSERT INTO controllers(model,controller_barcode,current_station,time_received) VALUES (?,?,?,?)";
 		try {
 			dbconnection = getConnectionAWS();
 			pst = dbconnection.prepareStatement(query);

@@ -20,7 +20,7 @@
                      <children>
                         <HBox alignment="CENTER">
                            <children>
-                              <JFXTextField fx:id="txtModel" focusColor="#105c82" labelFloat="true" prefHeight="60.0" prefWidth="549.0" promptText="Enter Controller Model" style="-fx-font-size: 2em; -fx-font-family: Roboto; -fx-font-weight: Bold;" unFocusColor="#50514f" />
+                              <JFXTextField fx:id="txtModel" focusColor="#105c82" labelFloat="true" onKeyReleased="#keyPressedAction" prefHeight="60.0" prefWidth="549.0" promptText="Enter Controller Model" style="-fx-font-size: 2em; -fx-font-family: Roboto; -fx-font-weight: Bold;" unFocusColor="#50514f" />
                            </children>
                            <VBox.margin>
                               <Insets top="20.0" />
@@ -31,7 +31,7 @@
                               <Insets top="70.0" />
                            </VBox.margin>
                            <children>
-                              <JFXTextField fx:id="txtBoxBarcode" focusColor="#105c82" labelFloat="true" prefHeight="60.0" prefWidth="501.0" promptText="Enter Box Barcode" style="-fx-font-size: 2em; -fx-font-family: Roboto; -fx-font-weight: Bold;" unFocusColor="#50514f">
+                              <JFXTextField fx:id="txtBoxBarcode" focusColor="#105c82" labelFloat="true" onKeyReleased="#keyPressedAction" prefHeight="60.0" prefWidth="501.0" promptText="Enter Box Barcode" style="-fx-font-size: 2em; -fx-font-family: Roboto; -fx-font-weight: Bold;" unFocusColor="#50514f">
                                  <HBox.margin>
                                     <Insets />
                                  </HBox.margin></JFXTextField>
@@ -40,7 +40,7 @@
                         </HBox>
                         <HBox alignment="CENTER">
                            <children>
-                              <JFXTextField fx:id="txtControllerBarcode" focusColor="#105c82" labelFloat="true" onAction="#submit" prefHeight="60.0" prefWidth="499.0" promptText="Enter Controller Barcode" style="-fx-font-size: 2em; -fx-font-family: Roboto; -fx-font-weight: Bold;" unFocusColor="#50514f">
+                              <JFXTextField fx:id="txtControllerBarcode" focusColor="#105c82" labelFloat="true" onAction="#submit" onKeyReleased="#keyPressedAction" prefHeight="60.0" prefWidth="499.0" promptText="Enter Controller Barcode" style="-fx-font-size: 2em; -fx-font-family: Roboto; -fx-font-weight: Bold;" unFocusColor="#50514f">
                                  <HBox.margin>
                                     <Insets />
                                  </HBox.margin></JFXTextField>
@@ -50,7 +50,7 @@
                               <Insets top="70.0" />
                            </VBox.margin>
                         </HBox>
-                        <JFXButton onAction="#submit" prefHeight="60.0" prefWidth="300.0" ripplerFill="#105c82" style="-fx-font-size: 2em; -fx-font-family: Roboto; -fx-font-weight: Bold; -fx-background-color: #2B98C6; -fx-background-radius: 100px;" text="Submit" textFill="WHITE">
+                        <JFXButton fx:id="btnSubmit" onAction="#submit" prefHeight="60.0" prefWidth="300.0" ripplerFill="#105c82" style="-fx-font-size: 2em; -fx-font-family: Roboto; -fx-font-weight: Bold; -fx-background-color: #2B98C6; -fx-background-radius: 100px;" text="Submit" textFill="WHITE">
                            <VBox.margin>
                               <Insets top="40.0" />
                            </VBox.margin>

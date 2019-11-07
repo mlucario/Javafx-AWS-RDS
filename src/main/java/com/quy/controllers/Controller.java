@@ -15,13 +15,17 @@ import java.util.Optional;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
+import org.controlsfx.control.Notifications;
+
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.validation.RequiredFieldValidator;
 
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -36,6 +40,7 @@ import javafx.scene.image.ImageView;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.Duration;
 
 public class Controller {
 	protected final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
@@ -107,6 +112,21 @@ public class Controller {
 	public void close(ActionEvent event) {
 		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 		stage.close();
+	}
+
+	// Notification Builder
+
+	public Notifications notificatioBuilder(Pos pos, Node graphic, String title, String text, double timeToStay) {
+		return Notifications.create().title(title).text(text).graphic(graphic).hideAfter(Duration.seconds(timeToStay))
+				.position(pos).onAction(new EventHandler<ActionEvent>() {
+
+					@Override
+					public void handle(ActionEvent e) {
+						System.out.println("Notification clicked. No any action needed so far.");
+
+					}
+				});
+
 	}
 
 	// Alert Style
@@ -261,6 +281,10 @@ public class Controller {
 
 	public boolean isModelValid(String model) {
 		return model.matches(PATTERN_MODEL);
+	}
+
+	public String getStringJFXTextField(JFXTextField txt) {
+		return txt.getText().trim().toUpperCase();
 	}
 
 }
