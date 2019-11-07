@@ -193,5 +193,34 @@ public class ReceivingController extends Controller implements Initializable {
 		treeView.setShowRoot(false);
 
 	}
+	
+	public String isModelvalid() {
+		String result="";
+		
+		if(txtModel.validate()) {
+			String model = txtModel.getText().toUpperCase().trim();
+			if(!isModelValid(model)) {
+				result = "Your model is not valid. It should be style as SMC-XX Rx";
+			}
+		}else {
+			result = "Controller model is missing! Enter valid model.";
+		}
+		
+		return result;
+	}
 
+	public String isBarcodevalid( JFXTextField txtBarcode) {
+		String result="";
+		
+		if(txtBarcode.validate()) {
+			String barcode = txtBarcode.getText().toUpperCase().trim();
+			if(!isBarcodeValid(barcode)) {
+				result = "Your barcode is not valid. It should be style as 30N0xxxx";
+			}
+		}else {
+			result = "Controller barcode is missing! Enter valid barcode.";
+		}
+		
+		return result;
+	}
 }
