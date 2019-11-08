@@ -21,7 +21,10 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.validation.RequiredFieldValidator;
+import com.quy.bizcom.MainApp;
+import com.quy.bizcom.SMCController;
 
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -78,7 +81,6 @@ public class Controller {
 	protected final String PACKING_STATION = "Packing Station";
 	protected final String SHIPPING_STATION = "Shipping Station";
 
-	
 	// Controllers Column
 	protected final String MODEL = "model";
 	protected final String CONTROLLER_BARCODE = "controller_barcode";
@@ -98,11 +100,10 @@ public class Controller {
 	protected final String IS_PACKED = "Is_Packed";
 	protected final String IS_SHIPPED = "is_Shipped";
 
-
 	// Needed Notification
 	protected Notifications notification;
 	protected Node graphic;
-	
+
 	public void textFieldFormat(JFXTextField txt, String warning, boolean isUpperCase) {
 //		txt.setStyle("-fx-text-inner-color: #8e44ad;");
 		if (isUpperCase) {
@@ -216,6 +217,7 @@ public class Controller {
 
 			Parent root = FXMLLoader.load(getClass().getResource("/FXML/" + sceneName + ".fxml"));
 			Scene scene = new Scene(root);
+			scene.getStylesheets().add(MainApp.class.getResource("/styles/Styles.css").toExternalForm());
 			home.setScene(scene);
 			home.initStyle(StageStyle.TRANSPARENT);
 			if (isFullScene) {
@@ -236,7 +238,6 @@ public class Controller {
 			e1.printStackTrace();
 		}
 	}
-	
 
 	// Password hash
 	public Optional<String> generateSalt(final int length) {
@@ -313,8 +314,10 @@ public class Controller {
 		return txt.getText().trim().toUpperCase();
 	}
 
-	
-	
+	public void addBarcodeToTable(ObservableList<SMCController> barcode, String controller_barcode) {
+		barcode.add(new SMCController(controller_barcode));
+	}
+
 	public String isModelvalid(JFXTextField txtModel) {
 		String result = "";
 

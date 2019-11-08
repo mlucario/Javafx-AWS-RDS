@@ -18,7 +18,7 @@
          <children>
             <HBox alignment="TOP_CENTER" StackPane.alignment="TOP_CENTER">
                <children>
-                  <VBox alignment="TOP_CENTER">
+                  <VBox alignment="TOP_CENTER" prefHeight="434.0" prefWidth="526.0">
                      <children>
                         <HBox alignment="CENTER">
                            <children>
@@ -51,7 +51,7 @@
                         </JFXButton>
                      </children>
                   </VBox>
-                  <JFXTreeTableView style="-fx-font-size: 1.2em; -fx-font-family: Roboto; -fx-border-color: Black; -fx-alignment: CENTER; -fx-border-width: 1;" HBox.hgrow="NEVER">
+                  <JFXTreeTableView fx:id="treeView" style="-fx-font-size: 1.2em; -fx-font-family: Roboto; -fx-border-color: Black; -fx-alignment: Center; -fx-border-width: 1;" stylesheets="@../../../styles/Styles.css" HBox.hgrow="NEVER">
                      <HBox.margin>
                         <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                      </HBox.margin>

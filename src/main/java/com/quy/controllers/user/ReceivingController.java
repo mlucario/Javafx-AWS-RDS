@@ -4,8 +4,6 @@ package com.quy.controllers.user;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import org.controlsfx.control.Notifications;
-
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.controls.JFXTreeTableColumn;
@@ -23,7 +21,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.text.Text;
@@ -173,8 +170,8 @@ public class ReceivingController extends Controller implements Initializable {
 		txtControllerBarcode.setOnAction(e -> {
 			String tempControllerBarcode = isBarcodevalid(txtControllerBarcode);
 			if (tempControllerBarcode.isEmpty()) {
-				if (txtBoxBarcode.getText().trim().toUpperCase()
-						.equalsIgnoreCase(txtControllerBarcode.getText().trim().toUpperCase())) {
+				if (getStringJFXTextField(txtBoxBarcode)
+						.equalsIgnoreCase(getStringJFXTextField(txtControllerBarcode))) {
 					submit(e);
 				} else {
 					warningAlert("Two barcodes are different");
@@ -192,7 +189,7 @@ public class ReceivingController extends Controller implements Initializable {
 		// setup tree view
 		JFXTreeTableColumn<SMCController, String> controlBarcode = new JFXTreeTableColumn<>("Controller Barcode");
 
-		controlBarcode.prefWidthProperty().bind(treeView.widthProperty().multiply(0.95));
+		controlBarcode.prefWidthProperty().bind(treeView.widthProperty().multiply(0.99));
 		controlBarcode.setResizable(false);
 		controlBarcode.setSortable(false);
 
@@ -205,19 +202,7 @@ public class ReceivingController extends Controller implements Initializable {
 
 		barcode.add(new SMCController("1111"));
 		barcode.add(new SMCController("22222"));
-		barcode.add(new SMCController("22222"));
-		barcode.add(new SMCController("22222"));
-		barcode.add(new SMCController("22222"));
-		barcode.add(new SMCController("22222"));
-		barcode.add(new SMCController("22222"));
-		barcode.add(new SMCController("22222"));
-		barcode.add(new SMCController("22222"));
-		barcode.add(new SMCController("22222"));
-		barcode.add(new SMCController("22222"));
-		barcode.add(new SMCController("22222"));
-		barcode.add(new SMCController("22222"));
-		barcode.add(new SMCController("22222"));
-		barcode.add(new SMCController("22222"));
+		barcode.add(new SMCController("3333"));
 
 		final TreeItem<SMCController> root = new RecursiveTreeItem<SMCController>(barcode,
 				RecursiveTreeObject::getChildren);
@@ -233,7 +218,8 @@ public class ReceivingController extends Controller implements Initializable {
 		String temp2 = isBarcodevalid(this.txtControllerBarcode);
 		String temp3 = isBarcodevalid(this.txtBoxBarcode);
 		if (temp1.isEmpty() && temp2.isEmpty() && temp3.isEmpty()) {
-			if (this.txtBoxBarcode.getText().trim().equalsIgnoreCase(this.txtControllerBarcode.getText().trim())) {
+			if (getStringJFXTextField(this.txtBoxBarcode)
+					.equalsIgnoreCase(getStringJFXTextField(this.txtControllerBarcode))) {
 				result = true;
 			} else {
 				result = false;

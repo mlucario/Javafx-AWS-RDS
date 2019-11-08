@@ -132,7 +132,7 @@ public class DBHandler {
 			try {
 				pst.close();
 				shutdown();
-			} catch (SQLException e) {				
+			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 
@@ -236,32 +236,30 @@ public class DBHandler {
 			try {
 				pst.close();
 				shutdown();
-			} catch (SQLException e) {				
+			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 
 		}
 		return result;
 	}
-	
+
 	// Add To Assembly Staion
-	public String assembly(String barcode, String timestamp) {
+	public String assembly(String controller_barcode, String timestamp) {
 		String result = "";
-		
-		
-		String query = "UPDATE controllers SET ";
+
+		String query = "UPDATE controllers SET current_station=?,time_start_assembly=?,Is_Assembled=? WHERE controller_barcode=?";
 		try {
 			dbconnection = getConnectionAWS();
 			pst = dbconnection.prepareStatement(query);
-			pst.setString(1, model);
-			pst.setString(2, controller_barcode);
-			pst.setString(3, "Receiving Station");
-			pst.setString(4, timestamp);
-			pst.setBoolean(5, true);
+			pst.setString(1, "Assembly Station");
+			pst.setString(2, timestamp);
+			pst.setBoolean(3, true);
+			pst.setString(4, controller_barcode);
 			if (pst.executeUpdate() == 1) {
 				result = controller_barcode;
 			} else {
-				result = "Cannot add to database. Please as manager to help";
+				result = "Update Assembly Station Fail. Please check with manager.";
 			}
 
 		} catch (SQLException e) {
@@ -272,7 +270,7 @@ public class DBHandler {
 			try {
 				pst.close();
 				shutdown();
-			} catch (SQLException e) {				
+			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 
@@ -308,7 +306,7 @@ public class DBHandler {
 			try {
 				pst.close();
 				shutdown();
-			} catch (SQLException e) {				
+			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 
@@ -382,19 +380,56 @@ public class DBHandler {
 		return result;
 	}
 
-	public String getStatusDone(String column,String barcode) {
-		String result = "";
-		
-		String query = "SELECT "+column+" FROM controllers WHERE controller_barcode=?";
-		
+	// Fetch all Controller At Receiving Station
+	public List<String> getAllReceived() {
+		ArrayList<String> result = new ArrayList<>();
+		String query = "SELECT controller_barcode FROM controllers WHERE current_station=? AND Is_Received=?";
 		try {
 			dbconnection = getConnectionAWS();
 			pst = dbconnection.prepareStatement(query);
+			pst.setString(1, "Receiving Station");
+			pst.setBoolean(2, true);
+
+			rs = pst.executeQuery();
+
+			while (rs.next()) {
+				result.add(rs.getString("controller_barcode").trim().replaceAll(" +", " ").toUpperCase());
+			}
+
+			System.out.println("All Receving Station is fetched");
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+
+			try {
+				pst.close();
+				rs.close();
+				shutdown();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		}
+
+		return result;
+	}
+
+	// ==========================================================
+	public String getStatusDone(String column, String barcode) {
+		String result = "";
+
+		String query = "SELECT " + column + " FROM controllers WHERE controller_barcode=?";
+
+		try {
+			dbconnection = getConnectionAWS();
+			pst = dbconnection.prepareStatement(query);
+			pst.setString(1, barcode);
 			rs = pst.executeQuery();
 
 			if (rs.next()) {
 				result = rs.getString(column).trim();
-				
+
 			}
 
 		} catch (SQLException e) {
@@ -410,14 +445,15 @@ public class DBHandler {
 			}
 
 		}
-		
+
 		return result;
 	}
+
 	public void shutdown() {
 		try {
 			dbconnection.close();
 			System.out.println("====Database close====");
-		} catch (SQLException e) {			
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 
