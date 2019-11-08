@@ -25,10 +25,12 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Screen;
 
 public class AssemblyStationController extends Controller implements Initializable {
 	@FXML
@@ -99,6 +101,7 @@ public class AssemblyStationController extends Controller implements Initializab
 		dbHandler = new DBHandler();
 		btnSubmit.setDisable(true);
 		textFieldFormat(txtControllerBarcode, "Controller barcode is required", true);
+		Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
 
 		// setup tree view
 		JFXTreeTableColumn<SMCController, String> controlBarcode = new JFXTreeTableColumn<>("Controller Barcode");
