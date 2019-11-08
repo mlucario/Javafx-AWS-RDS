@@ -4,11 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.time.LocalTime;
 import java.util.ResourceBundle;
-import java.util.concurrent.Executor;
-
 import com.jfoenix.controls.JFXButton;
-import com.quy.database.DBHandler;
-
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -16,7 +12,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -24,7 +19,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class UserDashboardController extends Controller implements Initializable {
@@ -74,10 +68,10 @@ public class UserDashboardController extends Controller implements Initializable
 	private VBox vboxLoad;
 
 	private String currentStation;
-	private double x, y;
+//	private double x, y;
 	private AnchorPane tempPane;
-	private Executor exec;
-	private DBHandler dbHandler;
+//	private Executor exec;
+//	private DBHandler dbHandler;
 
 	@FXML
 	void assemblyOnClick(ActionEvent event) {
@@ -123,16 +117,16 @@ public class UserDashboardController extends Controller implements Initializable
 
 	@FXML
 	void dragged(MouseEvent event) {
-		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-		stage.setX(event.getScreenX() - x);
-		stage.setY(event.getScreenY() - y);
+//		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+//		stage.setX(event.getScreenX() - x);
+//		stage.setY(event.getScreenY() - y);
 	}
 
 	@FXML
 	void pressed(MouseEvent event) {
 //    	System.out.println("Clicked");
-		x = event.getSceneX();
-		y = event.getSceneY();
+//		x = event.getSceneX();
+//		y = event.getSceneY();
 	}
 
 	@FXML
@@ -142,7 +136,7 @@ public class UserDashboardController extends Controller implements Initializable
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		dbHandler = new DBHandler();
+//		dbHandler = new DBHandler();
 		currentStation = "";
 		setUsername(SignInController.getInstance().username());
 
@@ -189,7 +183,7 @@ public class UserDashboardController extends Controller implements Initializable
 //				paneIntro.getChildren().add(tempPane);
 				currentStation = station;
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				
 				warningAlert("Cannot Run Scene. Please Contact Admin");
 				e.printStackTrace();
 			}

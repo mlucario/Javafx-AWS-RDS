@@ -46,9 +46,9 @@ public class ReceivingController extends Controller implements Initializable {
 	@FXML
 	private JFXTreeTableView<SMCController> treeView;
 
-	// Needed Notification
-	private Notifications notification;
-	private Node graphic;
+//	// Needed Notification
+//	private Notifications notification;
+//	private Node graphic;
 
 	private DBHandler dbHandler;
 	protected String currentUser = SignInController.getInstance().username();
@@ -91,7 +91,7 @@ public class ReceivingController extends Controller implements Initializable {
 					warningAlert(result);
 				}
 			} else {
-				warningAlert(controller_barcode + " already added!");
+				warningAlert(controller_barcode + " already added! Try add other controller.");
 			}
 		}
 
@@ -101,6 +101,7 @@ public class ReceivingController extends Controller implements Initializable {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		dbHandler = new DBHandler();
@@ -204,6 +205,19 @@ public class ReceivingController extends Controller implements Initializable {
 
 		barcode.add(new SMCController("1111"));
 		barcode.add(new SMCController("22222"));
+		barcode.add(new SMCController("22222"));
+		barcode.add(new SMCController("22222"));
+		barcode.add(new SMCController("22222"));
+		barcode.add(new SMCController("22222"));
+		barcode.add(new SMCController("22222"));
+		barcode.add(new SMCController("22222"));
+		barcode.add(new SMCController("22222"));
+		barcode.add(new SMCController("22222"));
+		barcode.add(new SMCController("22222"));
+		barcode.add(new SMCController("22222"));
+		barcode.add(new SMCController("22222"));
+		barcode.add(new SMCController("22222"));
+		barcode.add(new SMCController("22222"));
 
 		final TreeItem<SMCController> root = new RecursiveTreeItem<SMCController>(barcode,
 				RecursiveTreeObject::getChildren);
@@ -213,40 +227,10 @@ public class ReceivingController extends Controller implements Initializable {
 
 	}
 
-	public String isModelvalid(JFXTextField txtModel) {
-		String result = "";
-
-		if (txtModel.validate()) {
-			String model = txtModel.getText().toUpperCase().trim();
-			if (!isModelValid(model)) {
-				result = "Your model is not valid. It should be style as SMC-XX Rx\r\n.";
-			}
-		} else {
-			result = "Controller model is missing! Enter valid model.\r\n";
-		}
-
-		return result;
-	}
-
-	public String isBarcodevalid(JFXTextField txtBarcode) {
-		String result = "";
-
-		if (txtBarcode.validate()) {
-			String barcode = txtBarcode.getText().toUpperCase().trim();
-			if (!isBarcodeValid(barcode)) {
-				result = "Your barcode is not valid. It should be style as 30N0xxxx";
-			}
-		} else {
-			result = "Controller barcode is missing! Enter valid barcode.";
-		}
-
-		return result;
-	}
-
 	public boolean keyPressedAction() {
 		boolean result = false;
 		String temp1 = isModelvalid(this.txtModel);
-		String temp2 = isBarcodevalid(this.txtBoxBarcode);
+		String temp2 = isBarcodevalid(this.txtControllerBarcode);
 		String temp3 = isBarcodevalid(this.txtBoxBarcode);
 		if (temp1.isEmpty() && temp2.isEmpty() && temp3.isEmpty()) {
 			if (this.txtBoxBarcode.getText().trim().equalsIgnoreCase(this.txtControllerBarcode.getText().trim())) {

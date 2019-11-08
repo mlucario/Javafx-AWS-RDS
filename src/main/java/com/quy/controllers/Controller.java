@@ -78,6 +78,31 @@ public class Controller {
 	protected final String PACKING_STATION = "Packing Station";
 	protected final String SHIPPING_STATION = "Shipping Station";
 
+	
+	// Controllers Column
+	protected final String MODEL = "model";
+	protected final String CONTROLLER_BARCODE = "controller_barcode";
+	protected final String CURRENT_STATION = "current_station";
+	protected final String TIME_RECEIVED = "time_received";
+	protected final String TIME_START_ASSEMBLY = "time_start_assembly";
+	protected final String TIME_START_BURN_IN = "time_start_burn_in";
+	protected final String TIME_FINISH_BURN_IN = "time_finish_burn_in";
+	protected final String TIME_PACKED = "time_packed";
+	protected final String TIME_SHIPPED = "time_shipped";
+	protected final String IS_RECEIVED = "Is_Received";
+	protected final String IS_ASSEMBLED = "Is_Assembled";
+	protected final String IS_BURN_IN_PROCESSING = "Is_Burn_In_Processing";
+	protected final String IS_BURN_IN_DONE = "Is_Burn_In_Done";
+	protected final String IS_PASSED = "Is_Passed";
+	protected final String IS_REPAIRED = "Is_Repaired";
+	protected final String IS_PACKED = "Is_Packed";
+	protected final String IS_SHIPPED = "is_Shipped";
+
+
+	// Needed Notification
+	protected Notifications notification;
+	protected Node graphic;
+	
 	public void textFieldFormat(JFXTextField txt, String warning, boolean isUpperCase) {
 //		txt.setStyle("-fx-text-inner-color: #8e44ad;");
 		if (isUpperCase) {
@@ -211,6 +236,7 @@ public class Controller {
 			e1.printStackTrace();
 		}
 	}
+	
 
 	// Password hash
 	public Optional<String> generateSalt(final int length) {
@@ -287,4 +313,35 @@ public class Controller {
 		return txt.getText().trim().toUpperCase();
 	}
 
+	
+	
+	public String isModelvalid(JFXTextField txtModel) {
+		String result = "";
+
+		if (txtModel.validate()) {
+			String model = txtModel.getText().toUpperCase().trim();
+			if (!isModelValid(model)) {
+				result = "Your model is not valid. It should be style as SMC-XX Rx\r\n.";
+			}
+		} else {
+			result = "Controller model is missing! Enter valid model.\r\n";
+		}
+
+		return result;
+	}
+
+	public String isBarcodevalid(JFXTextField txtBarcode) {
+		String result = "";
+
+		if (txtBarcode.validate()) {
+			String barcode = txtBarcode.getText().toUpperCase().trim();
+			if (!isBarcodeValid(barcode)) {
+				result = "Your barcode is not valid. It should be style as 30N0xxxx";
+			}
+		} else {
+			result = "Controller barcode is missing! Enter valid barcode.";
+		}
+
+		return result;
+	}
 }

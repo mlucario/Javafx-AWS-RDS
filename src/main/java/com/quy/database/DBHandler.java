@@ -132,8 +132,7 @@ public class DBHandler {
 			try {
 				pst.close();
 				shutdown();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
+			} catch (SQLException e) {				
 				e.printStackTrace();
 			}
 
@@ -214,7 +213,7 @@ public class DBHandler {
 	public String addNewController(String model, String controller_barcode, String timestamp) {
 		String result = "";
 
-		String query = "INSERT INTO controllers(model,controller_barcode,current_station,time_received) VALUES (?,?,?,?)";
+		String query = "INSERT INTO controllers(model,controller_barcode,current_station,time_received,Is_Received) VALUES (?,?,?,?,?)";
 		try {
 			dbconnection = getConnectionAWS();
 			pst = dbconnection.prepareStatement(query);
@@ -222,6 +221,7 @@ public class DBHandler {
 			pst.setString(2, controller_barcode);
 			pst.setString(3, "Receiving Station");
 			pst.setString(4, timestamp);
+			pst.setBoolean(5, true);
 			if (pst.executeUpdate() == 1) {
 				result = controller_barcode;
 			} else {
@@ -236,8 +236,43 @@ public class DBHandler {
 			try {
 				pst.close();
 				shutdown();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
+			} catch (SQLException e) {				
+				e.printStackTrace();
+			}
+
+		}
+		return result;
+	}
+	
+	// Add To Assembly Staion
+	public String assembly(String barcode, String timestamp) {
+		String result = "";
+		
+		
+		String query = "UPDATE controllers SET ";
+		try {
+			dbconnection = getConnectionAWS();
+			pst = dbconnection.prepareStatement(query);
+			pst.setString(1, model);
+			pst.setString(2, controller_barcode);
+			pst.setString(3, "Receiving Station");
+			pst.setString(4, timestamp);
+			pst.setBoolean(5, true);
+			if (pst.executeUpdate() == 1) {
+				result = controller_barcode;
+			} else {
+				result = "Cannot add to database. Please as manager to help";
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			result = "Cannot add to database. Please as manager to help";
+		} finally {
+
+			try {
+				pst.close();
+				shutdown();
+			} catch (SQLException e) {				
 				e.printStackTrace();
 			}
 
@@ -273,8 +308,7 @@ public class DBHandler {
 			try {
 				pst.close();
 				shutdown();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
+			} catch (SQLException e) {				
 				e.printStackTrace();
 			}
 
@@ -348,12 +382,42 @@ public class DBHandler {
 		return result;
 	}
 
+	public String getStatusDone(String column,String barcode) {
+		String result = "";
+		
+		String query = "SELECT "+column+" FROM controllers WHERE controller_barcode=?";
+		
+		try {
+			dbconnection = getConnectionAWS();
+			pst = dbconnection.prepareStatement(query);
+			rs = pst.executeQuery();
+
+			if (rs.next()) {
+				result = rs.getString(column).trim();
+				
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+
+			try {
+				pst.close();
+				rs.close();
+				shutdown();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		}
+		
+		return result;
+	}
 	public void shutdown() {
 		try {
 			dbconnection.close();
 			System.out.println("====Database close====");
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+		} catch (SQLException e) {			
 			e.printStackTrace();
 		}
 
