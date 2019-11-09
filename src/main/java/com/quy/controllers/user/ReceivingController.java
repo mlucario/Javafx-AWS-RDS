@@ -2,30 +2,22 @@
 package com.quy.controllers.user;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
-import com.jfoenix.controls.JFXComboBox;
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
-import com.jfoenix.controls.JFXTreeTableColumn;
 import com.jfoenix.controls.JFXTreeTableView;
-import com.jfoenix.controls.RecursiveTreeItem;
-import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import com.quy.bizcom.SMCController;
 import com.quy.controllers.Controller;
+import com.quy.controllers.SignInController;
 import com.quy.database.DBHandler;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeTableColumn;
+import javafx.geometry.Pos;
 import javafx.scene.text.Text;
 
 public class ReceivingController extends Controller implements Initializable {
@@ -33,101 +25,201 @@ public class ReceivingController extends Controller implements Initializable {
 	private Text txtCompleted;
 
 	@FXML
-	private JFXComboBox<String> comboModel;
+	private JFXTextField txtModel;
 
 	@FXML
 	private JFXTextField txtBoxBarcode;
 
 	@FXML
 	private JFXTextField txtControllerBarcode;
+	@FXML
+	private JFXButton btnSubmit;
 
 	@FXML
 	private JFXTreeTableView<SMCController> treeView;
 
-	private Executor exec;
+//	// Needed Notification
+//	private Notifications notification;
+//	private Node graphic;
+
 	private DBHandler dbHandler;
-	private List<String> listModels;
+	protected String currentUser = SignInController.getInstance().username();
 	private ObservableList<SMCController> barcode = FXCollections.observableArrayList();
 
 	@FXML
 	void submit(ActionEvent event) {
-		// check if model is selected
+		if (!txtModel.validate()) {
+			warningAlert("Model is missing! Enter controller model.");
+			txtModel.clear();
+			txtModel.requestFocus();
+		} else if (!txtBoxBarcode.validate()) {
+			warningAlert("Box barcode is missing! Enter box barcode.");
+			txtBoxBarcode.clear();
+			txtBoxBarcode.requestFocus();
+		} else if (!txtControllerBarcode.validate()) {
+			warningAlert("Controller barcode is missing! Enter Controller barcode.");
+			txtControllerBarcode.clear();
+			txtControllerBarcode.requestFocus();
+		} else if (!txtBoxBarcode.getText().equalsIgnoreCase(txtControllerBarcode.getText())) {
+			warningAlert("Box and controller barcode DO NOT MATCH. Please verify them again.");
+			txtControllerBarcode.requestFocus();
+		}
+
+		else {
+			String controller_barcode = getStringJFXTextField(txtControllerBarcode);
+			String model = getStringJFXTextField(txtModel);
+
+			if (!dbHandler.isBarcodeExist(controller_barcode)) {
+				String result = dbHandler.addNewController(model, controller_barcode, getCurrentTimeStamp());
+				if (result.equalsIgnoreCase(controller_barcode)) {
+					addBarcodeToTable(barcode, controller_barcode);
+					notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null,
+							"Add New Controller Successfully", 2);
+					notification.showInformation();
+					dbHandler.addToHistoryRecord(currentUser, "Receiving Station", getCurrentTimeStamp(),
+							controller_barcode, "");
+				} else {
+					warningAlert(result);
+				}
+			} else {
+				warningAlert(controller_barcode + " already added! Try add other controller.");
+			}
+		}
+
+		txtBoxBarcode.clear();
+		txtControllerBarcode.clear();
+		txtBoxBarcode.requestFocus();
 
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		dbHandler = new DBHandler();
-		listModels = new ArrayList<>();
 		textFieldFormat(txtBoxBarcode, "Box barcode is required", true);
 		textFieldFormat(txtControllerBarcode, "Controller barcode is required", true);
+		textFieldFormat(txtModel, "Controller Model is required", true);
+		btnSubmit.setDisable(true);
 
-		// create executor that uses daemon threads:
-		exec = Executors.newCachedThreadPool(runnable -> {
-			Thread t = new Thread(runnable);
-			t.setDaemon(true);
-			return t;
-		});
+//		listModels = new ArrayList<>();
+//
+//
+//		exec = Executors.newCachedThreadPool(runnable -> {
+//			Thread t = new Thread(runnable);
+//			t.setDaemon(true);
+//			return t;
+//		});
+//
+//		Task<List<String>> getModelsTask = new Task<List<String>>() {
+//			@Override
+//			public List<String> call() throws Exception {
+//				return dbHandler.getAllModels();
+//			}
+//		};
+//
+//		getModelsTask.setOnFailed(e -> {
+//			getModelsTask.getException().printStackTrace();
+//
+//			warningAlert("Cannot fetch models");
+//		});
+//
+//		getModelsTask.setOnSucceeded(e -> {
+//
+//			System.out.println("get all models");
+//			listModels.addAll(getModelsTask.getValue());
+//			comboModel.getItems().addAll(listModels);
+//		});
+//
+//		exec.execute(getModelsTask);
+//		comboModel.setOnAction(e -> {
+//			txtBoxBarcode.requestFocus();
+//		});
 
-		Task<List<String>> getModelsTask = new Task<List<String>>() {
-			@Override
-			public List<String> call() throws Exception {
-				return dbHandler.getAllModels();
-			}
-		};
-
-		getModelsTask.setOnFailed(e -> {
-			getModelsTask.getException().printStackTrace();
-
-			warningAlert("Cannot fetch models");
-		});
-
-		getModelsTask.setOnSucceeded(e -> {
-			System.out.println("get all models");
-			listModels.addAll(getModelsTask.getValue());
-			// set for JFXComboBox
-			comboModel.getItems().addAll(listModels);
-		});
-
-		exec.execute(getModelsTask);
-		comboModel.setOnAction(e -> {
-			txtBoxBarcode.requestFocus();
-		});
-
-		txtBoxBarcode.setOnAction(e -> {
-			txtControllerBarcode.requestFocus();
-		});
-//		comboModel.getSelectionModel().selectedIndexProperty().addListener((options, oldValue, newValue) -> {
-//			if (comboModel.getSelectionModel().getSelectedItem() == null) {
-//				warningAlert("Please select one model to continute!");
-//			} else {
-//				System.out.println(newValue);
+//		txtModel.textProperty().addListener((observable, oldValue, newValue) -> {
+//			if (!oldValue.equalsIgnoreCase(newValue)) {
+//			
 //			}
 //		});
 
-		// setup tree view
-		JFXTreeTableColumn<SMCController, String> controlBarcode = new JFXTreeTableColumn<>("Controller Barcode");
+		txtModel.setOnAction(e -> {
+			String tempModel = isModelvalid(txtModel);
+			if (tempModel.isEmpty()) {
+				txtBoxBarcode.requestFocus();
+			} else {
+				warningAlert(tempModel);
+				txtModel.clear();
+				txtModel.requestFocus();
+			}
 
-		controlBarcode.prefWidthProperty().bind(treeView.widthProperty().multiply(0.97));
-		controlBarcode.setResizable(false);
-		controlBarcode.setSortable(false);
-
-		controlBarcode.setCellValueFactory((TreeTableColumn.CellDataFeatures<SMCController, String> param) -> {
-			if (controlBarcode.validateValue(param))
-				return param.getValue().getValue().getControllerBarcode();
-			else
-				return controlBarcode.getComputedValue(param);
+		});
+		txtBoxBarcode.setOnAction(e -> {
+			String tempboxBarcode = isBarcodevalid(txtBoxBarcode);
+			if (tempboxBarcode.isEmpty()) {
+				txtControllerBarcode.requestFocus();
+			} else {
+				warningAlert(tempboxBarcode);
+				txtBoxBarcode.clear();
+				txtBoxBarcode.requestFocus();
+			}
+		});
+		txtControllerBarcode.setOnAction(e -> {
+			String tempControllerBarcode = isBarcodevalid(txtControllerBarcode);
+			if (tempControllerBarcode.isEmpty()) {
+				if (getStringJFXTextField(txtBoxBarcode)
+						.equalsIgnoreCase(getStringJFXTextField(txtControllerBarcode))) {
+					submit(e);
+				} else {
+					warningAlert("Two barcodes are different");
+					txtBoxBarcode.clear();
+					txtControllerBarcode.clear();
+					txtBoxBarcode.requestFocus();
+				}
+			} else {
+				warningAlert(tempControllerBarcode);
+				txtControllerBarcode.clear();
+				txtControllerBarcode.requestFocus();
+			}
 		});
 
-		barcode.add(new SMCController("1111"));
-		barcode.add(new SMCController("22222"));
+		// setup tree view
+		treeviewTableBuilder(treeView, barcode, RECEIVING_STATION);
 
-		final TreeItem<SMCController> root = new RecursiveTreeItem<SMCController>(barcode,
-				RecursiveTreeObject::getChildren);
-		treeView.getColumns().setAll(controlBarcode);
-		treeView.setRoot(root);
-		treeView.setShowRoot(false);
+//		JFXTreeTableColumn<SMCController, String> controlBarcode = new JFXTreeTableColumn<>("Controller Barcode");
+//
+//		controlBarcode.prefWidthProperty().bind(treeView.widthProperty().multiply(0.975));
+//		controlBarcode.setResizable(false);
+//		controlBarcode.setSortable(false);
+//
+//		controlBarcode.setCellValueFactory((TreeTableColumn.CellDataFeatures<SMCController, String> param) -> {
+//			if (controlBarcode.validateValue(param))
+//				return param.getValue().getValue().getControllerBarcode();
+//			else
+//				return controlBarcode.getComputedValue(param);
+//		});
+//
+//
+//		final TreeItem<SMCController> root = new RecursiveTreeItem<SMCController>(barcode,
+//				RecursiveTreeObject::getChildren);
+//		treeView.getColumns().setAll(controlBarcode);
+//		treeView.setRoot(root);
+//		treeView.setShowRoot(false);
+
+	}
+
+	public boolean keyPressedAction() {
+		boolean result = false;
+		String temp1 = isModelvalid(this.txtModel);
+		String temp2 = isBarcodevalid(this.txtControllerBarcode);
+		String temp3 = isBarcodevalid(this.txtBoxBarcode);
+		if (temp1.isEmpty() && temp2.isEmpty() && temp3.isEmpty()) {
+			if (getStringJFXTextField(this.txtBoxBarcode)
+					.equalsIgnoreCase(getStringJFXTextField(this.txtControllerBarcode))) {
+				result = true;
+			} else {
+				result = false;
+			}
+		}
+		btnSubmit.setDisable(!result);
+		return result;
 
 	}
 

@@ -87,7 +87,7 @@
                                  <font>
                                     <Font name="System Bold" size="18.0" />
                                  </font></JFXTextField>
-                              <FontAwesomeIconView fill="DODGERBLUE" glyphName="ADDRESS_CARD" size="25">
+                              <FontAwesomeIconView fill="DODGERBLUE" glyphName="USER" size="25">
                                  <HBox.margin>
                                     <Insets left="15.0" />
                                  </HBox.margin>

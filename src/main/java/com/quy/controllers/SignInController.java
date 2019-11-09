@@ -50,7 +50,6 @@ public class SignInController extends Controller implements Initializable {
 	private DBHandler dbHandler;
 	private double x, y;
 	private int count;
-
 	private static SignInController instance;
 
 	public SignInController() {
@@ -59,6 +58,10 @@ public class SignInController extends Controller implements Initializable {
 
 	public static SignInController getInstance() {
 		return instance;
+	}
+
+	public String username() {
+		return txtUsername.getText();
 	}
 
 	@FXML
@@ -84,12 +87,11 @@ public class SignInController extends Controller implements Initializable {
 				if (verifyPassword(password, result.get(1), result.get(0))) {
 					// Go to dashboard
 					String type = result.get(2);
-					if(type.equalsIgnoreCase("admin")) {
-						goToScene(ADMIN_DASHBOARD_SCENE, btnSignIn, true);	
-					}else {
-						goToScene(USER_DASHBOARD_SCENE, btnSignIn, true);	
+					if (type.equalsIgnoreCase("admin")) {
+						goToScene(ADMIN_DASHBOARD_SCENE, btnSignIn, true);
+					} else {
+						goToScene(USER_DASHBOARD_SCENE, btnSignIn, true);
 					}
-					
 
 				} else {
 					count++;
@@ -173,7 +175,6 @@ public class SignInController extends Controller implements Initializable {
 			login(e);
 		});
 
-		
 	}
 
 	public void loadingScreen() {
@@ -194,9 +195,10 @@ public class SignInController extends Controller implements Initializable {
 		txtSuccess.setVisible(true);
 		txtLoading.setVisible(false);
 		txtSpinner.setVisible(false);
-		
+
 		txtUsername.setText("a1956");
 		txtPassword.setText("1234567Aa");
 
 	}
+
 }
