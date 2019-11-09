@@ -107,7 +107,7 @@ public class UserDashboardController extends Controller implements Initializable
 
 	@FXML
 	void resultOnClick(ActionEvent event) {
-
+		switchScence(RESULT_STATION_SCENE, RESULT_STATION);
 	}
 
 	@FXML
@@ -171,7 +171,7 @@ public class UserDashboardController extends Controller implements Initializable
 	// Switch to scene when user click on button
 	public void switchScence(String scene, String station) {
 		if (!currentStation.equalsIgnoreCase(station)) {
-			System.out.println("Show " + station);
+//			System.out.println("Show " + station);
 			txtTitleStation.setText(station);
 			// Hide diagram and view
 			hideIntroView();

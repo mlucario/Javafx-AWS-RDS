@@ -5,10 +5,12 @@
 <?import com.jfoenix.controls.JFXTreeTableView?>
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <AnchorPane xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.quy.controllers.user.ReceivingController">
    <children>
@@ -57,11 +59,22 @@
                         </JFXButton>
                      </children>
                   </VBox>
-                  <JFXTreeTableView fx:id="treeView" currentItemsCount="1" style="-fx-font-size: 1.2em; -fx-font-family: Roboto; -fx-border-color: Black; -fx-alignment: Center; -fx-border-width: 1;" HBox.hgrow="NEVER">
+                  <VBox alignment="TOP_CENTER" prefHeight="410.0" prefWidth="188.0">
+                     <children>
+                        <JFXTreeTableView fx:id="treeView" currentItemsCount="1" style="-fx-font-size: 1.2em; -fx-font-family: Roboto; -fx-border-color: Black; -fx-alignment: Center; -fx-border-width: 1;" />
+                        <Label text="List Controller Received" textFill="BLUE">
+                           <font>
+                              <Font name="Roboto Bold" size="15.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets top="15.0" />
+                           </VBox.margin>
+                        </Label>
+                     </children>
                      <HBox.margin>
-                        <Insets bottom="15.0" left="50.0" right="15.0" top="15.0" />
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                      </HBox.margin>
-                  </JFXTreeTableView>
+                  </VBox>
                </children>
             </HBox>
          </children>

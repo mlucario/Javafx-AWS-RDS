@@ -154,7 +154,7 @@ public class DBHandler {
 
 			if (rs.next()) {
 				result = true;
-				System.out.println(username + " is exist!.");
+//				System.out.println(username + " is exist!.");
 			}
 
 		} catch (SQLException e) {
@@ -188,7 +188,7 @@ public class DBHandler {
 
 			if (rs.next()) {
 				result = true;
-				System.out.println(controller_barcode + " is exist!.");
+//				System.out.println(controller_barcode + " is exist!.");
 			}
 
 		} catch (SQLException e) {
@@ -275,6 +275,115 @@ public class DBHandler {
 			}
 
 		}
+		return result;
+	}
+
+	// add to waiting burn in list
+	public String addToBurnInWaitingList(String controller_barcode) {
+		String result = "";
+
+		String query = "UPDATE controllers SET current_station=? WHERE controller_barcode=?";
+		try {
+			dbconnection = getConnectionAWS();
+			pst = dbconnection.prepareStatement(query);
+			pst.setString(1, "Wait_To_Burn_In");
+			pst.setString(2, controller_barcode);
+			if (pst.executeUpdate() == 1) {
+				result = controller_barcode;
+			} else {
+				result = "Cannot add to database. Please as manager to help";
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			result = "Cannot connect to database. Please as manager to help";
+		} finally {
+
+			try {
+				pst.close();
+				shutdown();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		}
+		return result;
+	}
+
+	// Add To Assembly Staion
+	public String burn_in(String barcode, String timestamp) {
+		String result = "";
+
+		String query = "UPDATE controllers SET current_station=?,time_start_burn_in=?,Is_Burn_In_Processing=? WHERE controller_barcode=?";
+		try {
+			dbconnection = getConnectionAWS();
+			pst = dbconnection.prepareStatement(query);
+			pst.setString(1, "Burn In Station");
+			pst.setString(2, timestamp);
+			pst.setBoolean(3, true);
+			pst.setString(4, barcode);
+			if (pst.executeUpdate() == 1) {
+				result = barcode;
+
+			} else {
+				result = "Cannot change/update " + barcode + " into database.";
+
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			result = "Cannot Connect to database.";
+
+		} finally {
+
+			try {
+				pst.close();
+				shutdown();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		}
+
+		return result;
+	}
+
+	// Set the result
+	public String setResult(String barcode, String timestamp, boolean isPassed) {
+		String result = "";
+
+		String query = "UPDATE controllers SET current_station=?,time_finish_burn_in=?,Is_Burn_In_Done=?,Is_Passed=? WHERE controller_barcode=?";
+		try {
+			dbconnection = getConnectionAWS();
+			pst = dbconnection.prepareStatement(query);
+			pst.setString(1, "Result Station");
+			pst.setString(2, timestamp);
+			pst.setBoolean(3, true);
+			pst.setBoolean(4, isPassed);
+			pst.setString(5, barcode);
+			if (pst.executeUpdate() == 1) {
+				result = barcode;
+
+			} else {
+				result = "Cannot change/update " + barcode + " into database.";
+
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			result = "Cannot Connect to database.";
+
+		} finally {
+
+			try {
+				pst.close();
+				shutdown();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		}
+
 		return result;
 	}
 
@@ -415,7 +524,152 @@ public class DBHandler {
 		return result;
 	}
 
-	// ==========================================================
+	// Fetch all Controller Which are ready to burn in
+	public List<String> getAllAssemblyDone() {
+		ArrayList<String> result = new ArrayList<>();
+		String query = "SELECT controller_barcode FROM controllers WHERE current_station=? AND Is_Received=? AND Is_Assembled=?";
+		try {
+			dbconnection = getConnectionAWS();
+			pst = dbconnection.prepareStatement(query);
+			pst.setString(1, "Assembly Station");
+			pst.setBoolean(2, true);
+			pst.setBoolean(3, true);
+
+			rs = pst.executeQuery();
+
+			while (rs.next()) {
+				result.add(rs.getString("controller_barcode").trim().replaceAll(" +", " ").toUpperCase());
+			}
+
+			System.out.println("All Controller Assemblied is fetched");
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+
+			try {
+				pst.close();
+				rs.close();
+				shutdown();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		}
+
+		return result;
+	}
+
+	// Fetch all Controller Which are ready to burn in
+	public List<String> getAllReadyToBurn() {
+		ArrayList<String> result = new ArrayList<>();
+		String query = "SELECT controller_barcode FROM controllers WHERE current_station=? AND Is_Received=? AND Is_Assembled=?";
+		try {
+			dbconnection = getConnectionAWS();
+			pst = dbconnection.prepareStatement(query);
+			pst.setString(1, "Wait_To_Burn_In");
+			pst.setBoolean(2, true);
+			pst.setBoolean(3, true);
+
+			rs = pst.executeQuery();
+
+			while (rs.next()) {
+				result.add(rs.getString("controller_barcode").trim().replaceAll(" +", " ").toUpperCase());
+			}
+
+			System.out.println("All Controller Ready to burn is fetched");
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+
+			try {
+				pst.close();
+				rs.close();
+				shutdown();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		}
+
+		return result;
+	}
+
+	// Fetch all Controller Which are burning in
+	public List<String> getAllBurning() {
+		ArrayList<String> result = new ArrayList<>();
+		String query = "SELECT controller_barcode FROM controllers WHERE current_station=? AND Is_Received=? AND Is_Assembled=?";
+		try {
+			dbconnection = getConnectionAWS();
+			pst = dbconnection.prepareStatement(query);
+			pst.setString(1, "Burn In Station");
+			pst.setBoolean(2, true);
+			pst.setBoolean(3, true);
+			rs = pst.executeQuery();
+
+			while (rs.next()) {
+				result.add(rs.getString("controller_barcode").trim().replaceAll(" +", " ").toUpperCase());
+			}
+
+			System.out.println("All BURN IN Controller is fetched");
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+
+			try {
+				pst.close();
+				rs.close();
+				shutdown();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		}
+
+		return result;
+	}
+
+	
+	// Fetch all Controller Which are passed / fail
+	public List<String> getAllPassedOrFail(boolean isPassed) {
+		ArrayList<String> result = new ArrayList<>();
+		String query = "SELECT controller_barcode FROM controllers WHERE current_station=? AND Is_Received=? AND Is_Assembled=? AND Is_Burn_In_Done=? AND Is_Passed=?";
+		try {
+			dbconnection = getConnectionAWS();
+			pst = dbconnection.prepareStatement(query);
+			pst.setString(1, "Result Station");
+			pst.setBoolean(2, true);
+			pst.setBoolean(3, true);
+			pst.setBoolean(4, true);
+			pst.setBoolean(5, isPassed);
+			rs = pst.executeQuery();
+
+			while (rs.next()) {
+				result.add(rs.getString("controller_barcode").trim().replaceAll(" +", " ").toUpperCase());
+			}
+
+			System.out.println("All PASSED/FAIL controller is fetched");
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+
+			try {
+				pst.close();
+				rs.close();
+				shutdown();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		}
+
+		return result;
+	}
+
+		// ==========================================================
 	public String getStatusDone(String column, String barcode) {
 		String result = "";
 

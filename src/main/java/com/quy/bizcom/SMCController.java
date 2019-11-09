@@ -8,8 +8,9 @@ import javafx.beans.value.ObservableValue;
 
 public class SMCController extends RecursiveTreeObject<SMCController> {
 
-	StringProperty controllerBarcode;
-	StringProperty controllerModel;
+	private StringProperty controllerBarcode;
+	private StringProperty controllerModel;
+	private boolean isPassed;
 
 	public SMCController(String controllerBarcode) {
 		this.controllerBarcode = new SimpleStringProperty(controllerBarcode);
@@ -23,6 +24,18 @@ public class SMCController extends RecursiveTreeObject<SMCController> {
 
 	public ObservableValue<String> getControllerBarcode() {
 		return this.controllerBarcode;
+	}
+	
+	public void setFail() {
+		this.isPassed = false;
+	}
+	
+	public void setPassed() {
+		this.isPassed = true;
+	}
+	
+	public boolean getResult() {
+		return this.isPassed;
 	}
 
 }

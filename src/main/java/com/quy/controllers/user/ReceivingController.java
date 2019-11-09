@@ -6,10 +6,7 @@ import java.util.ResourceBundle;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
-import com.jfoenix.controls.JFXTreeTableColumn;
 import com.jfoenix.controls.JFXTreeTableView;
-import com.jfoenix.controls.RecursiveTreeItem;
-import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import com.quy.bizcom.SMCController;
 import com.quy.controllers.Controller;
 import com.quy.controllers.SignInController;
@@ -21,8 +18,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeTableColumn;
 import javafx.scene.text.Text;
 
 public class ReceivingController extends Controller implements Initializable {
@@ -77,11 +72,10 @@ public class ReceivingController extends Controller implements Initializable {
 			if (!dbHandler.isBarcodeExist(controller_barcode)) {
 				String result = dbHandler.addNewController(model, controller_barcode, getCurrentTimeStamp());
 				if (result.equalsIgnoreCase(controller_barcode)) {
-
+					addBarcodeToTable(barcode, controller_barcode);
 					notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null,
 							"Add New Controller Successfully", 2);
 					notification.showInformation();
-					addToTable(controller_barcode);
 					dbHandler.addToHistoryRecord(currentUser, "Receiving Station", getCurrentTimeStamp(),
 							controller_barcode, "");
 				} else {
@@ -98,7 +92,6 @@ public class ReceivingController extends Controller implements Initializable {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		dbHandler = new DBHandler();
@@ -106,6 +99,7 @@ public class ReceivingController extends Controller implements Initializable {
 		textFieldFormat(txtControllerBarcode, "Controller barcode is required", true);
 		textFieldFormat(txtModel, "Controller Model is required", true);
 		btnSubmit.setDisable(true);
+
 //		listModels = new ArrayList<>();
 //
 //
@@ -187,28 +181,27 @@ public class ReceivingController extends Controller implements Initializable {
 		});
 
 		// setup tree view
-		JFXTreeTableColumn<SMCController, String> controlBarcode = new JFXTreeTableColumn<>("Controller Barcode");
+		treeviewTableBuilder(treeView, barcode, RECEIVING_STATION);
 
-		controlBarcode.prefWidthProperty().bind(treeView.widthProperty().multiply(0.99));
-		controlBarcode.setResizable(false);
-		controlBarcode.setSortable(false);
-
-		controlBarcode.setCellValueFactory((TreeTableColumn.CellDataFeatures<SMCController, String> param) -> {
-			if (controlBarcode.validateValue(param))
-				return param.getValue().getValue().getControllerBarcode();
-			else
-				return controlBarcode.getComputedValue(param);
-		});
-
-		barcode.add(new SMCController("1111"));
-		barcode.add(new SMCController("22222"));
-		barcode.add(new SMCController("3333"));
-
-		final TreeItem<SMCController> root = new RecursiveTreeItem<SMCController>(barcode,
-				RecursiveTreeObject::getChildren);
-		treeView.getColumns().setAll(controlBarcode);
-		treeView.setRoot(root);
-		treeView.setShowRoot(false);
+//		JFXTreeTableColumn<SMCController, String> controlBarcode = new JFXTreeTableColumn<>("Controller Barcode");
+//
+//		controlBarcode.prefWidthProperty().bind(treeView.widthProperty().multiply(0.975));
+//		controlBarcode.setResizable(false);
+//		controlBarcode.setSortable(false);
+//
+//		controlBarcode.setCellValueFactory((TreeTableColumn.CellDataFeatures<SMCController, String> param) -> {
+//			if (controlBarcode.validateValue(param))
+//				return param.getValue().getValue().getControllerBarcode();
+//			else
+//				return controlBarcode.getComputedValue(param);
+//		});
+//
+//
+//		final TreeItem<SMCController> root = new RecursiveTreeItem<SMCController>(barcode,
+//				RecursiveTreeObject::getChildren);
+//		treeView.getColumns().setAll(controlBarcode);
+//		treeView.setRoot(root);
+//		treeView.setShowRoot(false);
 
 	}
 
@@ -230,7 +223,4 @@ public class ReceivingController extends Controller implements Initializable {
 
 	}
 
-	public void addToTable(String barcodex) {
-		barcode.add(new SMCController(barcodex));
-	}
 }

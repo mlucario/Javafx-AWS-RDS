@@ -7,10 +7,14 @@ import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
@@ -20,11 +24,17 @@ import org.controlsfx.control.Notifications;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
+import com.jfoenix.controls.JFXTreeTableColumn;
+import com.jfoenix.controls.JFXTreeTableView;
+import com.jfoenix.controls.RecursiveTreeItem;
+import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import com.jfoenix.validation.RequiredFieldValidator;
 import com.quy.bizcom.MainApp;
 import com.quy.bizcom.SMCController;
+import com.quy.database.DBHandler;
 
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -38,6 +48,8 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextFormatter;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeTableColumn;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Screen;
@@ -62,6 +74,7 @@ public class Controller {
 	protected final String RECEIVING_STATION_SCENE = "/fxml/ui/users/ReceivingStationScene.fxml";
 	protected final String ASSEMBLY_STATION_SCENE = "/fxml/ui/users/AssemblyStationScene.fxml";
 	protected final String BURN_IN_STATION_SCENE = "/fxml/ui/users/BurnInStationScene.fxml";
+	protected final String RESULT_STATION_SCENE = "/fxml/ui/users/ResultStation.fxml";
 
 	// Hashing Password
 	private static final SecureRandom RAND = new SecureRandom();
@@ -75,8 +88,9 @@ public class Controller {
 	// List Stations
 	protected final String RECEIVING_STATION = "Receiving Station";
 	protected final String ASSEMBLY_STATION = "Assembly Station";
+	protected final String RE_ASSEMBLY_STATION = "Re_Assembly Station";
 	protected final String BURN_IN_STATION = "Burn In Station";
-	protected final String RESULT_STATION = "Set Result Station";
+	protected final String RESULT_STATION = "Result Station";
 	protected final String REPAIR_STATION = "Repair Station";
 	protected final String PACKING_STATION = "Packing Station";
 	protected final String SHIPPING_STATION = "Shipping Station";
@@ -87,22 +101,30 @@ public class Controller {
 	protected final String CURRENT_STATION = "current_station";
 	protected final String TIME_RECEIVED = "time_received";
 	protected final String TIME_START_ASSEMBLY = "time_start_assembly";
+	protected final String TIME_START_RE_ASSEMBLY = "time_start_re_assembly";
 	protected final String TIME_START_BURN_IN = "time_start_burn_in";
 	protected final String TIME_FINISH_BURN_IN = "time_finish_burn_in";
 	protected final String TIME_PACKED = "time_packed";
 	protected final String TIME_SHIPPED = "time_shipped";
 	protected final String IS_RECEIVED = "Is_Received";
 	protected final String IS_ASSEMBLED = "Is_Assembled";
+	protected final String IS_RE_ASSEMBLED = "Is_Re_Assembled";
 	protected final String IS_BURN_IN_PROCESSING = "Is_Burn_In_Processing";
 	protected final String IS_BURN_IN_DONE = "Is_Burn_In_Done";
 	protected final String IS_PASSED = "Is_Passed";
 	protected final String IS_REPAIRED = "Is_Repaired";
 	protected final String IS_PACKED = "Is_Packed";
 	protected final String IS_SHIPPED = "is_Shipped";
+//	protected final String BURN_IN_PROCESSING = "Burn in processing";
 
 	// Needed Notification
 	protected Notifications notification;
 	protected Node graphic;
+
+	// Some helper value
+
+	private ExecutorService exec;;
+	private DBHandler dbHandler;
 
 	public void textFieldFormat(JFXTextField txt, String warning, boolean isUpperCase) {
 //		txt.setStyle("-fx-text-inner-color: #8e44ad;");
@@ -346,5 +368,104 @@ public class Controller {
 		}
 
 		return result;
+	}
+
+	// Treeview Builder
+	@SuppressWarnings("unchecked")
+	public void treeviewTableBuilder(JFXTreeTableView<SMCController> treeView, ObservableList<SMCController> barcode,
+			String station) {
+		JFXTreeTableColumn<SMCController, String> controlBarcode = new JFXTreeTableColumn<>("Serial Number");
+
+		controlBarcode.prefWidthProperty().bind(treeView.widthProperty().multiply(0.97));
+		controlBarcode.setResizable(false);
+		controlBarcode.setSortable(false);
+		controlBarcode.setCellValueFactory((TreeTableColumn.CellDataFeatures<SMCController, String> param) -> {
+			if (controlBarcode.validateValue(param))
+				return param.getValue().getValue().getControllerBarcode();
+			else
+				return controlBarcode.getComputedValue(param);
+		});
+
+		final TreeItem<SMCController> root = new RecursiveTreeItem<SMCController>(barcode,
+				RecursiveTreeObject::getChildren);
+		treeView.getColumns().setAll(controlBarcode);
+		treeView.setRoot(root);
+		treeView.setShowRoot(false);
+
+		ArrayList<String> listBarcodeReceived = new ArrayList<>();
+
+		exec = Executors.newCachedThreadPool(runnable -> {
+			Thread t = new Thread(runnable);
+			t.setDaemon(true);
+			return t;
+		});
+
+		Task<List<String>> getAllReceivedTask = new Task<List<String>>() {
+			@Override
+			public List<String> call() throws Exception {
+				dbHandler = new DBHandler();
+				ArrayList<String> temp = new ArrayList<>();
+				switch (station) {
+				case RECEIVING_STATION:
+					temp.addAll(dbHandler.getAllReceived());
+					break;
+				case ASSEMBLY_STATION:
+					temp.addAll(dbHandler.getAllAssemblyDone());
+					break;
+				case BURN_IN_STATION:
+					temp.addAll(dbHandler.getAllReadyToBurn());
+					break;
+				default:
+					temp.clear();
+				}
+				return temp;
+			}
+		};
+
+		getAllReceivedTask.setOnFailed(e -> {
+			getAllReceivedTask.getException().printStackTrace();
+
+			warningAlert("Cannot fetch barcode");
+		});
+
+		getAllReceivedTask.setOnSucceeded(e -> {
+
+			listBarcodeReceived.addAll(getAllReceivedTask.getValue());
+
+			for (String s : listBarcodeReceived) {
+				addBarcodeToTable(barcode, s);
+			}
+		});
+
+		exec.execute(getAllReceivedTask);
+
+	}
+
+	// Treeview Builder
+	@SuppressWarnings("unchecked")
+	public void treeviewTableBuilder(JFXTreeTableView<SMCController> treeView, ObservableList<SMCController> barcode,
+			List<String> listControllers) {
+		JFXTreeTableColumn<SMCController, String> controlBarcode = new JFXTreeTableColumn<>("Serial Number");
+
+		controlBarcode.prefWidthProperty().bind(treeView.widthProperty().multiply(0.97));
+		controlBarcode.setResizable(false);
+		controlBarcode.setSortable(false);
+		controlBarcode.setCellValueFactory((TreeTableColumn.CellDataFeatures<SMCController, String> param) -> {
+			if (controlBarcode.validateValue(param))
+				return param.getValue().getValue().getControllerBarcode();
+			else
+				return controlBarcode.getComputedValue(param);
+		});
+
+		final TreeItem<SMCController> root = new RecursiveTreeItem<SMCController>(barcode,
+				RecursiveTreeObject::getChildren);
+		treeView.getColumns().setAll(controlBarcode);
+		treeView.setRoot(root);
+		treeView.setShowRoot(false);
+
+		for (String s : listControllers) {
+			addBarcodeToTable(barcode, s);
+		}
+
 	}
 }
