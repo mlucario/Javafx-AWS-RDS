@@ -16,9 +16,9 @@
 
 <AnchorPane xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.quy.controllers.user.ResultStationController">
    <children>
-      <StackPane layoutY="45.0" prefWidth="853.0" AnchorPane.bottomAnchor="77.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+      <StackPane alignment="TOP_CENTER" layoutY="45.0" AnchorPane.bottomAnchor="77.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
          <children>
-            <HBox prefHeight="463.0">
+            <HBox alignment="TOP_CENTER">
                <children>
                   <VBox alignment="TOP_CENTER" prefHeight="463.0" prefWidth="559.0">
                      <children>

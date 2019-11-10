@@ -10,39 +10,42 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class DBHandler {
 
 	private Connection dbconnection;
 	private PreparedStatement pst;
 	private ResultSet rs;
 	private final String STANDARD_USER = "user";
+	private static final Logger LOGGER = LogManager.getLogger("SQL Connector");
 
 	public Connection getConnectionAWS() {
-
-//		 System.out.println("----MySQL JDBC Connection Testing -------");
 
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 		} catch (ClassNotFoundException e) {
-//		        System.out.println("Where is your MySQL JDBC Driver?");
+			System.out.println("Where is your MySQL JDBC Driver?");
 			e.printStackTrace();
 			return null;
 		}
 
-//		    System.out.println("MySQL JDBC Driver Registered!");
+		System.out.println("MySQL JDBC Driver Registered!");
 
 		try {
 			dbconnection = DriverManager.getConnection(
 					"jdbc:mysql://" + Configs.dbHost + ":" + Configs.dbPort + "/" + Configs.dbName, Configs.dbUsername,
 					Configs.dbPassword);
 		} catch (SQLException e) {
-//		        System.out.println("Connection Failed!:\n" + e.getMessage());
+
+			LOGGER.error("Connection Failed!: {} ", e.getMessage());
 		}
 
 		if (dbconnection != null) {
-			System.out.println("SUCCESS!!!! You made it, take control your database now!");
+			LOGGER.info("SUCCESS!!!! You made it, take control your database now!");
 		} else {
-			System.out.println("FAILURE! Failed to make connection!");
+			LOGGER.error("FAILURE! Failed to make connection!");
 		}
 		return dbconnection;
 
@@ -58,29 +61,44 @@ public class DBHandler {
 		String connectionString = "jdbc:mysql://" + Configs.dbhost + ":" + Configs.dbport + "/" + Configs.dbname
 				+ "?autoReconnect=true&useSSL=false";
 
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
-
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			Class.forName("com.mysql.jdbc.Driver");
+//
+//		} catch (ClassNotFoundException e) {
+//			e.printStackTrace();
+//		}
 
 		try {
 			dbconnection = DriverManager.getConnection(connectionString, Configs.dbuser, Configs.dbpass);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.error("Connection Failed! %s", e.getMessage());
 		}
 
+		if (dbconnection != null) {
+			LOGGER.info("SUCCESS!!!! You made it, take control your database now!");
+		} else {
+			LOGGER.error("FAILURE! Failed to make connection!");
+		}
 		return dbconnection;
 
 	}
 
-	public ArrayList<String> getPasswordAndSaltKey(String username) {
+	public void shutdown() {
+		try {
+			dbconnection.close();
+			LOGGER.info("====Database close====");
+		} catch (SQLException e) {
+			LOGGER.error("Cannot disconnect! %s", e.getMessage());
+		}
+
+	}
+
+	public List<String> getPasswordAndSaltKey(String username) {
 		ArrayList<String> result = new ArrayList<>();
 
 		String query = "SELECT hashing_password,salt_key,user_type FROM users WHERE username=?";
 		try {
-			dbconnection = getConnectionAWS();
+			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
 			pst.setString(1, username);
 			rs = pst.executeQuery();
@@ -93,7 +111,7 @@ public class DBHandler {
 			}
 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.error("Connection Failed! %s", e.getMessage());
 		} finally {
 
 			try {
@@ -101,7 +119,7 @@ public class DBHandler {
 				rs.close();
 				shutdown();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				LOGGER.error("Cannot close connection! %s", e.getMessage());
 			}
 
 		}
@@ -114,12 +132,13 @@ public class DBHandler {
 
 		String query = "INSERT INTO users(username,hashing_password,salt_key,user_type,active,created_at) VALUES (?,?,?,?,?,?)";
 		try {
-			dbconnection = getConnectionAWS();
+			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
 			pst.setString(1, username);
 			pst.setString(2, hashingPassword);
 			pst.setString(3, saltKey);
-			pst.setString(4, STANDARD_USER);
+//			pst.setString(4, STANDARD_USER);
+			pst.setString(4, "Admin");
 			pst.setBoolean(5, true);
 			pst.setString(6, created_at);
 			pst.executeUpdate();
@@ -146,7 +165,7 @@ public class DBHandler {
 
 		String query = "SELECT username FROM users WHERE username=?";
 		try {
-			dbconnection = getConnectionAWS();
+			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
 			pst.setString(1, username);
 
@@ -180,7 +199,7 @@ public class DBHandler {
 
 		String query = "SELECT controller_barcode FROM controllers WHERE controller_barcode=?";
 		try {
-			dbconnection = getConnectionAWS();
+			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
 			pst.setString(1, controller_barcode);
 
@@ -215,7 +234,7 @@ public class DBHandler {
 
 		String query = "INSERT INTO controllers(model,controller_barcode,current_station,time_received,Is_Received) VALUES (?,?,?,?,?)";
 		try {
-			dbconnection = getConnectionAWS();
+			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
 			pst.setString(1, model);
 			pst.setString(2, controller_barcode);
@@ -250,7 +269,7 @@ public class DBHandler {
 
 		String query = "UPDATE controllers SET current_station=?,time_start_assembly=?,Is_Assembled=? WHERE controller_barcode=?";
 		try {
-			dbconnection = getConnectionAWS();
+			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
 			pst.setString(1, "Assembly Station");
 			pst.setString(2, timestamp);
@@ -284,7 +303,7 @@ public class DBHandler {
 
 		String query = "UPDATE controllers SET current_station=? WHERE controller_barcode=?";
 		try {
-			dbconnection = getConnectionAWS();
+			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
 			pst.setString(1, "Wait_To_Burn_In");
 			pst.setString(2, controller_barcode);
@@ -316,7 +335,7 @@ public class DBHandler {
 
 		String query = "UPDATE controllers SET current_station=?,time_start_burn_in=?,Is_Burn_In_Processing=? WHERE controller_barcode=?";
 		try {
-			dbconnection = getConnectionAWS();
+			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
 			pst.setString(1, "Burn In Station");
 			pst.setString(2, timestamp);
@@ -354,7 +373,7 @@ public class DBHandler {
 
 		String query = "UPDATE controllers SET current_station=?,time_finish_burn_in=?,Is_Burn_In_Done=?,Is_Passed=? WHERE controller_barcode=?";
 		try {
-			dbconnection = getConnectionAWS();
+			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
 			pst.setString(1, "Result Station");
 			pst.setString(2, timestamp);
@@ -394,7 +413,7 @@ public class DBHandler {
 
 		String query = "INSERT INTO history(tester,station_tested,time,controller_barcode,note) VALUES (?,?,?,?,?)";
 		try {
-			dbconnection = getConnectionAWS();
+			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
 			pst.setString(1, tester);
 			pst.setString(2, station_tested);
@@ -431,7 +450,7 @@ public class DBHandler {
 		String query = "SELECT model FROM controllers GROUP BY model";
 		List<String> result = new ArrayList<>();
 		try {
-			dbconnection = getConnectionAWS();
+			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
 			rs = pst.executeQuery();
 
@@ -462,7 +481,7 @@ public class DBHandler {
 		String query = "SELECT controller_barcode FROM controllers";
 		Set<String> result = new HashSet<>();
 		try {
-			dbconnection = getConnectionAWS();
+			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
 			rs = pst.executeQuery();
 
@@ -494,7 +513,7 @@ public class DBHandler {
 		ArrayList<String> result = new ArrayList<>();
 		String query = "SELECT controller_barcode FROM controllers WHERE current_station=? AND Is_Received=?";
 		try {
-			dbconnection = getConnectionAWS();
+			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
 			pst.setString(1, "Receiving Station");
 			pst.setBoolean(2, true);
@@ -529,7 +548,7 @@ public class DBHandler {
 		ArrayList<String> result = new ArrayList<>();
 		String query = "SELECT controller_barcode FROM controllers WHERE current_station=? AND Is_Received=? AND Is_Assembled=?";
 		try {
-			dbconnection = getConnectionAWS();
+			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
 			pst.setString(1, "Assembly Station");
 			pst.setBoolean(2, true);
@@ -565,7 +584,7 @@ public class DBHandler {
 		ArrayList<String> result = new ArrayList<>();
 		String query = "SELECT controller_barcode FROM controllers WHERE current_station=? AND Is_Received=? AND Is_Assembled=?";
 		try {
-			dbconnection = getConnectionAWS();
+			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
 			pst.setString(1, "Wait_To_Burn_In");
 			pst.setBoolean(2, true);
@@ -601,7 +620,7 @@ public class DBHandler {
 		ArrayList<String> result = new ArrayList<>();
 		String query = "SELECT controller_barcode FROM controllers WHERE current_station=? AND Is_Received=? AND Is_Assembled=?";
 		try {
-			dbconnection = getConnectionAWS();
+			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
 			pst.setString(1, "Burn In Station");
 			pst.setBoolean(2, true);
@@ -631,13 +650,12 @@ public class DBHandler {
 		return result;
 	}
 
-	
 	// Fetch all Controller Which are passed / fail
 	public List<String> getAllPassedOrFail(boolean isPassed) {
 		ArrayList<String> result = new ArrayList<>();
 		String query = "SELECT controller_barcode FROM controllers WHERE current_station=? AND Is_Received=? AND Is_Assembled=? AND Is_Burn_In_Done=? AND Is_Passed=?";
 		try {
-			dbconnection = getConnectionAWS();
+			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
 			pst.setString(1, "Result Station");
 			pst.setBoolean(2, true);
@@ -669,14 +687,14 @@ public class DBHandler {
 		return result;
 	}
 
-		// ==========================================================
+	// ==========================================================
 	public String getStatusDone(String column, String barcode) {
 		String result = "";
 
 		String query = "SELECT " + column + " FROM controllers WHERE controller_barcode=?";
 
 		try {
-			dbconnection = getConnectionAWS();
+			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
 			pst.setString(1, barcode);
 			rs = pst.executeQuery();
@@ -701,16 +719,6 @@ public class DBHandler {
 		}
 
 		return result;
-	}
-
-	public void shutdown() {
-		try {
-			dbconnection.close();
-			System.out.println("====Database close====");
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
 	}
 
 }

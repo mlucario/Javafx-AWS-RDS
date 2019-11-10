@@ -39,7 +39,7 @@ public class MainApp extends Application {
 //        stage.setResizable(false);
 		stage.setMinWidth(700);
 		stage.setMinHeight(800);
-		stage.setAlwaysOnTop(true);
+//		stage.setAlwaysOnTop(true);
 		stage.show();
 
 	}

@@ -2,7 +2,7 @@ package com.quy.controllers;
 
 import java.net.URL;
 import java.sql.Connection;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import com.jfoenix.controls.JFXButton;
@@ -18,6 +18,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
@@ -46,6 +47,13 @@ public class SignInController extends Controller implements Initializable {
 
 	@FXML
 	private JFXButton btnSignUp;
+
+	@FXML
+	private HBox hboxSignUp;
+	@FXML
+	private HBox hboxUsername;
+	@FXML
+	private HBox hboxPassword;
 
 	private DBHandler dbHandler;
 	private double x, y;
@@ -77,13 +85,20 @@ public class SignInController extends Controller implements Initializable {
 		y = event.getSceneY();
 	}
 
+	/**
+	 * Login Method Will check the username with database and get key and password
+	 * To verify and compare with verifyPassword method
+	 * 
+	 * @param event the event
+	 */
 	@FXML
 	void login(ActionEvent event) {
 		if (txtUsername.validate() && txtPassword.validate()) {
 			String username = txtUsername.getText();
 			String password = txtPassword.getText();
-			ArrayList<String> result = dbHandler.getPasswordAndSaltKey(username);
+			List<String> result = dbHandler.getPasswordAndSaltKey(username);
 			if (result.size() == 3) {
+				// Verify input
 				if (verifyPassword(password, result.get(1), result.get(0))) {
 					// Go to dashboard
 					String type = result.get(2);
@@ -95,14 +110,14 @@ public class SignInController extends Controller implements Initializable {
 
 				} else {
 					count++;
-					System.out.println("Fail Sign In");
+					LOGGER.error("Fail Sign In");
 
 					if (count == 3) {
 						warningAlert("You failed 3 times. Application will close.");
 						close(event);
 					} else {
 						warningAlert("Your username or password are not corrected. Please Sign In again!.");
-						txtPassword.setText("");
+						txtPassword.clear();
 					}
 				}
 
@@ -133,16 +148,20 @@ public class SignInController extends Controller implements Initializable {
 		count = 0;
 		textFieldFormat(txtUsername, "Username is required!", false);
 		textFieldFormat(txtPassword, "Password is required!");
-
+		hboxPassword.setVisible(false);
+		hboxSignUp.setVisible(false);
+		hboxUsername.setVisible(false);
+		btnSignIn.setVisible(false);
+		btnSignIn.setDisable(true);
 		// Loading Screen Until Connected To Database
 
 		PauseTransition pt = new PauseTransition();
-		pt.setDuration(Duration.seconds(1));
+		pt.setDuration(Duration.millis(800));
 		pt.setOnFinished(e -> {
 
 			String content = "There is a problem with the database or connection. Please close application and contact admin.";
 			try {
-				Connection connection = dbHandler.getConnectionAWS();
+				Connection connection = dbHandler.getConnection();
 
 				if (connection.isValid(1)) {
 					loginScreen();
@@ -153,51 +172,53 @@ public class SignInController extends Controller implements Initializable {
 
 			} catch (Exception e1) {
 				loadingScreen();
-				e1.printStackTrace();
+				LOGGER.error("Connection Failed!: {} ", e1.getMessage());
 				txtLoading.setText("Database Fail");
 				txtLoading.setFill(Color.RED);
 				txtLoading.setTextAlignment(TextAlignment.CENTER);
 				warningAlert(content);
 			}
 		});
+		txtUsername.setText("a1956");
+		txtPassword.setText("1234567Aa");
 		pt.play();
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				txtUsername.requestFocus();
-			}
-		});
-		txtUsername.setOnAction(e -> {
-			txtPassword.requestFocus();
-		});
+		Platform.runLater(() -> txtUsername.requestFocus());
+		txtUsername.setOnAction(e -> txtPassword.requestFocus());
 
-		txtPassword.setOnAction(e -> {
-			login(e);
-		});
+		txtPassword.setOnAction(e -> login(e));
+
+	}
+
+	public boolean isValidInput() {
+		boolean result = false;
+
+		if (txtUsername.validate() && txtPassword.validate()) {
+			result = true;
+		}
+
+		btnSignIn.setDisable(!result);
+		return result;
 
 	}
 
 	public void loadingScreen() {
-		txtUsername.setDisable(true);
-		txtPassword.setDisable(true);
-		btnSignIn.setVisible(false);
-		btnSignUp.setDisable(true);
-		txtSuccess.setDisable(true);
+		txtSuccess.setVisible(false);
+		hboxPassword.setVisible(false);
+		hboxSignUp.setVisible(false);
+		hboxUsername.setVisible(false);
 
 	}
 
 	public void loginScreen() {
 		txtLoading.setText("Connected!");
-		txtUsername.setDisable(false);
-		txtPassword.setDisable(false);
-		btnSignIn.setDisable(false);
-		btnSignUp.setDisable(false);
+		btnSignIn.setVisible(true);
+		hboxPassword.setVisible(true);
+		hboxSignUp.setVisible(true);
+		hboxUsername.setVisible(true);
+
 		txtSuccess.setVisible(true);
 		txtLoading.setVisible(false);
 		txtSpinner.setVisible(false);
-
-		txtUsername.setText("a1956");
-		txtPassword.setText("1234567Aa");
 
 	}
 

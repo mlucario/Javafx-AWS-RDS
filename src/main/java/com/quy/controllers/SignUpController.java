@@ -1,6 +1,8 @@
 package com.quy.controllers;
 
 import java.net.URL;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Optional;
 import java.util.Random;
 import java.util.ResourceBundle;
@@ -34,7 +36,13 @@ public class SignUpController extends Controller implements Initializable {
 	@FXML
 	private JFXButton btnSignIn;
 	private DBHandler dbHandler;
-	private double x, y;
+	private double x;
+	private double y;
+	private Random rd;
+	private boolean inputUsername;
+	private boolean inputPassword;
+	private boolean inputConfirmPassword;
+	private boolean isValidInput = inputUsername && inputPassword && inputConfirmPassword;
 
 	@FXML
 	void dragged(MouseEvent event) {
@@ -51,95 +59,149 @@ public class SignUpController extends Controller implements Initializable {
 
 	@FXML
 	void signInPressed(ActionEvent event) {
-		System.out.println("Go back sign in");
+		LOGGER.info("Go back sign in");
 		goToScene(LOGIN_SCENE, btnSignIn, false);
 	}
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		// TODO Auto-generated method stub
 		dbHandler = new DBHandler();
-		
-		textFieldFormat(txtUsername, "Username is required!",false);
+		textFieldFormat(txtUsername, "Username is required!", false);
 		textFieldFormat(txtPassword1, "Password is required!");
 		textFieldFormat(txtPassword2, "Confirm Password is required!");
-		
+		inputUsername = true;
+		inputPassword = true;
+		inputConfirmPassword = true;
+		btnSignUp.setDisable(true);
 		txtUsername.setOnAction(e -> {
 			txtPassword1.requestFocus();
 		});
-		
+
 		txtPassword1.setOnAction(e -> {
 			txtPassword2.requestFocus();
 		});
 		txtPassword2.setOnAction(e -> {
 			signUpAction(e);
 		});
-		
+
 	}
 
 	@FXML
 	void signUpAction(ActionEvent event) {
-		String username = txtUsername.getText().toLowerCase();
-		String password1 = txtPassword1.getText();
-		String password2 = txtPassword2.getText();
-		String time = formatter.format(sqlDate);
-		
+		try {
+			rd = SecureRandom.getInstanceStrong();
 
-		if(txtUsername.validate() ==false) {
-			warningAlert("Username is required. Enter valid username");
-			txtUsername.requestFocus();
-		}else if(txtPassword1.validate() ==false) {			
-			warningAlert("Password is required. Enter valid Password");
-			txtPassword1.requestFocus();
-		}else if(txtPassword2.validate() ==false) {
-			warningAlert("Confirm Password is required. Enter valid Confirm Password");
-			txtPassword2.requestFocus();
-		}else if(!password1.equals(password2)) {			
-			warningAlert("Two Password are different. Enter valid Confirm Password");
-			txtPassword2.setText("");
-			txtPassword2.requestFocus();
-		}else if(dbHandler.isUserExist(username)){
-			warningAlert("Username is exist!. Enter other username");
-			txtUsername.setText("");
-			txtUsername.requestFocus();
-		}else {
-			Random rd = new Random();
-			int tempRandomInt =rd.nextInt(256)+1;
-			System.out.println("random number : " + tempRandomInt);
-			
-			Optional<String> tempSalt = generateSalt(tempRandomInt);
-			String tempStringSalt = tempSalt.get();
-			System.out.println("tempStringSalt passowrd" + tempStringSalt);
-			Optional<String> hashPassword = hashPassword(password1, tempStringSalt);
-			String hashingPassword = hashPassword.get();
-			System.out.println("Hashing passowrd" + hashingPassword);
-			
-			boolean result = dbHandler.signup(username, hashingPassword, tempStringSalt, time);
-			if(result) {
-				Alert alert = new Alert(AlertType.CONFIRMATION);
-				alert.setTitle("Create Account Successfully");
-				alert.setHeaderText(null);
-				alert.setContentText("Your account created. Please take note your account \r\n"
-						+ "Username: "+ username
-						+ "\r\nPassword: " + password1
-						+"\r\nOK to go back Login. Cancel to close application.");
+			if (isValidInput) {
+				String username = txtUsername.getText().toLowerCase();
+				String password1 = txtPassword1.getText();
+				String time = formatter.format(sqlDate);
 
-				Optional<javafx.scene.control.ButtonType> resultAlert = alert.showAndWait();
-				if (resultAlert.get() == javafx.scene.control.ButtonType.OK) {
-					goToScene(LOGIN_SCENE, btnSignUp, false);
+				int tempRandomInt = rd.nextInt(256) + 1;
+				LOGGER.debug("random number : %d", tempRandomInt);
+
+				Optional<String> tempSalt = generateSalt(tempRandomInt);
+				if (tempSalt.isPresent()) {
+					String tempStringSalt = tempSalt.get();
+					LOGGER.debug("tempStringSalt passowrd %s", tempStringSalt);
+
+					Optional<String> hashPassword = hashPassword(password1, tempStringSalt);
+					if (hashPassword.isPresent()) {
+						String hashingPassword = hashPassword.get();
+						LOGGER.debug("Hashing passowrd %s", hashingPassword);
+						boolean result = dbHandler.signup(username, hashingPassword, tempStringSalt, time);
+						if (result) {
+							Alert alert = new Alert(AlertType.CONFIRMATION);
+							alert.setTitle("Create Account Successfully");
+							alert.setHeaderText(null);
+							alert.setContentText("Your account created. Please take note your account \r\n"
+									+ "Username: " + username + "\r\nPassword: " + password1
+									+ "\r\nOK to go back Login. Cancel to close application.");
+
+							Optional<javafx.scene.control.ButtonType> resultAlert = alert.showAndWait();
+							if (resultAlert.isPresent()) {
+								if (resultAlert.get() == javafx.scene.control.ButtonType.OK) {
+									goToScene(LOGIN_SCENE, btnSignUp, false);
+								} else {
+									close(event);
+								}
+							} else {
+								LOGGER.error("Cannot modify Ok/Cancel button Default!");
+							}
+
+						} else {
+							warningAlert("Cannot create your account. Contact with manager to help.");
+						}
+
+					} else {
+						LOGGER.error("FAIL to encrypte password ( Hashing fail)!");
+					}
+
 				} else {
-					close(event);
+					LOGGER.error("FAIL to generate Salt Key!");
 				}
-				
-			}else {
-				warningAlert("Cannot create your account. Contact with manager to help.");
-			}
-			
-		}
-		
 
+			} else {
+				warningAlert("Cannot create your account. Inputs are invalid.");
+				LOGGER.error("Cannot create acccount");
+			}
+		} catch (NoSuchAlgorithmException e) {
+
+			LOGGER.error("Cannot create random object : %s", e.getMessage());
+		}
+
+		txtPassword1.clear();
+		txtPassword2.clear();
+		txtUsername.clear();
 
 	}
 
-	
+	public boolean isInputUsernameValid() {
+		boolean flag = false;
+		if (txtUsername.validate()) {
+			if (dbHandler.isUserExist(txtUsername.getText().toLowerCase())) {
+				warningAlert("Username is exist!. Enter other username");
+				txtUsername.clear();
+				txtUsername.requestFocus();
+			} else {
+				flag = true;
+
+			}
+		} else {
+			warningAlert("Please enter Username to continute");
+		}
+		this.inputUsername = flag;
+		btnSignUp.setDisable(!isValidInput);
+		return flag;
+	}
+
+	public boolean isPasswordValid() {
+
+		boolean flag = false;
+		// TODO Can implement safe password at here
+		if (txtPassword1.validate()) {
+			flag = true;
+
+		}
+		this.inputPassword = flag;
+		btnSignUp.setDisable(!isValidInput);
+		return flag;
+	}
+
+	public boolean isConfirmPasswordValid() {
+		boolean flag = false;
+		if (txtPassword2.validate() && isPasswordValid()) {
+
+			if (txtPassword1.getText().equals(txtPassword2.getText())) {
+				flag = true;
+			} else {
+				warningAlert("Two Password are different. Enter valid Confirm Password");
+				txtPassword2.clear();
+				txtPassword2.requestFocus();
+			}
+		}
+		this.inputConfirmPassword = flag;
+		btnSignUp.setDisable(!isValidInput);
+		return flag;
+	}
+
 }

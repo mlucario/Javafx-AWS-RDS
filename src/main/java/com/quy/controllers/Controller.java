@@ -19,6 +19,8 @@ import java.util.concurrent.Executors;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.controlsfx.control.Notifications;
 
 import com.jfoenix.controls.JFXButton;
@@ -65,7 +67,7 @@ public class Controller {
 	protected java.sql.Timestamp sqlTime;
 	protected final String PATTERN_MODEL = "(SMC-)\\w+\\s{1}\\w+";
 	protected final String PATTERN_BARCODE = "(30N0)\\d{8}";
-
+	protected final Logger LOGGER = LogManager.getLogger("SQL Connector");
 	// List of scene
 	protected final String LOGIN_SCENE = "SignInScene";
 	protected final String SIGNUP_SCENE = "SignUpScene";

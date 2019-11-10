@@ -81,9 +81,9 @@
                               </VBox>
                            </children>
                         </StackPane>
-                        <HBox alignment="CENTER">
+                        <HBox fx:id="hboxUsername" alignment="CENTER">
                            <children>
-                              <JFXTextField fx:id="txtUsername" focusColor="#ff5900" labelFloat="true" prefHeight="40.0" prefWidth="300.0" promptText="Username">
+                              <JFXTextField fx:id="txtUsername" focusColor="#ff5900" labelFloat="true" onKeyReleased="#isValidInput" prefHeight="40.0" prefWidth="300.0" promptText="Username">
                                  <font>
                                     <Font name="System Bold" size="18.0" />
                                  </font></JFXTextField>
@@ -97,9 +97,9 @@
                               <Insets bottom="20.0" left="50.0" right="50.0" top="20.0" />
                            </VBox.margin>
                         </HBox>
-                        <HBox alignment="CENTER">
+                        <HBox fx:id="hboxPassword" alignment="CENTER">
                            <children>
-                              <JFXPasswordField fx:id="txtPassword" focusColor="#ff5900" labelFloat="true" onAction="#login" prefHeight="40.0" prefWidth="300.0" promptText="Password">
+                              <JFXPasswordField fx:id="txtPassword" focusColor="#ff5900" labelFloat="true" onAction="#login" onKeyReleased="#isValidInput" prefHeight="40.0" prefWidth="300.0" promptText="Password">
                                  <font>
                                     <Font name="System Bold" size="18.0" />
                                  </font></JFXPasswordField>
@@ -121,7 +121,7 @@
                               <Insets top="20.0" />
                            </VBox.margin>
                         </JFXButton>
-                        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                        <HBox fx:id="hboxSignUp" alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                            <children>
                               <Text fill="#f40000" strokeType="OUTSIDE" strokeWidth="0.0" text="Don't Have An Account?">
                                  <font>
