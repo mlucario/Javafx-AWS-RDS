@@ -39,10 +39,6 @@ public class SignUpController extends Controller implements Initializable {
 	private double x;
 	private double y;
 	private Random rd;
-	private boolean inputUsername;
-	private boolean inputPassword;
-	private boolean inputConfirmPassword;
-	private boolean isValidInput = inputUsername && inputPassword && inputConfirmPassword;
 
 	@FXML
 	void dragged(MouseEvent event) {
@@ -69,33 +65,26 @@ public class SignUpController extends Controller implements Initializable {
 		textFieldFormat(txtUsername, "Username is required!", false);
 		textFieldFormat(txtPassword1, "Password is required!");
 		textFieldFormat(txtPassword2, "Confirm Password is required!");
-		inputUsername = true;
-		inputPassword = true;
-		inputConfirmPassword = true;
 		btnSignUp.setDisable(true);
-		txtUsername.setOnAction(e -> {
-			txtPassword1.requestFocus();
-		});
+		txtUsername.setOnAction(e -> txtPassword1.requestFocus());
 
-		txtPassword1.setOnAction(e -> {
-			txtPassword2.requestFocus();
-		});
-		txtPassword2.setOnAction(e -> {
-			signUpAction(e);
-		});
+		txtPassword1.setOnAction(e -> txtPassword2.requestFocus());
+		txtPassword2.setOnAction(e -> signUpAction(e));
 
 	}
 
 	@FXML
-	void signUpAction(ActionEvent event) {
-		try {
-			rd = SecureRandom.getInstanceStrong();
+	boolean signUpAction(ActionEvent event) {
 
-			if (isValidInput) {
-				String username = txtUsername.getText().toLowerCase();
-				String password1 = txtPassword1.getText();
-				String time = formatter.format(sqlDate);
-
+		String username = txtUsername.getText().toLowerCase();
+		String password1 = txtPassword1.getText();
+		String password2 = txtPassword2.getText();
+		String time = getCurrentTimeStamp();
+		String restInput = checkInput(username, password1, password2);
+		boolean flag = false;
+		if (restInput.isEmpty()) {
+			try {
+				rd = SecureRandom.getInstanceStrong();
 				int tempRandomInt = rd.nextInt(256) + 1;
 				LOGGER.debug("random number : %d", tempRandomInt);
 
@@ -110,6 +99,7 @@ public class SignUpController extends Controller implements Initializable {
 						LOGGER.debug("Hashing passowrd %s", hashingPassword);
 						boolean result = dbHandler.signup(username, hashingPassword, tempStringSalt, time);
 						if (result) {
+							flag = true;
 							Alert alert = new Alert(AlertType.CONFIRMATION);
 							alert.setTitle("Create Account Successfully");
 							alert.setHeaderText(null);
@@ -140,67 +130,41 @@ public class SignUpController extends Controller implements Initializable {
 					LOGGER.error("FAIL to generate Salt Key!");
 				}
 
-			} else {
-				warningAlert("Cannot create your account. Inputs are invalid.");
-				LOGGER.error("Cannot create acccount");
-			}
-		} catch (NoSuchAlgorithmException e) {
+			} catch (NoSuchAlgorithmException e) {
 
-			LOGGER.error("Cannot create random object : %s", e.getMessage());
+				LOGGER.error("Cannot create random object : %s", e.getMessage());
+			}
+
+		} else {
+			warningAlert(restInput);
 		}
 
 		txtPassword1.clear();
 		txtPassword2.clear();
 		txtUsername.clear();
-
-	}
-
-	public boolean isInputUsernameValid() {
-		boolean flag = false;
-		if (txtUsername.validate()) {
-			if (dbHandler.isUserExist(txtUsername.getText().toLowerCase())) {
-				warningAlert("Username is exist!. Enter other username");
-				txtUsername.clear();
-				txtUsername.requestFocus();
-			} else {
-				flag = true;
-
-			}
-		} else {
-			warningAlert("Please enter Username to continute");
-		}
-		this.inputUsername = flag;
-		btnSignUp.setDisable(!isValidInput);
 		return flag;
+
 	}
 
-	public boolean isPasswordValid() {
+	public String checkInput(String username, String password1, String password2) {
+		String result = "";
+		if (dbHandler.isUserExist(username)) {
+			result += username + " is exist. Please choice other username!\r\n";
+		}
+		if (!password1.equalsIgnoreCase(password2)) {
+			result += "Two passwords are different! Type it agains.";
+		}
 
+		return result;
+	}
+
+	public boolean isValidInput() {
 		boolean flag = false;
-		// TODO Can implement safe password at here
-		if (txtPassword1.validate()) {
+
+		if (txtUsername.validate() && txtPassword1.validate() && txtPassword2.validate()) {
 			flag = true;
-
 		}
-		this.inputPassword = flag;
-		btnSignUp.setDisable(!isValidInput);
-		return flag;
-	}
-
-	public boolean isConfirmPasswordValid() {
-		boolean flag = false;
-		if (txtPassword2.validate() && isPasswordValid()) {
-
-			if (txtPassword1.getText().equals(txtPassword2.getText())) {
-				flag = true;
-			} else {
-				warningAlert("Two Password are different. Enter valid Confirm Password");
-				txtPassword2.clear();
-				txtPassword2.requestFocus();
-			}
-		}
-		this.inputConfirmPassword = flag;
-		btnSignUp.setDisable(!isValidInput);
+		btnSignUp.setDisable(!flag);
 		return flag;
 	}
 

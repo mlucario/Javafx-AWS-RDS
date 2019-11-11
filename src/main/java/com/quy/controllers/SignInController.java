@@ -56,7 +56,8 @@ public class SignInController extends Controller implements Initializable {
 	private HBox hboxPassword;
 
 	private DBHandler dbHandler;
-	private double x, y;
+	private double x;
+	private double y;
 	private int count;
 	private static SignInController instance;
 
@@ -96,7 +97,7 @@ public class SignInController extends Controller implements Initializable {
 		if (txtUsername.validate() && txtPassword.validate()) {
 			String username = txtUsername.getText();
 			String password = txtPassword.getText();
-			List<String> result = dbHandler.getPasswordAndSaltKey(username);
+			List<String> result = dbHandler.login(username);
 			if (result.size() == 3) {
 				// Verify input
 				if (verifyPassword(password, result.get(1), result.get(0))) {
@@ -148,6 +149,7 @@ public class SignInController extends Controller implements Initializable {
 		count = 0;
 		textFieldFormat(txtUsername, "Username is required!", false);
 		textFieldFormat(txtPassword, "Password is required!");
+		txtSuccess.setVisible(false);
 		hboxPassword.setVisible(false);
 		hboxSignUp.setVisible(false);
 		hboxUsername.setVisible(false);
@@ -162,7 +164,6 @@ public class SignInController extends Controller implements Initializable {
 			String content = "There is a problem with the database or connection. Please close application and contact admin.";
 			try {
 				Connection connection = dbHandler.getConnection();
-
 				if (connection.isValid(1)) {
 					loginScreen();
 
@@ -179,8 +180,10 @@ public class SignInController extends Controller implements Initializable {
 				warningAlert(content);
 			}
 		});
+
+		// TODO Remove after test done
 		txtUsername.setText("a1956");
-		txtPassword.setText("1234567Aa");
+		txtPassword.setText("1234567Aa@");
 		pt.play();
 		Platform.runLater(() -> txtUsername.requestFocus());
 		txtUsername.setOnAction(e -> txtPassword.requestFocus());
@@ -206,7 +209,7 @@ public class SignInController extends Controller implements Initializable {
 		hboxPassword.setVisible(false);
 		hboxSignUp.setVisible(false);
 		hboxUsername.setVisible(false);
-
+		txtSuccess.setVisible(false);
 	}
 
 	public void loginScreen() {
@@ -215,7 +218,6 @@ public class SignInController extends Controller implements Initializable {
 		hboxPassword.setVisible(true);
 		hboxSignUp.setVisible(true);
 		hboxUsername.setVisible(true);
-
 		txtSuccess.setVisible(true);
 		txtLoading.setVisible(false);
 		txtSpinner.setVisible(false);

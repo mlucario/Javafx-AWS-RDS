@@ -38,10 +38,6 @@ public class ReceivingController extends Controller implements Initializable {
 	@FXML
 	private JFXTreeTableView<SMCController> treeView;
 
-//	// Needed Notification
-//	private Notifications notification;
-//	private Node graphic;
-
 	private DBHandler dbHandler;
 	protected String currentUser = SignInController.getInstance().username();
 	private ObservableList<SMCController> barcode = FXCollections.observableArrayList();
@@ -66,23 +62,26 @@ public class ReceivingController extends Controller implements Initializable {
 		}
 
 		else {
-			String controller_barcode = getStringJFXTextField(txtControllerBarcode);
+			String serialNumber = getStringJFXTextField(txtControllerBarcode);
 			String model = getStringJFXTextField(txtModel);
-
-			if (!dbHandler.isBarcodeExist(controller_barcode)) {
-				String result = dbHandler.addNewController(model, controller_barcode, getCurrentTimeStamp());
-				if (result.equalsIgnoreCase(controller_barcode)) {
-					addBarcodeToTable(barcode, controller_barcode);
+			String lotId = generatorLotId();
+			if (!dbHandler.isBarcodeExist(serialNumber)) {
+				String result = dbHandler.addNewController(model, serialNumber, getCurrentTimeStamp(), lotId);
+				if (result.equalsIgnoreCase(serialNumber)) {
+					addBarcodeToTable(barcode, serialNumber);
 					notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null,
 							"Add New Controller Successfully", 2);
 					notification.showInformation();
-					dbHandler.addToHistoryRecord(currentUser, "Receiving Station", getCurrentTimeStamp(),
-							controller_barcode, "");
+					dbHandler.addToHistoryRecord(currentUser, "Receiving Station", getCurrentTimeStamp(), serialNumber,
+							"");
 				} else {
 					warningAlert(result);
 				}
 			} else {
-				warningAlert(controller_barcode + " already added! Try add other controller.");
+				// If serial number added, lotId different => rework handler
+				warningAlert(serialNumber + " already added! Try add other controller.");
+				int reworkTimes = dbHandler.getLastestReWorkCount(serialNumber);
+				System.out.println(serialNumber + " RW : " + reworkTimes);
 			}
 		}
 
@@ -99,46 +98,6 @@ public class ReceivingController extends Controller implements Initializable {
 		textFieldFormat(txtControllerBarcode, "Controller barcode is required", true);
 		textFieldFormat(txtModel, "Controller Model is required", true);
 		btnSubmit.setDisable(true);
-
-//		listModels = new ArrayList<>();
-//
-//
-//		exec = Executors.newCachedThreadPool(runnable -> {
-//			Thread t = new Thread(runnable);
-//			t.setDaemon(true);
-//			return t;
-//		});
-//
-//		Task<List<String>> getModelsTask = new Task<List<String>>() {
-//			@Override
-//			public List<String> call() throws Exception {
-//				return dbHandler.getAllModels();
-//			}
-//		};
-//
-//		getModelsTask.setOnFailed(e -> {
-//			getModelsTask.getException().printStackTrace();
-//
-//			warningAlert("Cannot fetch models");
-//		});
-//
-//		getModelsTask.setOnSucceeded(e -> {
-//
-//			System.out.println("get all models");
-//			listModels.addAll(getModelsTask.getValue());
-//			comboModel.getItems().addAll(listModels);
-//		});
-//
-//		exec.execute(getModelsTask);
-//		comboModel.setOnAction(e -> {
-//			txtBoxBarcode.requestFocus();
-//		});
-
-//		txtModel.textProperty().addListener((observable, oldValue, newValue) -> {
-//			if (!oldValue.equalsIgnoreCase(newValue)) {
-//			
-//			}
-//		});
 
 		txtModel.setOnAction(e -> {
 			String tempModel = isModelvalid(txtModel);
@@ -182,26 +141,6 @@ public class ReceivingController extends Controller implements Initializable {
 
 		// setup tree view
 		treeviewTableBuilder(treeView, barcode, RECEIVING_STATION);
-
-//		JFXTreeTableColumn<SMCController, String> controlBarcode = new JFXTreeTableColumn<>("Controller Barcode");
-//
-//		controlBarcode.prefWidthProperty().bind(treeView.widthProperty().multiply(0.975));
-//		controlBarcode.setResizable(false);
-//		controlBarcode.setSortable(false);
-//
-//		controlBarcode.setCellValueFactory((TreeTableColumn.CellDataFeatures<SMCController, String> param) -> {
-//			if (controlBarcode.validateValue(param))
-//				return param.getValue().getValue().getControllerBarcode();
-//			else
-//				return controlBarcode.getComputedValue(param);
-//		});
-//
-//
-//		final TreeItem<SMCController> root = new RecursiveTreeItem<SMCController>(barcode,
-//				RecursiveTreeObject::getChildren);
-//		treeView.getColumns().setAll(controlBarcode);
-//		treeView.setRoot(root);
-//		treeView.setShowRoot(false);
 
 	}
 

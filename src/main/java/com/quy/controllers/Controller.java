@@ -61,22 +61,23 @@ import javafx.util.Duration;
 
 public class Controller {
 	protected final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
-	protected final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
+	protected static final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
+	protected static final DateTimeFormatter dtf2 = DateTimeFormatter.ofPattern("MMddyy");
 	protected Date date;
 	protected java.sql.Date sqlDate;
 	protected java.sql.Timestamp sqlTime;
-	protected final String PATTERN_MODEL = "(SMC-)\\w+\\s{1}\\w+";
-	protected final String PATTERN_BARCODE = "(30N0)\\d{8}";
-	protected final Logger LOGGER = LogManager.getLogger("SQL Connector");
+	protected static final String PATTERN_MODEL = "(SMC-)\\w+\\s{1}\\w+";
+	protected static final String PATTERN_BARCODE = "(30N0)\\d{8}";
+	protected static final Logger LOGGER = LogManager.getLogger("SQL Connector");
 	// List of scene
-	protected final String LOGIN_SCENE = "SignInScene";
-	protected final String SIGNUP_SCENE = "SignUpScene";
-	protected final String USER_DASHBOARD_SCENE = "UserDashboardScene";
-	protected final String ADMIN_DASHBOARD_SCENE = "AdminDashboardScene";
-	protected final String RECEIVING_STATION_SCENE = "/fxml/ui/users/ReceivingStationScene.fxml";
-	protected final String ASSEMBLY_STATION_SCENE = "/fxml/ui/users/AssemblyStationScene.fxml";
-	protected final String BURN_IN_STATION_SCENE = "/fxml/ui/users/BurnInStationScene.fxml";
-	protected final String RESULT_STATION_SCENE = "/fxml/ui/users/ResultStation.fxml";
+	protected static final String LOGIN_SCENE = "SignInScene";
+	protected static final String SIGNUP_SCENE = "SignUpScene";
+	protected static final String USER_DASHBOARD_SCENE = "UserDashboardScene";
+	protected static final String ADMIN_DASHBOARD_SCENE = "AdminDashboardScene";
+	protected static final String RECEIVING_STATION_SCENE = "/fxml/ui/users/ReceivingStationScene.fxml";
+	protected static final String ASSEMBLY_STATION_SCENE = "/fxml/ui/users/AssemblyStationScene.fxml";
+	protected static final String BURN_IN_STATION_SCENE = "/fxml/ui/users/BurnInStationScene.fxml";
+	protected static final String RESULT_STATION_SCENE = "/fxml/ui/users/ResultStation.fxml";
 
 	// Hashing Password
 	private static final SecureRandom RAND = new SecureRandom();
@@ -85,39 +86,82 @@ public class Controller {
 	private static final String ALGORITHM = "PBKDF2WithHmacSHA512";
 
 	// List Resource Path
-	protected final String IMAGE_PATH = "/images/";
+	protected static final String IMAGE_PATH = "/images/";
 
 	// List Stations
-	protected final String RECEIVING_STATION = "Receiving Station";
-	protected final String ASSEMBLY_STATION = "Assembly Station";
-	protected final String RE_ASSEMBLY_STATION = "Re_Assembly Station";
-	protected final String BURN_IN_STATION = "Burn In Station";
-	protected final String RESULT_STATION = "Result Station";
-	protected final String REPAIR_STATION = "Repair Station";
-	protected final String PACKING_STATION = "Packing Station";
-	protected final String SHIPPING_STATION = "Shipping Station";
+	protected static final String RECEIVING_STATION = "Receiving Station";
+	protected static final String ASSEMBLY_STATION = "Assembly Station";
+	protected static final String RE_ASSEMBLY_STATION = "Re_Assembly Station";
+	protected static final String BURN_IN_STATION = "Burn In Station";
+	protected static final String RESULT_STATION = "Result Station";
+	protected static final String REPAIR_STATION = "Repair Station";
+	protected static final String PACKING_STATION = "Packing Station";
+	protected static final String SHIPPING_STATION = "Shipping Station";
 
 	// Controllers Column
-	protected final String MODEL = "model";
-	protected final String CONTROLLER_BARCODE = "controller_barcode";
-	protected final String CURRENT_STATION = "current_station";
-	protected final String TIME_RECEIVED = "time_received";
-	protected final String TIME_START_ASSEMBLY = "time_start_assembly";
-	protected final String TIME_START_RE_ASSEMBLY = "time_start_re_assembly";
-	protected final String TIME_START_BURN_IN = "time_start_burn_in";
-	protected final String TIME_FINISH_BURN_IN = "time_finish_burn_in";
-	protected final String TIME_PACKED = "time_packed";
-	protected final String TIME_SHIPPED = "time_shipped";
-	protected final String IS_RECEIVED = "Is_Received";
-	protected final String IS_ASSEMBLED = "Is_Assembled";
-	protected final String IS_RE_ASSEMBLED = "Is_Re_Assembled";
-	protected final String IS_BURN_IN_PROCESSING = "Is_Burn_In_Processing";
-	protected final String IS_BURN_IN_DONE = "Is_Burn_In_Done";
-	protected final String IS_PASSED = "Is_Passed";
-	protected final String IS_REPAIRED = "Is_Repaired";
-	protected final String IS_PACKED = "Is_Packed";
-	protected final String IS_SHIPPED = "is_Shipped";
-//	protected final String BURN_IN_PROCESSING = "Burn in processing";
+	protected static final String MODEL = "model";
+	protected static final String CONTROLLER_BARCODE = "controller_barcode";
+	protected static final String CURRENT_STATION = "current_station";
+	protected static final String TIME_RECEIVED = "time_received";
+	protected static final String TIME_START_ASSEMBLY = "time_start_assembly";
+	protected static final String TIME_START_RE_ASSEMBLY = "time_start_re_assembly";
+	protected static final String TIME_START_BURN_IN = "time_start_burn_in";
+	protected static final String TIME_FINISH_BURN_IN = "time_finish_burn_in";
+	protected static final String TIME_PACKED = "time_packed";
+	protected static final String TIME_SHIPPED = "time_shipped";
+	protected static final String IS_RECEIVED = "Is_Received";
+	protected static final String IS_ASSEMBLED = "Is_Assembled";
+	protected static final String IS_RE_ASSEMBLED = "Is_Re_Assembled";
+	protected static final String IS_BURN_IN_PROCESSING = "Is_Burn_In_Processing";
+	protected static final String IS_BURN_IN_DONE = "Is_Burn_In_Done";
+	protected static final String IS_PASSED = "Is_Passed";
+	protected static final String IS_REPAIRED = "Is_Repaired";
+	protected static final String IS_PACKED = "Is_Packed";
+	protected static final String IS_SHIPPED = "is_Shipped";
+
+	// History Table
+	protected static final String TABLE_HISTORY = "history";
+	protected static final String COL_QA_HISTORY = "QA";
+	protected static final String COL_TIME_HISTORY = "Time";
+	protected static final String COL_STATION_HISTORY = "Station";
+	protected static final String COL_SERIAL_NUMBER_HISTORY = "Controller_Serial_Number";
+	protected static final String COL_NOTE_HISTORY = "Note";
+
+	// Controler Table
+	protected static final String TABLE_CONTROLER = "controllers";
+	protected static final String COL_MODEL_CONTROLER = "Model";
+	protected static final String COL_SERIAL_NUMBER_CONTROLER = "Serial_Number";
+	protected static final String COL_CURRENT_STATION_CONTROLER = "Current_Station";
+	protected static final String COL_RECEIVING_TIME_CONTROLER = "Receiving_Time";
+	protected static final String COL_ASSEMBLY_TIME_CONTROLER = "Assembly_Time";
+	protected static final String COL_RE_ASSEMBLY_TIME_CONTROLER = "Re_Assembly_Time";
+	protected static final String COL_BURN_IN_START_TIME_CONTROLER = "Burn_In_Start";
+	protected static final String COL_BURN_IN_END_TIME_CONTROLER = "Burn_In_End";
+	protected static final String COL_PACKING_TIME_CONTROLER = "Packing_Time";
+	protected static final String COL_SHIPPING_TIME_CONTROLER = "Shipping_Time";
+	protected static final String COL_REPAIR_TIME_CONTROLER = "Repair_Time";
+	protected static final String COL_BURN_IN_RESULT_CONTROLER = "Burn_In_Result";
+	protected static final String COL_LOT_ID_CONTROLER = "Lot_ID";
+	protected static final String COL_IS_RECEIVIING_CONTROLER = "Is_Received";
+	protected static final String COL_IS_ASSEMBLY_DONE_CONTROLER = "Is_Assembly_Done";
+	protected static final String COL_IS_RE_ASSEMBLY_DONE_CONTROLER = "Is_Re_Assembly_Done";
+	protected static final String COL_IS_BURIN_IN_DONE_CONTROLER = "Is_Burn_In_Done";
+	protected static final String COL_IS_BURIN_IN_PROCESSING_CONTROLER = "Is_Burn_In_Processing";
+	protected static final String COL_IS_PACKING_DONE_CONTROLER = "Is_Packing_Done";
+	protected static final String COL_IS_SHIPPING_DONE_CONTROLER = "Is_Shipping_Done";
+	protected static final String COL_IS_REPAIR_DONE_CONTROLER = "Is_Repaired_Done";
+	protected static final String COL_IS_PASSED_CONTROLER = "Is_Passed";
+	protected static final String COL_SYMPTOM_FAIL_CONTROLER = "Symptoms_Fail";
+	protected static final String COL_REWORK_COUNT_CONTROLER = "Re_work_count";
+
+	// User Table
+	protected static final String TABLE_USER = "users";
+	protected static final String COL_USERNAME_USER = "username";
+	protected static final String COL_HASHING_PASSWORD_USER = "hashing_password";
+	protected static final String COL_SALT_KEY_USER = "salt_key";
+	protected static final String COL_TYPE_USER = "user_type";
+	protected static final String COL_IS_ACTIVE_USER = "active";
+	protected static final String COL_CREATE_AT_USER = "created_at";
 
 	// Needed Notification
 	protected Notifications notification;
@@ -164,6 +208,12 @@ public class Controller {
 		stage.close();
 	}
 
+	// Generate LOT_ID by date
+	public String generatorLotId() {
+		date = new Date();
+		sqlTime = new java.sql.Timestamp(date.getTime());
+		return dtf2.format(sqlTime.toLocalDateTime());
+	}
 	// Notification Builder
 
 	public Notifications notificatioBuilder(Pos pos, Node graphic, String title, String text, double timeToStay) {

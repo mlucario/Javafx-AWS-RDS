@@ -58,7 +58,7 @@
                            </VBox.margin></Text>
                         <HBox alignment="CENTER">
                            <children>
-                              <JFXTextField fx:id="txtUsername" focusColor="#ff5900" labelFloat="true" onKeyReleased="#isInputUsernameValid" prefHeight="40.0" prefWidth="300.0" promptText="Enter Username">
+                              <JFXTextField fx:id="txtUsername" focusColor="#ff5900" labelFloat="true" onKeyReleased="#isValidInput" prefHeight="40.0" prefWidth="300.0" promptText="Enter Username">
                                  <font>
                                     <Font name="System Bold" size="18.0" />
                                  </font></JFXTextField>
@@ -74,7 +74,7 @@
                         </HBox>
                         <HBox alignment="CENTER">
                            <children>
-                              <JFXPasswordField fx:id="txtPassword1" focusColor="#ff5900" labelFloat="true" onKeyReleased="#isPasswordValid" prefHeight="40.0" prefWidth="300.0" promptText="Enter Password">
+                              <JFXPasswordField fx:id="txtPassword1" focusColor="#ff5900" labelFloat="true" onKeyReleased="#isValidInput" prefHeight="40.0" prefWidth="300.0" promptText="Enter Password">
                                  <font>
                                     <Font name="System Bold" size="18.0" />
                                  </font></JFXPasswordField>
@@ -90,7 +90,7 @@
                         </HBox>
                         <HBox alignment="CENTER">
                            <children>
-                              <JFXPasswordField fx:id="txtPassword2" focusColor="#ff5900" labelFloat="true" onAction="#signUpAction" onKeyReleased="#isConfirmPasswordValid" prefHeight="40.0" prefWidth="300.0" promptText="Enter Confirm Password">
+                              <JFXPasswordField fx:id="txtPassword2" focusColor="#ff5900" labelFloat="true" onAction="#signUpAction" onKeyReleased="#isValidInput" prefHeight="40.0" prefWidth="300.0" promptText="Enter Confirm Password">
                                  <font>
                                     <Font name="System Bold" size="18.0" />
                                  </font></JFXPasswordField>
