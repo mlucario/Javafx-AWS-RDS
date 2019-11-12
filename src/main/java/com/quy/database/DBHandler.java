@@ -347,6 +347,32 @@ public class DBHandler {
 		return result;
 	}
 
+	public int duplicateRow(String serialNumber, String lotId) {
+		int rowID = -1;
+		String query = "INSERT INTO bizcom_smc.controllers(Lot_ID,Model,Serial_Number,Receiving_Time,Is_Received,Re_Work_Count) "
+				+ "SELECT Lot_ID,Model,Serial_Number,Receiving_Time,Is_Received,Re_Work_Count FROM controllers WHERE Serial_Number=? AND Lot_ID=?";
+		try {
+			dbconnection = getConnection();
+			pst = dbconnection.prepareStatement(query);
+			pst.setString(1, serialNumber);
+			pst.setString(2, lotId);
+
+			rowID = pst.executeUpdate();
+
+		} catch (SQLException e) {
+			LOGGER.error("duplicateRow " + CONNECTION_FAIL, e.getMessage());
+
+		} finally {
+
+			try {
+				pst.close();
+				shutdown();
+			} catch (SQLException e) {
+				LOGGER.error("duplicateRow " + CLOSE_CONNECTION_FAIL, e.getMessage());
+			}
+		}
+		return rowID;
+	}
 	// ==================================================================================================
 
 	// STATION HANDLER METHODS
@@ -390,10 +416,10 @@ public class DBHandler {
 	}
 
 	// ASSEMBLY STATION
-	public String assembly(String serialNumber, String timestamp, int reworkCount) {
+	public String assembly(String serialNumber, String timestamp, int reworkCount, String lotId) {
 		String result = "";
 
-		String query = "UPDATE controllers SET Current_Station=?,Assembly_Time=?,Is_Assembly_Done=?,Re_work_count=? WHERE Serial_Number=?";
+		String query = "UPDATE controllers SET Current_Station=?,Assembly_Time=?,Is_Assembly_Done=?,Re_work_count=? WHERE Serial_Number=? AND Lot_ID=?";
 		try {
 			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
@@ -402,6 +428,7 @@ public class DBHandler {
 			pst.setBoolean(3, true);
 			pst.setInt(4, reworkCount);
 			pst.setString(5, serialNumber);
+			pst.setString(6, lotId);
 			if (pst.executeUpdate() != 0) {
 				result = serialNumber;
 			} else {
@@ -409,7 +436,7 @@ public class DBHandler {
 			}
 
 		} catch (SQLException e) {
-			LOGGER.error("assembly " + CONNECTION_FAIL, e.getMessage());
+			LOGGER.error(ASSEMBLY_STATION + " " + CONNECTION_FAIL, e.getMessage());
 		} finally {
 
 			try {
@@ -418,7 +445,43 @@ public class DBHandler {
 				}
 				shutdown();
 			} catch (SQLException e) {
-				LOGGER.error("assembly " + CLOSE_CONNECTION_FAIL, e.getMessage());
+				LOGGER.error(ASSEMBLY_STATION + " " + CLOSE_CONNECTION_FAIL, e.getMessage());
+			}
+
+		}
+		return result;
+	}
+
+	// RE_ASSEMBLY STATION
+	public String reassembly(String id, String timestamp, int reworkCount) {
+		String result = "";
+
+		String query = "UPDATE controllers SET Current_Station=?,Assembly_Time=?,Is_Assembly_Done=?,Re_work_count=? WHERE ID=?";
+		try {
+			dbconnection = getConnection();
+			pst = dbconnection.prepareStatement(query);
+			pst.setString(1, ASSEMBLY_STATION);
+			pst.setString(2, timestamp);
+			pst.setBoolean(3, true);
+			pst.setInt(4, reworkCount);
+			pst.setString(5, id);
+			if (pst.executeUpdate() != 0) {
+				result = id + "";
+			} else {
+				result = "Update Assembly Station Fail. Please check with manager.";
+			}
+
+		} catch (SQLException e) {
+			LOGGER.error("RE_" + ASSEMBLY_STATION + " " + CONNECTION_FAIL, e.getMessage());
+		} finally {
+
+			try {
+				if (pst != null) {
+					pst.close();
+				}
+				shutdown();
+			} catch (SQLException e) {
+				LOGGER.error("RE_" + ASSEMBLY_STATION + " " + CLOSE_CONNECTION_FAIL, e.getMessage());
 			}
 
 		}

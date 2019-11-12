@@ -2,6 +2,7 @@ package com.quy.controllers.user;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.controls.JFXTreeTableView;
@@ -16,6 +17,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.text.Text;
 
 public class AssemblyStationController extends Controller implements Initializable {
@@ -31,55 +33,91 @@ public class AssemblyStationController extends Controller implements Initializab
 	protected String currentUser = SignInController.getInstance().username();
 	private ObservableList<SMCController> barcode = FXCollections.observableArrayList();
 	private int count;
-	private boolean currentInputValid;
 
 	@FXML
-	public boolean isValidInput() {
-		boolean result = false;
+	public String isValidInput() {
+		String result = "";
+		result = isBarcodeValid(txtControllerBarcode);
+		if (result.isEmpty()) {
+			String serialNumber = getStringJFXTextField(txtControllerBarcode);
+			String currentStatus = dbHandler.getStatusDone(COL_CURRENT_STATION_CONTROLER, serialNumber);
+			if (!dbHandler.isBarcodeExist(serialNumber)) {
+				result = "\r\n Serial Number does not exist!";
+			} else if (currentStatus.equalsIgnoreCase(ASSEMBLY_STATION)) {
+				result = "\r\n Serial Number has Assemsbly DONE!";
+			} else if (currentStatus.equalsIgnoreCase(SHIPPING_STATION)) {
+				result = "\r\n Serial Number has been shipped. Please ask manager intermediately.";
+			} else {
 
-		if (isBarcodeValid(txtControllerBarcode).isEmpty()) {
+			}
+		}
+
+		return result;
+	}
+
+	public void keyPressValidate() {
+		boolean result = false;
+		if (txtControllerBarcode.validate()) {
 			result = true;
 		}
 		btnSubmit.setDisable(!result);
-		currentInputValid = result;
-		return result;
 	}
 
 	@FXML
 	void submit(ActionEvent event) {
-		if (!currentInputValid) {
-			warningAlert(isBarcodeValid(txtControllerBarcode));
-			txtControllerBarcode.clear();
-			txtControllerBarcode.requestFocus();
-		} else {
 
+		if (isValidInput().isEmpty()) {
 			String serialNumber = getStringJFXTextField(txtControllerBarcode);
-			String currentStation = dbHandler.getStatusDone(CURRENT_STATION, serialNumber);
-
-			if (currentStation.equalsIgnoreCase(ASSEMBLY_STATION)) {
-				warningAlert(serialNumber + " is finised assembly step. Go to burn in station.");
-			} else {
-				int reworkCount = Integer.parseInt(dbHandler.getStatusDone(COL_REWORK_COUNT_CONTROLER, serialNumber));
-				// Run follow sequence
-				if (currentStation.equalsIgnoreCase(RECEIVING_STATION)) {
-					String result = dbHandler.assembly(serialNumber, getCurrentTimeStamp(), reworkCount);
-					if (result.equalsIgnoreCase(serialNumber)) {
-						count++;
-						addBarcodeToTable(barcode, serialNumber);
-						dbHandler.addToHistoryRecord(currentUser, ASSEMBLY_STATION, getCurrentTimeStamp(), serialNumber,
-								"");
+			String currentLastestStation = dbHandler.getStatusDone(COL_CURRENT_STATION_CONTROLER, serialNumber);
+			int reworkCount = Integer.parseInt(dbHandler.getStatusDone(COL_REWORK_COUNT_CONTROLER, serialNumber));
+			String timestamp = getCurrentTimeStamp();
+			String lotId = dbHandler.getStatusDone(COL_LOT_ID_CONTROLER, serialNumber);
+			System.out.println(lotId);
+			// Normal sequence
+			if (currentLastestStation.equalsIgnoreCase(RECEIVING_STATION)) {
+				String result = dbHandler.assembly(serialNumber, timestamp, reworkCount, lotId);
+				if (result.equalsIgnoreCase(serialNumber)) {
+					count++;
+					addBarcodeToTable(barcode, serialNumber);
+					String history = dbHandler.addToHistoryRecord(currentUser, ASSEMBLY_STATION, timestamp,
+							serialNumber, "");
+					if (!history.equalsIgnoreCase(serialNumber)) {
+						warningAlert(history);
 					} else {
-						warningAlert(result);
+						notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null, "Assembler Successfully", 2);
+						notification.showInformation();
 					}
-
 				} else {
-					// Rework sequence
-					
+					warningAlert(result);
+				}
 
+			} else {
+				// REWORK PROCESS
+
+				// Duplicate Row and Clear all result
+				String id = dbHandler.duplicateRow(serialNumber, lotId) + "";
+				// do assembly
+				String result = dbHandler.assembly(id, timestamp, ++reworkCount, lotId);
+				if (result.equalsIgnoreCase(id)) {
+					count++;
+					addBarcodeToTable(barcode, serialNumber);
+					String history = dbHandler.addToHistoryRecord(currentUser, ASSEMBLY_STATION, timestamp,
+							serialNumber, "Rework: From" + currentLastestStation + " to " + ASSEMBLY_STATION);
+					if (!history.equalsIgnoreCase(serialNumber)) {
+						warningAlert(history);
+					} else {
+						notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null, "Re_Assembler Successfully",
+								2);
+						notification.showInformation();
+					}
+				} else {
+					warningAlert(result);
 				}
 
 			}
 
+		} else {
+			warningAlert(isValidInput());
 		}
 
 		txtControllerBarcode.clear();
@@ -97,14 +135,9 @@ public class AssemblyStationController extends Controller implements Initializab
 		textFieldFormat(txtControllerBarcode, "Controller barcode is required", true);
 		Platform.runLater(() -> txtControllerBarcode.requestFocus());
 		txtControllerBarcode.setOnAction(e -> {
-			String result = isBarcodeValid(txtControllerBarcode);
-			if (result.isEmpty()) {
-				submit(e);
-			} else {
-				warningAlert(result);
-				txtControllerBarcode.clear();
-				txtControllerBarcode.requestFocus();
-			}
+
+			submit(e);
+
 		});
 		// setup tree view
 		treeviewTableBuilder(treeView, barcode, ASSEMBLY_STATION);

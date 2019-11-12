@@ -11,7 +11,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -54,7 +56,6 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -172,6 +173,19 @@ public class Controller {
 
 	private ExecutorService exec;;
 	private DBHandler dbHandler;
+
+	// HashMap error code
+	protected static final Map<String, String> errorCodes;
+
+	static {
+		errorCodes = new HashMap<>();
+		errorCodes.put("er001", "Serial Number doesn't exist.");
+		errorCodes.put("ar02", "Some article");
+	}
+
+	public String errorMessage(String errorCode) {
+		return errorCodes.get(errorCode);
+	}
 
 	public void textFieldFormat(JFXTextField txt, String warning, boolean isUpperCase) {
 //		txt.setStyle("-fx-text-inner-color: #8e44ad;");
