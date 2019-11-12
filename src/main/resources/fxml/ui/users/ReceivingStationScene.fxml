@@ -11,8 +11,9 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.quy.controllers.user.ReceivingController">
+<AnchorPane fx:id="anchoirReceived" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.quy.controllers.user.ReceivingController">
    <children>
       <StackPane AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
          <children>
@@ -62,6 +63,14 @@
                   <VBox alignment="TOP_CENTER" prefHeight="410.0" prefWidth="188.0">
                      <children>
                         <JFXTreeTableView fx:id="treeView" currentItemsCount="1" style="-fx-font-size: 1.2em; -fx-font-family: Roboto; -fx-border-color: Black; -fx-alignment: Center; -fx-border-width: 1;" />
+                        <Text fx:id="txtCounter" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
+                           <VBox.margin>
+                              <Insets top="15.0" />
+                           </VBox.margin>
+                           <font>
+                              <Font name="Roboto Medium" size="24.0" />
+                           </font>
+                        </Text>
                         <Label text="List Controller Received" textFill="BLUE">
                            <font>
                               <Font name="Roboto Bold" size="15.0" />
@@ -80,4 +89,7 @@
          </children>
       </StackPane>
    </children>
+   <padding>
+      <Insets top="20.0" />
+   </padding>
 </AnchorPane>

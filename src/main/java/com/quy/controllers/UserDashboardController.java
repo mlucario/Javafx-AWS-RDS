@@ -179,13 +179,15 @@ public class UserDashboardController extends Controller implements Initializable
 			// Load fxml into loadPane
 			try {
 				tempPane = FXMLLoader.load(getClass().getResource(scene));
+				vboxLoad.getChildren().clear();
+				vboxLoad.getChildren().add(txtTitleStation);
 				vboxLoad.getChildren().add(tempPane);
-//				paneIntro.getChildren().add(tempPane);
+
 				currentStation = station;
 			} catch (IOException e) {
 				
-				warningAlert("Cannot Run Scene. Please Contact Admin");
-				e.printStackTrace();
+				LOGGER.error("Cannot Run Scene {} " , e.getMessage());
+				
 			}
 		}
 

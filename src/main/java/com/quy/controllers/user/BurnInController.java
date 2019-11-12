@@ -60,7 +60,7 @@ public class BurnInController extends Controller implements Initializable {
 				totalInList++;
 				txtNumber.setText(totalInList + "");
 //				addBarcodeToTable(this.barcode, controller_barcode);
-				// Remove barcode if submit succeffull
+				// Remove barcode if submit successful
 //				int index = 0;
 //				if(currentSelectedBarcode == null) {
 //					for(SMCController smc : barcode) {
@@ -119,7 +119,7 @@ public class BurnInController extends Controller implements Initializable {
 	public boolean isValidIinput() {
 		boolean result = false;
 
-		String temp = isBarcodevalid(this.txtControllerBarcode);
+		String temp = isBarcodeValid(this.txtControllerBarcode);
 
 		if (temp.isEmpty()) {
 			String barcode = getStringJFXTextField(txtControllerBarcode);

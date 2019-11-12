@@ -54,6 +54,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -252,7 +253,7 @@ public class Controller {
 	}
 
 	// Comfirm warning
-	public boolean warningComfirmAlert(String headerText, String contentText) {
+	public boolean warningComfirmAlert(String headerText, String contentText, boolean isSetDefault) {
 		Alert alert = new Alert(AlertType.CONFIRMATION);
 		alert.setTitle("Confirmation alert");
 		alert.setHeaderText(null);
@@ -266,7 +267,7 @@ public class Controller {
 		alert.getButtonTypes().add(ButtonType.OK);
 		alert.getButtonTypes().add(ButtonType.CLOSE);
 		Button okButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
-		okButton.setDefaultButton(false);
+		okButton.setDefaultButton(isSetDefault);
 
 		Optional<javafx.scene.control.ButtonType> result = alert.showAndWait();
 		if (result.get() == javafx.scene.control.ButtonType.OK) {
@@ -308,8 +309,7 @@ public class Controller {
 			home.show();
 
 		} catch (IOException e1) {
-
-			e1.printStackTrace();
+			LOGGER.error("Cannot generate Scene {} ", e1.getMessage());
 		}
 	}
 
@@ -376,8 +376,8 @@ public class Controller {
 		return sqlTime.toString();
 	}
 
-	public boolean isBarcodeValid(String controller_barcode) {
-		return controller_barcode.matches(PATTERN_BARCODE);
+	public boolean isBarcodeValid(String serialNumber) {
+		return serialNumber.matches(PATTERN_BARCODE);
 	}
 
 	public boolean isModelValid(String model) {
@@ -388,11 +388,11 @@ public class Controller {
 		return txt.getText().trim().toUpperCase();
 	}
 
-	public void addBarcodeToTable(ObservableList<SMCController> barcode, String controller_barcode) {
-		barcode.add(new SMCController(controller_barcode));
+	public void addBarcodeToTable(ObservableList<SMCController> barcode, String serialNumber) {
+		barcode.add(new SMCController(serialNumber));
 	}
 
-	public String isModelvalid(JFXTextField txtModel) {
+	public String isModelValid(JFXTextField txtModel) {
 		String result = "";
 
 		if (txtModel.validate()) {
@@ -407,16 +407,16 @@ public class Controller {
 		return result;
 	}
 
-	public String isBarcodevalid(JFXTextField txtBarcode) {
+	public String isBarcodeValid(JFXTextField txtBarcode) {
 		String result = "";
 
 		if (txtBarcode.validate()) {
 			String barcode = txtBarcode.getText().toUpperCase().trim();
 			if (!isBarcodeValid(barcode)) {
-				result = "Your barcode is not valid. It should be style as 30N0xxxx";
+				result = "Your barcode is not valid. It should be style as 30N0xxxx\r\n";
 			}
 		} else {
-			result = "Controller barcode is missing! Enter valid barcode.";
+			result = "Controller barcode is missing! Enter valid barcode.\r\n";
 		}
 
 		return result;
@@ -426,6 +426,7 @@ public class Controller {
 	@SuppressWarnings("unchecked")
 	public void treeviewTableBuilder(JFXTreeTableView<SMCController> treeView, ObservableList<SMCController> barcode,
 			String station) {
+
 		JFXTreeTableColumn<SMCController, String> controlBarcode = new JFXTreeTableColumn<>("Serial Number");
 
 		controlBarcode.prefWidthProperty().bind(treeView.widthProperty().multiply(0.97));
@@ -438,8 +439,7 @@ public class Controller {
 				return controlBarcode.getComputedValue(param);
 		});
 
-		final TreeItem<SMCController> root = new RecursiveTreeItem<SMCController>(barcode,
-				RecursiveTreeObject::getChildren);
+		final TreeItem<SMCController> root = new RecursiveTreeItem<>(barcode, RecursiveTreeObject::getChildren);
 		treeView.getColumns().setAll(controlBarcode);
 		treeView.setRoot(root);
 		treeView.setShowRoot(false);
@@ -485,6 +485,7 @@ public class Controller {
 			listBarcodeReceived.addAll(getAllReceivedTask.getValue());
 
 			for (String s : listBarcodeReceived) {
+
 				addBarcodeToTable(barcode, s);
 			}
 		});

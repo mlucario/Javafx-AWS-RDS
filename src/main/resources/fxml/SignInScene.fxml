@@ -83,7 +83,7 @@
                         </StackPane>
                         <HBox fx:id="hboxUsername" alignment="CENTER">
                            <children>
-                              <JFXTextField fx:id="txtUsername" focusColor="#ff5900" labelFloat="true" onKeyReleased="#isValidInput" prefHeight="40.0" prefWidth="300.0" promptText="Username">
+                              <JFXTextField fx:id="txtUsername" focusColor="#ff5900" labelFloat="true" onKeyReleased="#isValidInput" onMousePressed="#isValidInput" prefHeight="40.0" prefWidth="300.0" promptText="Username">
                                  <font>
                                     <Font name="System Bold" size="18.0" />
                                  </font></JFXTextField>
@@ -99,7 +99,7 @@
                         </HBox>
                         <HBox fx:id="hboxPassword" alignment="CENTER">
                            <children>
-                              <JFXPasswordField fx:id="txtPassword" focusColor="#ff5900" labelFloat="true" onAction="#login" onKeyReleased="#isValidInput" prefHeight="40.0" prefWidth="300.0" promptText="Password">
+                              <JFXPasswordField fx:id="txtPassword" focusColor="#ff5900" labelFloat="true" onAction="#login" onKeyReleased="#isValidInput" onMousePressed="#isValidInput" prefHeight="40.0" prefWidth="300.0" promptText="Password">
                                  <font>
                                     <Font name="System Bold" size="18.0" />
                                  </font></JFXPasswordField>

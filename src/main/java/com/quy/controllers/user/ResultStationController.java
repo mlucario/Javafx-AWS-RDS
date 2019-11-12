@@ -104,7 +104,7 @@ public class ResultStationController extends Controller implements Initializable
 	public boolean isValidInput() {
 		boolean result = false;
 
-		String temp = isBarcodevalid(this.txtControllerBarcode);
+		String temp = isBarcodeValid(this.txtControllerBarcode);
 
 		if (temp.isEmpty()) {
 			String barcode = getStringJFXTextField(txtControllerBarcode);

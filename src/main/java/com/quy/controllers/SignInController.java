@@ -111,6 +111,7 @@ public class SignInController extends Controller implements Initializable {
 
 				} else {
 					count++;
+					
 					LOGGER.error("Fail Sign In");
 
 					if (count == 3) {

@@ -12,6 +12,7 @@ import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
 import com.quy.database.DBHandler;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -66,6 +67,7 @@ public class SignUpController extends Controller implements Initializable {
 		textFieldFormat(txtPassword1, "Password is required!");
 		textFieldFormat(txtPassword2, "Confirm Password is required!");
 		btnSignUp.setDisable(true);
+		Platform.runLater(() -> txtUsername.requestFocus());
 		txtUsername.setOnAction(e -> txtPassword1.requestFocus());
 
 		txtPassword1.setOnAction(e -> txtPassword2.requestFocus());
