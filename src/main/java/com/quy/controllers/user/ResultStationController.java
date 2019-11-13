@@ -5,17 +5,13 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
+import com.jfoenix.controls.JFXRadioButton;
+import com.jfoenix.controls.JFXTextField;
+import com.jfoenix.controls.JFXTreeTableView;
 import com.quy.bizcom.SMCController;
 import com.quy.controllers.Controller;
 import com.quy.controllers.SignInController;
 import com.quy.database.DBHandler;
-
-import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
-
-import com.jfoenix.controls.JFXRadioButton;
-import com.jfoenix.controls.JFXTextField;
-import com.jfoenix.controls.JFXTreeTableView;
 
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -24,6 +20,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
@@ -168,9 +166,15 @@ public class ResultStationController extends Controller implements Initializable
 	// TODO How to delete one row in TreeViewTable faster??
 
 	public void resetBurnInList(String serialNumber) {
-		inBurnInSystem.remove(serialNumber);
-		treeview.setRoot(null);
-		treeviewTableBuilder(treeview, barcodeInBurnInSystem, inBurnInSystem);
+		SMCController temp = null;
+
+		for (SMCController smc : barcodeInBurnInSystem) {
+			if (smc.getControllerBarcode().getValue().equalsIgnoreCase(serialNumber)) {
+				temp = smc;
+				break;
+			}
+		}
+		barcodeInBurnInSystem.remove(temp);
 	}
 
 	@FXML
@@ -190,7 +194,7 @@ public class ResultStationController extends Controller implements Initializable
 					String resultAc = dbHandler.setResult(iD, timeStamp, true, "No Trouble Found.");
 					if (resultAc.equals(iD)) {
 						passedCount++;
-						txtPass.setText("PASSED: "+passedCount + "");
+						txtPass.setText("PASSED: " + passedCount + "");
 						addBarcodeToTable(barcodePassed, serialNumber);
 						String history = dbHandler.addToHistoryRecord(currentUser, RESULT_STATION, timeStamp,
 								serialNumber, "Marked Passed!");
@@ -213,7 +217,7 @@ public class ResultStationController extends Controller implements Initializable
 						String resultAc = dbHandler.setResult(iD, timeStamp, false, txtSymptoms.getText());
 						if (resultAc.equals(iD)) {
 							failCount++;
-							txtFail.setText("FAIL: "+failCount + "");
+							txtFail.setText("FAIL: " + failCount + "");
 							addBarcodeToTable(barcodeFail, serialNumber);
 							String history = dbHandler.addToHistoryRecord(currentUser, RESULT_STATION, timeStamp,
 									serialNumber, "Marked Fail: " + txtSymptoms.getText());
