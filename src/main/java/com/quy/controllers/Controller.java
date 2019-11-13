@@ -79,7 +79,7 @@ public class Controller {
 	protected static final String RECEIVING_STATION_SCENE = "/fxml/ui/users/ReceivingStationScene.fxml";
 	protected static final String ASSEMBLY_STATION_SCENE = "/fxml/ui/users/AssemblyStationScene.fxml";
 	protected static final String BURN_IN_STATION_SCENE = "/fxml/ui/users/BurnInStationScene.fxml";
-	protected static final String RESULT_STATION_SCENE = "/fxml/ui/users/ResultStation.fxml";
+	protected static final String RESULT_STATION_SCENE = "/fxml/ui/users/ResultStationScene.fxml";
 
 	// Hashing Password
 	private static final SecureRandom RAND = new SecureRandom();
@@ -99,7 +99,9 @@ public class Controller {
 	protected static final String REPAIR_STATION = "Repair Station";
 	protected static final String PACKING_STATION = "Packing Station";
 	protected static final String SHIPPING_STATION = "Shipping Station";
-
+	protected static final String WAIT_TO_BURN_IN = "Wait_To_Burn_In";
+	protected static final String FIRMWARE_UPDATE_STATION = "Firmware Update Station";
+	
 	// Controllers Column
 	protected static final String MODEL = "model";
 	protected static final String CONTROLLER_BARCODE = "controller_barcode";
@@ -130,7 +132,8 @@ public class Controller {
 	protected static final String COL_NOTE_HISTORY = "Note";
 
 	// Controler Table
-	protected static final String TABLE_CONTROLER = "controllers";
+	protected static final String TABLE_CONTROLER = "controllers";	
+	protected static final String COL_ID_CONTROLER = "ID";
 	protected static final String COL_MODEL_CONTROLER = "Model";
 	protected static final String COL_SERIAL_NUMBER_CONTROLER = "Serial_Number";
 	protected static final String COL_CURRENT_STATION_CONTROLER = "Current_Station";
@@ -155,6 +158,8 @@ public class Controller {
 	protected static final String COL_IS_PASSED_CONTROLER = "Is_Passed";
 	protected static final String COL_SYMPTOM_FAIL_CONTROLER = "Symptoms_Fail";
 	protected static final String COL_REWORK_COUNT_CONTROLER = "Re_work_count";
+	protected static final String COL_FIRMWARE_UPDATE_TIME_CONTROLER = "Firmware_Update_Time";
+	protected static final String COL_IS_FIRMWARE_UPDATED_CONTROLER = "Is_Firmware_Updated";
 
 	// User Table
 	protected static final String TABLE_USER = "users";
@@ -527,6 +532,7 @@ public class Controller {
 		final TreeItem<SMCController> root = new RecursiveTreeItem<SMCController>(barcode,
 				RecursiveTreeObject::getChildren);
 		treeView.getColumns().setAll(controlBarcode);
+		treeView.setRoot(null);
 		treeView.setRoot(root);
 		treeView.setShowRoot(false);
 

@@ -16,13 +16,13 @@
 
 <AnchorPane xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.quy.controllers.user.ResultStationController">
    <children>
-      <StackPane alignment="TOP_CENTER" layoutY="45.0" AnchorPane.bottomAnchor="77.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+      <StackPane alignment="TOP_CENTER" layoutY="28.0" prefWidth="853.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
          <children>
-            <HBox alignment="TOP_CENTER">
+            <HBox alignment="TOP_CENTER" prefHeight="525.0" prefWidth="853.0">
                <children>
                   <VBox alignment="TOP_CENTER" prefHeight="463.0" prefWidth="559.0">
                      <children>
-                        <HBox alignment="CENTER">
+                        <HBox alignment="CENTER" style="-fx-border-color: Red; -fx-border-radius: 50px; -fx-border-style: dotted; -fx-border-width: 2;">
                            <children>
                               <JFXRadioButton fx:id="rdPassed" text="PASSED" textFill="#005b06">
                                  <font>
@@ -45,16 +45,39 @@
                               </JFXRadioButton>
                            </children>
                            <VBox.margin>
-                              <Insets bottom="20.0" top="20.0" />
+                              <Insets bottom="20.0" top="10.0" />
+                           </VBox.margin>
+                        </HBox>
+                        <HBox fx:id="hBoxSymptoms" alignment="CENTER">
+                           <children>
+                              <Label text="Symptoms">
+                                 <font>
+                                    <Font name="Roboto Bold" size="18.0" />
+                                 </font>
+                              </Label>
+                              <JFXTextField fx:id="txtSymptoms" promptText="Enter Symptoms of fail" HBox.hgrow="ALWAYS">
+                                 <font>
+                                    <Font name="Roboto" size="15.0" />
+                                 </font>
+                                 <HBox.margin>
+                                    <Insets left="10.0" />
+                                 </HBox.margin>
+                              </JFXTextField>
+                           </children>
+                           <VBox.margin>
+                              <Insets bottom="10.0" top="10.0" />
                            </VBox.margin>
                         </HBox>
                         <HBox alignment="CENTER">
                            <children>
-                              <JFXTextField fx:id="txtControllerBarcode" focusColor="#105c82" labelFloat="true" onAction="#resultAction" onKeyReleased="#isValidInput" prefHeight="60.0" prefWidth="400.0" promptText="Enter Controller Barcode" style="-fx-font-size: 2em; -fx-font-family: Roboto; -fx-font-weight: Bold;" unFocusColor="#50514f" />
+                              <JFXTextField fx:id="txtControllerBarcode" focusColor="#105c82" labelFloat="true" onAction="#resultAction" prefHeight="60.0" prefWidth="400.0" promptText="Enter Controller Barcode" style="-fx-font-size: 2em; -fx-font-family: Roboto; -fx-font-weight: Bold;" unFocusColor="#50514f">
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin></JFXTextField>
                               <FontAwesomeIconView fill="#105c82" glyphName="BARCODE" size="55" />
                            </children>
                            <VBox.margin>
-                              <Insets top="20.0" />
+                              <Insets top="30.0" />
                            </VBox.margin>
                         </HBox>
                         <HBox alignment="TOP_CENTER" prefHeight="332.0" prefWidth="590.0">
@@ -66,7 +89,7 @@
                                           <Font name="Roboto Black" size="18.0" />
                                        </font>
                                     </Label>
-                                    <JFXTreeTableView fx:id="treeviewPassed" prefHeight="251.0" prefWidth="248.0" />
+                                    <JFXTreeTableView fx:id="treeviewPassed" prefHeight="280.0" prefWidth="248.0" />
                                  </children>
                                  <HBox.margin>
                                     <Insets right="10.0" />
@@ -79,7 +102,7 @@
                                           <Font name="Roboto Black" size="18.0" />
                                        </font>
                                     </Label>
-                                    <JFXTreeTableView fx:id="treeviewFail" prefHeight="251.0" prefWidth="248.0" />
+                                    <JFXTreeTableView fx:id="treeviewFail" prefHeight="280.0" prefWidth="248.0" />
                                  </children>
                                  <HBox.margin>
                                     <Insets left="10.0" />
@@ -118,24 +141,40 @@
                            <font>
                               <Font name="Roboto Medium" size="35.0" />
                            </font>
+                           <VBox.margin>
+                              <Insets top="15.0" />
+                           </VBox.margin>
                         </Label>
-                        <HBox alignment="CENTER">
+                        <VBox alignment="CENTER">
                            <children>
-                              <Label text="TESTING TIME" textFill="#0d00ff">
+                              <Label text="TESTING TIME" textFill="#3300ff">
                                  <font>
                                     <Font name="Roboto Black" size="20.0" />
                                  </font>
                               </Label>
-                              <JFXTextField fx:id="txtHours" alignment="CENTER" prefHeight="38.0" prefWidth="91.0" promptText="24" style="-fx-border-color: grey; -fx-background-color: grey;">
+                              <JFXTextField fx:id="txtHours" alignment="CENTER" focusColor="#0040ff" onKeyReleased="#inputValid" promptText="Enter Testing Time" style="-fx-border-color: grey;" text="24" unFocusColor="#eb1010">
                                  <font>
                                     <Font name="Roboto Black" size="20.0" />
                                  </font>
-                                 <HBox.margin>
-                                    <Insets left="30.0" />
-                                 </HBox.margin>
                               </JFXTextField>
                            </children>
-                        </HBox>
+                           <VBox.margin>
+                              <Insets bottom="15.0" top="10.0" />
+                           </VBox.margin>
+                        </VBox>
+                        <Label text="Burn-In Done List" textFill="RED">
+                           <VBox.margin>
+                              <Insets top="25.0" />
+                           </VBox.margin>
+                           <font>
+                              <Font name="Roboto Medium" size="15.0" />
+                           </font>
+                        </Label>
+                        <JFXTreeTableView fx:id="treeview" prefHeight="323.0" prefWidth="244.0">
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                        </JFXTreeTableView>
                      </children>
                      <HBox.margin>
                         <Insets left="30.0" right="20.0" />
@@ -147,6 +186,6 @@
       </StackPane>
    </children>
    <padding>
-      <Insets top="20.0" />
+      <Insets top="10.0" />
    </padding>
 </AnchorPane>

@@ -242,7 +242,7 @@ public class DBHandler {
 	public String getStatusDone(String column, String serialNumber) {
 		String result = "";
 
-		String query = "SELECT " + column + " FROM controllers WHERE Serial_Number=? ORDER BY Receiving_Time DESC";
+		String query = "SELECT " + column + " FROM controllers WHERE Serial_Number=? ORDER BY ID DESC";
 
 		try {
 			dbconnection = getConnection();
@@ -277,6 +277,38 @@ public class DBHandler {
 		return result;
 	}
 
+	public boolean updateCurrentStation(String id, String value) {
+		boolean result = false;
+
+		String query = "UPDATE controllers SET Current_Station=? WHERE ID=?";
+		try {
+			dbconnection = getConnection();
+			pst = dbconnection.prepareStatement(query);
+			pst.setString(1, value);
+			pst.setString(2, id);
+
+			if (pst.executeUpdate() != 0) {
+				result = true;
+			}
+
+		} catch (SQLException e) {
+			LOGGER.error("updateCurrentStation" + " " + CONNECTION_FAIL, e.getMessage());
+		} finally {
+
+			try {
+
+				pst.close();
+
+				shutdown();
+			} catch (SQLException e) {
+				LOGGER.error("updateCurrentStation" + " " + CLOSE_CONNECTION_FAIL, e.getMessage());
+			}
+
+		}
+
+		return result;
+	}
+
 	public boolean isBarcodeExist(String serialNumber) {
 		boolean result = false;
 
@@ -297,9 +329,13 @@ public class DBHandler {
 		} finally {
 
 			try {
+				if (pst != null) {
+					pst.close();
+				}
+				if (rs != null) {
+					rs.close();
+				}
 
-				pst.close();
-				rs.close();
 				shutdown();
 			} catch (SQLException e) {
 				LOGGER.error(CLOSE_CONNECTION_FAIL, e.getMessage());
@@ -347,17 +383,59 @@ public class DBHandler {
 		return result;
 	}
 
-	public int duplicateRow(String serialNumber, String lotId) {
-		int rowID = -1;
-		String query = "INSERT INTO bizcom_smc.controllers(Lot_ID,Model,Serial_Number,Receiving_Time,Is_Received,Re_Work_Count) "
-				+ "SELECT Lot_ID,Model,Serial_Number,Receiving_Time,Is_Received,Re_Work_Count FROM controllers WHERE Serial_Number=? AND Lot_ID=?";
+	// Fetch all Controller Which are ready to burn in
+	public List<String> getAllReadyToBurn() {
+		ArrayList<String> result = new ArrayList<>();
+		String query = "SELECT Serial_Number FROM controllers WHERE Current_Station=? AND Is_Received=? AND Is_Assembly_Done=?";
+		try {
+			dbconnection = getConnection();
+			pst = dbconnection.prepareStatement(query);
+			pst.setString(1, "Wait_To_Burn_In");
+			pst.setBoolean(2, true);
+			pst.setBoolean(3, true);
+
+			rs = pst.executeQuery();
+
+			while (rs.next()) {
+				result.add(rs.getString("Serial_Number").trim().replaceAll(" +", " ").toUpperCase());
+			}
+
+		} catch (SQLException e) {
+			LOGGER.error("getAllReadyToBurn " + CONNECTION_FAIL, e.getMessage());
+		} finally {
+
+			try {
+
+				if (pst != null) {
+					pst.close();
+				}
+
+				if (rs != null) {
+					rs.close();
+				}
+				shutdown();
+			} catch (SQLException e) {
+				LOGGER.error("getAllReadyToBurn " + CLOSE_CONNECTION_FAIL, e.getMessage());
+			}
+
+		}
+
+		return result;
+	}
+
+	public boolean duplicateRow(String serialNumber, String Id) {
+		boolean result = false;
+		String query = "INSERT INTO controllers(Lot_ID,Model,Serial_Number,Receiving_Time,Is_Received,Re_Work_Count) "
+				+ "SELECT Lot_ID,Model,Serial_Number,Receiving_Time,Is_Received,Re_Work_Count FROM controllers WHERE Serial_Number=? AND ID=?";
 		try {
 			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
 			pst.setString(1, serialNumber);
-			pst.setString(2, lotId);
+			pst.setString(2, Id);
 
-			rowID = pst.executeUpdate();
+			if (pst.executeUpdate() != 0) {
+				result = true;
+			}
 
 		} catch (SQLException e) {
 			LOGGER.error("duplicateRow " + CONNECTION_FAIL, e.getMessage());
@@ -371,7 +449,7 @@ public class DBHandler {
 				LOGGER.error("duplicateRow " + CLOSE_CONNECTION_FAIL, e.getMessage());
 			}
 		}
-		return rowID;
+		return result;
 	}
 	// ==================================================================================================
 
@@ -416,44 +494,7 @@ public class DBHandler {
 	}
 
 	// ASSEMBLY STATION
-	public String assembly(String serialNumber, String timestamp, int reworkCount, String lotId) {
-		String result = "";
-
-		String query = "UPDATE controllers SET Current_Station=?,Assembly_Time=?,Is_Assembly_Done=?,Re_work_count=? WHERE Serial_Number=? AND Lot_ID=?";
-		try {
-			dbconnection = getConnection();
-			pst = dbconnection.prepareStatement(query);
-			pst.setString(1, ASSEMBLY_STATION);
-			pst.setString(2, timestamp);
-			pst.setBoolean(3, true);
-			pst.setInt(4, reworkCount);
-			pst.setString(5, serialNumber);
-			pst.setString(6, lotId);
-			if (pst.executeUpdate() != 0) {
-				result = serialNumber;
-			} else {
-				result = "Update Assembly Station Fail. Please check with manager.";
-			}
-
-		} catch (SQLException e) {
-			LOGGER.error(ASSEMBLY_STATION + " " + CONNECTION_FAIL, e.getMessage());
-		} finally {
-
-			try {
-				if (pst != null) {
-					pst.close();
-				}
-				shutdown();
-			} catch (SQLException e) {
-				LOGGER.error(ASSEMBLY_STATION + " " + CLOSE_CONNECTION_FAIL, e.getMessage());
-			}
-
-		}
-		return result;
-	}
-
-	// RE_ASSEMBLY STATION
-	public String reassembly(String id, String timestamp, int reworkCount) {
+	public String assembly(String id, String timestamp, int reworkCount) {
 		String result = "";
 
 		String query = "UPDATE controllers SET Current_Station=?,Assembly_Time=?,Is_Assembly_Done=?,Re_work_count=? WHERE ID=?";
@@ -466,7 +507,7 @@ public class DBHandler {
 			pst.setInt(4, reworkCount);
 			pst.setString(5, id);
 			if (pst.executeUpdate() != 0) {
-				result = id + "";
+				result = id;
 			} else {
 				result = "Update Assembly Station Fail. Please check with manager.";
 			}
@@ -488,65 +529,26 @@ public class DBHandler {
 		return result;
 	}
 
-	// Fetch all Controller Which are ready to burn in
-	public List<String> getAllReadyToBurn() {
-		ArrayList<String> result = new ArrayList<>();
-		String query = "SELECT Serial_Number FROM controllers WHERE Current_Station=? AND Is_Received=? AND Is_Assembly_Done=?";
-		try {
-			dbconnection = getConnection();
-			pst = dbconnection.prepareStatement(query);
-			pst.setString(1, "Wait_To_Burn_In");
-			pst.setBoolean(2, true);
-			pst.setBoolean(3, true);
-
-			rs = pst.executeQuery();
-
-			while (rs.next()) {
-				result.add(rs.getString("Serial_Number").trim().replaceAll(" +", " ").toUpperCase());
-			}
-
-		} catch (SQLException e) {
-			LOGGER.error("getAllReadyToBurn " + CONNECTION_FAIL, e.getMessage());
-		} finally {
-
-			try {
-
-				if (pst != null) {
-					pst.close();
-				}
-
-				if (rs != null) {
-					rs.close();
-				}
-				shutdown();
-			} catch (SQLException e) {
-				LOGGER.error("getAllReadyToBurn " + CLOSE_CONNECTION_FAIL, e.getMessage());
-			}
-
-		}
-
-		return result;
-	}
-
-	// add to waiting burn in list
-	public String addToBurnInWaitingList(String serialNumber) {
+	// ADD TO BURN IN WAITING LIST
+	public String addToBurnInWaitingList(String iD) {
 		String result = "";
 
-		String query = "UPDATE controllers SET Current_Station=? WHERE Serial_Number=?";
+		String query = "UPDATE controllers SET Current_Station=? WHERE  ID = ?";
 		try {
 			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
 			pst.setString(1, "Wait_To_Burn_In");
-			pst.setString(2, serialNumber);
+			pst.setString(2, iD);
+
 			if (pst.executeUpdate() != 0) {
-				result = serialNumber;
+				result = iD;
 			} else {
-				result = "Cannot add to database. Please as manager to help";
+				result = "Cannot add to burn in waiting list! Please as manager to help";
 			}
 
 		} catch (SQLException e) {
 			LOGGER.error("addToBurnInWaitingList " + CONNECTION_FAIL, e.getMessage());
-			result = "Cannot connect to database. Please as manager to help";
+
 		} finally {
 
 			try {
@@ -562,29 +564,29 @@ public class DBHandler {
 		return result;
 	}
 
-	// Stat to burn in
-	public String burn_in(String barcode, String timestamp) {
+	// BURN IN STATION
+	public String burnIn(String iD, String timestamp) {
 		String result = "";
 
-		String query = "UPDATE controllers SET Current_Station=?,Burn_In_Start=?,Is_Burn_In_Processing=? WHERE Serial_Number=?";
+		String query = "UPDATE controllers SET Current_Station=?,Burn_In_Start=?,Is_Burn_In_Processing=?,Burn_In_Result=? WHERE ID=?";
 		try {
 			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
-			pst.setString(1, "Burn In Station");
+			pst.setString(1, BURN_IN_STATION);
 			pst.setString(2, timestamp);
 			pst.setBoolean(3, true);
-			pst.setString(4, barcode);
-			if (pst.executeUpdate() == 1) {
-				result = barcode;
+			pst.setString(4, "Burn In Processing");
+			pst.setString(5, iD);
+			if (pst.executeUpdate() !=0) {
+				result = iD;
 
 			} else {
-				result = "Cannot change/update " + barcode + " into database.";
+				result = "Cannot Start Burn_In at Row Record" + iD+"\r\b";
 
 			}
 
 		} catch (SQLException e) {
 			LOGGER.error("burn_in " + CONNECTION_FAIL, e.getMessage());
-			result = "Cannot Connect to database.";
 
 		} finally {
 
@@ -603,38 +605,44 @@ public class DBHandler {
 		return result;
 	}
 
-	// Set the result
-	public String setResult(String barcode, String timestamp, boolean isPassed) {
+	// RESULT STATION
+	public String setResult(String iD, String timestamp, boolean isPassed, String symptoms) {
 		String result = "";
 
-		String query = "UPDATE controllers SET current_station=?,time_finish_burn_in=?,Is_Burn_In_Done=?,Is_Passed=? WHERE controller_barcode=?";
+		String query = "UPDATE controllers SET Current_Station=?,Burn_In_End=?,Burn_In_Result=?,Is_Burn_In_Done=?,Is_Passed=?,Symptoms_Fail=? WHERE ID=?";
 		try {
+			String rx = isPassed ? "PASS" : "FAIL";
+				
 			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
-			pst.setString(1, "Result Station");
+			pst.setString(1, RESULT_STATION);
 			pst.setString(2, timestamp);
-			pst.setBoolean(3, true);
-			pst.setBoolean(4, isPassed);
-			pst.setString(5, barcode);
-			if (pst.executeUpdate() == 1) {
-				result = barcode;
+			pst.setString(3, rx);
+			pst.setBoolean(4, true);
+			pst.setBoolean(5, isPassed);
+			pst.setString(6, symptoms);
+			pst.setString(7, iD);
+			if (pst.executeUpdate() !=0) {
+				result = iD;
 
 			} else {
-				result = "Cannot change/update " + barcode + " into database.";
+				result = "Cannot change/update into database.";
 
 			}
 
 		} catch (SQLException e) {
-			e.printStackTrace();
-			result = "Cannot Connect to database.";
-
+			LOGGER.error("setResult " + CONNECTION_FAIL, e.getMessage());
+			result = e.getMessage();
 		} finally {
 
 			try {
-				pst.close();
+				if (pst != null) {
+					pst.close();
+				}
+
 				shutdown();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				LOGGER.error("setResult " + CLOSE_CONNECTION_FAIL, e.getMessage());
 			}
 
 		}
@@ -822,31 +830,36 @@ public class DBHandler {
 	// Fetch all Controller Which are burning in
 	public List<String> getAllBurning() {
 		ArrayList<String> result = new ArrayList<>();
-		String query = "SELECT controller_barcode FROM controllers WHERE current_station=? AND Is_Received=? AND Is_Assembled=?";
+		String query = "SELECT Serial_Number FROM controllers WHERE Current_Station=? AND Is_Received=? AND Is_Assembly_Done=? AND Burn_In_Result=?";
 		try {
 			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
 			pst.setString(1, "Burn In Station");
 			pst.setBoolean(2, true);
 			pst.setBoolean(3, true);
+			pst.setString(4, "Burn In Processing");
 			rs = pst.executeQuery();
 
 			while (rs.next()) {
-				result.add(rs.getString("controller_barcode").trim().replaceAll(" +", " ").toUpperCase());
+				result.add(rs.getString("Serial_Number").trim().replaceAll(" +", " ").toUpperCase());
 			}
 
-			System.out.println("All BURN IN Controller is fetched");
+			LOGGER.info("All BURN IN Controller is fetched");
 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.error(" getAllBurning " + CONNECTION_FAIL, e.getMessage());
 		} finally {
 
 			try {
-				pst.close();
-				rs.close();
+				if (rs != null) {
+					rs.close();
+				}
+				if (pst != null) {
+					pst.close();
+				}
 				shutdown();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				LOGGER.error(" getAllBurning " + CLOSE_CONNECTION_FAIL, e.getMessage());
 			}
 
 		}
@@ -857,7 +870,7 @@ public class DBHandler {
 	// Fetch all Controller Which are passed / fail
 	public List<String> getAllPassedOrFail(boolean isPassed) {
 		ArrayList<String> result = new ArrayList<>();
-		String query = "SELECT controller_barcode FROM controllers WHERE current_station=? AND Is_Received=? AND Is_Assembled=? AND Is_Burn_In_Done=? AND Is_Passed=?";
+		String query = "SELECT Serial_Number FROM controllers WHERE Current_Station=? AND Is_Received=? AND Is_Assembly_Done=? AND Is_Burn_In_Done=? AND Is_Passed=?";
 		try {
 			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);

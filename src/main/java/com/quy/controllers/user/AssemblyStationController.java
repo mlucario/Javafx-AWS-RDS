@@ -30,7 +30,7 @@ public class AssemblyStationController extends Controller implements Initializab
 	@FXML
 	private JFXButton btnSubmit;
 	private DBHandler dbHandler;
-	protected String currentUser = SignInController.getInstance().username();
+	private String currentUser = SignInController.getInstance().username();
 	private ObservableList<SMCController> barcode = FXCollections.observableArrayList();
 	private int count;
 
@@ -43,12 +43,20 @@ public class AssemblyStationController extends Controller implements Initializab
 			String currentStatus = dbHandler.getStatusDone(COL_CURRENT_STATION_CONTROLER, serialNumber);
 			if (!dbHandler.isBarcodeExist(serialNumber)) {
 				result = "\r\n Serial Number does not exist!";
-			} else if (currentStatus.equalsIgnoreCase(ASSEMBLY_STATION)) {
-				result = "\r\n Serial Number has Assemsbly DONE!";
-			} else if (currentStatus.equalsIgnoreCase(SHIPPING_STATION)) {
-				result = "\r\n Serial Number has been shipped. Please ask manager intermediately.";
 			} else {
-
+				if (currentStatus.equalsIgnoreCase(SHIPPING_STATION)) {
+					result = "\r\n Controller has been shipped. Please ask manager intermediately.";
+				} else {
+					switch (currentStatus) {
+					case ASSEMBLY_STATION:
+					case BURN_IN_STATION:
+					case WAIT_TO_BURN_IN:
+						result = "\r\n Controller has Assemsbly DONE!";
+						break;
+					default:
+						LOGGER.info("There is nothing here.");
+					}
+				}
 			}
 		}
 
@@ -71,16 +79,17 @@ public class AssemblyStationController extends Controller implements Initializab
 			String currentLastestStation = dbHandler.getStatusDone(COL_CURRENT_STATION_CONTROLER, serialNumber);
 			int reworkCount = Integer.parseInt(dbHandler.getStatusDone(COL_REWORK_COUNT_CONTROLER, serialNumber));
 			String timestamp = getCurrentTimeStamp();
-			String lotId = dbHandler.getStatusDone(COL_LOT_ID_CONTROLER, serialNumber);
-			System.out.println(lotId);
+			// Lastest LotId
+			String iD = dbHandler.getStatusDone(COL_ID_CONTROLER, serialNumber);
+
 			// Normal sequence
 			if (currentLastestStation.equalsIgnoreCase(RECEIVING_STATION)) {
-				String result = dbHandler.assembly(serialNumber, timestamp, reworkCount, lotId);
-				if (result.equalsIgnoreCase(serialNumber)) {
+				String result = dbHandler.assembly(iD, timestamp, reworkCount);
+				if (result.equalsIgnoreCase(iD)) {
 					count++;
 					addBarcodeToTable(barcode, serialNumber);
 					String history = dbHandler.addToHistoryRecord(currentUser, ASSEMBLY_STATION, timestamp,
-							serialNumber, "");
+							serialNumber, RECEIVING_STATION + " to " + ASSEMBLY_STATION);
 					if (!history.equalsIgnoreCase(serialNumber)) {
 						warningAlert(history);
 					} else {
@@ -95,23 +104,28 @@ public class AssemblyStationController extends Controller implements Initializab
 				// REWORK PROCESS
 
 				// Duplicate Row and Clear all result
-				String id = dbHandler.duplicateRow(serialNumber, lotId) + "";
-				// do assembly
-				String result = dbHandler.assembly(id, timestamp, ++reworkCount, lotId);
-				if (result.equalsIgnoreCase(id)) {
-					count++;
-					addBarcodeToTable(barcode, serialNumber);
-					String history = dbHandler.addToHistoryRecord(currentUser, ASSEMBLY_STATION, timestamp,
-							serialNumber, "Rework: From" + currentLastestStation + " to " + ASSEMBLY_STATION);
-					if (!history.equalsIgnoreCase(serialNumber)) {
-						warningAlert(history);
+				if (dbHandler.duplicateRow(serialNumber, iD)) {
+					dbHandler.updateCurrentStation(iD, "Re_Work Processing");
+					String newId = dbHandler.getStatusDone(COL_ID_CONTROLER, serialNumber);
+					// do assembly
+					String result = dbHandler.assembly(newId, timestamp, ++reworkCount);
+					if (result.equalsIgnoreCase(newId)) {
+						count++;
+						addBarcodeToTable(barcode, serialNumber);
+						String history = dbHandler.addToHistoryRecord(currentUser, ASSEMBLY_STATION, timestamp,
+								serialNumber, "Rework: From" + currentLastestStation + " to " + ASSEMBLY_STATION);
+						if (!history.equalsIgnoreCase(serialNumber)) {
+							warningAlert(history);
+						} else {
+							notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null,
+									"Re_Assembler Successfully", 2);
+							notification.showInformation();
+						}
 					} else {
-						notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null, "Re_Assembler Successfully",
-								2);
-						notification.showInformation();
+						warningAlert(result);
 					}
 				} else {
-					warningAlert(result);
+					warningAlert("Cannot duplicate record!");
 				}
 
 			}
