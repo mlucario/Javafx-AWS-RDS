@@ -145,7 +145,7 @@ public class DBHandler {
 			pst.setString(1, username);
 			rs = pst.executeQuery();
 
-			while (rs.next()) {
+			if (rs.next()) {
 				result.add(rs.getString("salt_key"));
 				result.add(rs.getString("hashing_password"));
 				result.add(rs.getString("user_type"));
@@ -872,40 +872,41 @@ public class DBHandler {
 		}
 		return result;
 	}
+
 	// SHIPPING STATION
-		public String shipping(String id, String timestamp) {
-			String result = "";
+	public String shipping(String id, String timestamp) {
+		String result = "";
 
-			String query = "UPDATE controllers SET Current_Station=?,Shipping_Time=?,Is_Shipping_Done=? WHERE ID=?";
-			try {
-				dbconnection = getConnection();
-				pst = dbconnection.prepareStatement(query);
-				pst.setString(1, SHIPPING_STATION);
-				pst.setString(2, timestamp);
-				pst.setBoolean(3, true);
-				pst.setString(4, id);
-				if (pst.executeUpdate() != 0) {
-					result = id;
-				} else {
-					result = "Update Shipping Station Fail. Please check with manager.";
-				}
-
-			} catch (SQLException e) {
-				LOGGER.error(SHIPPING_STATION + " " + CONNECTION_FAIL, e.getMessage());
-			} finally {
-
-				try {
-					if (pst != null) {
-						pst.close();
-					}
-					shutdown();
-				} catch (SQLException e) {
-					LOGGER.error(SHIPPING_STATION + " " + CLOSE_CONNECTION_FAIL, e.getMessage());
-				}
-
+		String query = "UPDATE controllers SET Current_Station=?,Shipping_Time=?,Is_Shipping_Done=? WHERE ID=?";
+		try {
+			dbconnection = getConnection();
+			pst = dbconnection.prepareStatement(query);
+			pst.setString(1, SHIPPING_STATION);
+			pst.setString(2, timestamp);
+			pst.setBoolean(3, true);
+			pst.setString(4, id);
+			if (pst.executeUpdate() != 0) {
+				result = id;
+			} else {
+				result = "Update Shipping Station Fail. Please check with manager.";
 			}
-			return result;
+
+		} catch (SQLException e) {
+			LOGGER.error(SHIPPING_STATION + " " + CONNECTION_FAIL, e.getMessage());
+		} finally {
+
+			try {
+				if (pst != null) {
+					pst.close();
+				}
+				shutdown();
+			} catch (SQLException e) {
+				LOGGER.error(SHIPPING_STATION + " " + CLOSE_CONNECTION_FAIL, e.getMessage());
+			}
+
 		}
+		return result;
+	}
 	// =============FETCH DATA==================
 
 	// Fetch all model

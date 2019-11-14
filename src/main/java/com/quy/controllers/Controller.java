@@ -42,26 +42,32 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBase;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
 public class Controller {
+	protected Stage home;
 	protected final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
 	protected static final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
 	protected static final DateTimeFormatter dtf2 = DateTimeFormatter.ofPattern("MMddyy");
@@ -262,8 +268,14 @@ public class Controller {
 		alert.setTitle("Error");
 		alert.setHeaderText(null);
 		alert.setContentText(msm);
+		DialogPane root = alert.getDialogPane();
+		Stage dialogStage = new Stage(StageStyle.UTILITY);
+		root.getScene().setRoot(new Group());
 
+		root.setPadding(new Insets(10, 0, 10, 0));
+		Scene scene = new Scene(root);
 		final Runnable runnable = (Runnable) Toolkit.getDefaultToolkit().getDesktopProperty("win.sound.exclamation");
+
 		if (runnable != null)
 			runnable.run();
 
@@ -271,8 +283,19 @@ public class Controller {
 		alert.getButtonTypes().add(ButtonType.CLOSE);
 		Button closeButton = (Button) alert.getDialogPane().lookupButton(ButtonType.CLOSE);
 		closeButton.setDefaultButton(false);
-
-		alert.show();
+		for (ButtonType buttonType : root.getButtonTypes()) {
+			ButtonBase button = (ButtonBase) root.lookupButton(buttonType);
+			button.setOnAction(evt -> {
+				root.setUserData(buttonType);
+				dialogStage.close();
+			});
+		}
+		dialogStage.setScene(scene);
+		dialogStage.initModality(Modality.APPLICATION_MODAL);
+		dialogStage.setAlwaysOnTop(true);
+		dialogStage.setResizable(false);
+		dialogStage.showAndWait();
+//		alert.show();
 	}
 
 	// Comfirm warning
@@ -306,8 +329,8 @@ public class Controller {
 	// sceneName name of file fxml we want to go
 	public void goToScene(String sceneName, JFXButton buttonOfCurentScene, boolean isFullScene) {
 		buttonOfCurentScene.getScene().getWindow().hide();
-
-		Stage home = new Stage();
+		home = new Stage();
+//		Stage home = new Stage();
 		try {
 
 			Screen screen = Screen.getPrimary();
@@ -328,7 +351,7 @@ public class Controller {
 				home.setMinHeight(600);
 
 			}
-//			home.setAlwaysOnTop(true);
+			home.setAlwaysOnTop(true);
 			home.show();
 
 		} catch (IOException e1) {

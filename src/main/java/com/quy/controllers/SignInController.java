@@ -60,6 +60,7 @@ public class SignInController extends Controller implements Initializable {
 	private double y;
 	private int count;
 	private static SignInController instance;
+	private String role;
 
 	public SignInController() {
 		instance = this;
@@ -73,11 +74,15 @@ public class SignInController extends Controller implements Initializable {
 		return txtUsername.getText();
 	}
 
+	public String getRole() {
+		return this.role;
+	}
+
 	@FXML
 	void dragged(MouseEvent event) {
 		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-		stage.setX(event.getScreenX() - x);
-		stage.setY(event.getScreenY() - y);
+//		stage.setX(event.getScreenX() - x);
+//		stage.setY(event.getScreenY() - y);
 	}
 
 	@FXML
@@ -103,6 +108,7 @@ public class SignInController extends Controller implements Initializable {
 				if (verifyPassword(password, result.get(1), result.get(0))) {
 					// Go to dashboard
 					String type = result.get(2);
+					this.role = type;
 					if (type.equalsIgnoreCase("admin")) {
 						goToScene(ADMIN_DASHBOARD_SCENE, btnSignIn, true);
 					} else {
@@ -111,8 +117,6 @@ public class SignInController extends Controller implements Initializable {
 
 				} else {
 					count++;
-					
-					LOGGER.error("Fail Sign In");
 
 					if (count == 3) {
 						warningAlert("You failed 3 times. Application will close.");

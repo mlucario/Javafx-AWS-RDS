@@ -21,10 +21,12 @@ public class MainApp extends Application {
 		stage.setScene(scene);
 		stage.initStyle(StageStyle.TRANSPARENT);
 //		stage.setMaximized(true);
-//        stage.setResizable(false);
+		stage.setResizable(false);
 		stage.setMinWidth(700);
 		stage.setMinHeight(800);
+
 		stage.setAlwaysOnTop(true);
+
 		stage.show();
 
 	}
