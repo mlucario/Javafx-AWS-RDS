@@ -166,15 +166,14 @@ public class ResultStationController extends Controller implements Initializable
 	// TODO How to delete one row in TreeViewTable faster??
 
 	public void resetBurnInList(String serialNumber) {
-		SMCController temp = null;
 
 		for (SMCController smc : barcodeInBurnInSystem) {
 			if (smc.getControllerBarcode().getValue().equalsIgnoreCase(serialNumber)) {
-				temp = smc;
+				barcodeInBurnInSystem.remove(smc);
 				break;
 			}
 		}
-		barcodeInBurnInSystem.remove(temp);
+
 	}
 
 	@FXML
@@ -213,7 +212,7 @@ public class ResultStationController extends Controller implements Initializable
 				// RESULT FAIL
 				else {
 					// Add auto completed at here
-					if (txtSymptoms.validate()) {
+					if (!txtSymptoms.getText().isEmpty()) {
 						String resultAc = dbHandler.setResult(iD, timeStamp, false, txtSymptoms.getText());
 						if (resultAc.equals(iD)) {
 							failCount++;
@@ -234,6 +233,8 @@ public class ResultStationController extends Controller implements Initializable
 						}
 					} else {
 						warningAlert("PLEASE ENTER SYMPTOMS");
+						txtSymptoms.clear();
+						txtSymptoms.requestFocus();
 					}
 				}
 

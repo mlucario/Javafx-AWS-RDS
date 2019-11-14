@@ -8,26 +8,11 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 public class MainApp extends Application {
-//	private double x, y;
-
-//	@FXML
-//	void dragged(MouseEvent event) {
-//		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-//		stage.setX(event.getScreenX() - x);
-//		stage.setY(event.getScreenY() - y);
-//	}
-//
-//	@FXML
-//	void pressed(MouseEvent event) {
-//		x = event.getSceneX();
-//		y = event.getSceneY();
-//	}
 
 	@Override
 	public void start(Stage stage) throws Exception {
 
 		Parent root = FXMLLoader.load(getClass().getResource("/fxml/SignInScene.fxml"));
-//		Parent root = FXMLLoader.load(getClass().getResource("/fxml/UserDashboardScene.fxml"));
 
 		Scene scene = new Scene(root);
 //		scene.getStylesheets().add(MainApp.class.getResource("/styles/fonts.css").toExternalForm());
@@ -39,7 +24,7 @@ public class MainApp extends Application {
 //        stage.setResizable(false);
 		stage.setMinWidth(700);
 		stage.setMinHeight(800);
-//		stage.setAlwaysOnTop(true);
+		stage.setAlwaysOnTop(true);
 		stage.show();
 
 	}

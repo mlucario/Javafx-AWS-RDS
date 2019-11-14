@@ -92,7 +92,7 @@ public class UserDashboardController extends Controller implements Initializable
 
 	@FXML
 	void packingOnClick(ActionEvent event) {
-
+		switchScence(PACKING_STATION_SCENE, PACKING_STATION);
 	}
 
 	@FXML
@@ -102,7 +102,12 @@ public class UserDashboardController extends Controller implements Initializable
 
 	@FXML
 	void repairOnClick(ActionEvent event) {
+		switchScence(REPAIR_STATION_SCENE, REPAIR_STATION);
+	}
 
+	@FXML
+	void firmwareOnClick(ActionEvent event) {
+		switchScence(FIRMWARE_UPDATE_STATION_SCENE, FIRMWARE_UPDATE_STATION);
 	}
 
 	@FXML
@@ -112,7 +117,7 @@ public class UserDashboardController extends Controller implements Initializable
 
 	@FXML
 	void shippingOnClick(ActionEvent event) {
-
+		switchScence(SHIPPING_STATION_SCENE, SHIPPING_STATION);
 	}
 
 	@FXML
@@ -185,9 +190,9 @@ public class UserDashboardController extends Controller implements Initializable
 
 				currentStation = station;
 			} catch (IOException e) {
-				
-				LOGGER.error("Cannot Run Scene {} " , e.getMessage());
-				
+
+				LOGGER.error("Cannot Run Scene {} ", e.getMessage());
+
 			}
 		}
 

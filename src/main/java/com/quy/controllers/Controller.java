@@ -80,6 +80,10 @@ public class Controller {
 	protected static final String ASSEMBLY_STATION_SCENE = "/fxml/ui/users/AssemblyStationScene.fxml";
 	protected static final String BURN_IN_STATION_SCENE = "/fxml/ui/users/BurnInStationScene.fxml";
 	protected static final String RESULT_STATION_SCENE = "/fxml/ui/users/ResultStationScene.fxml";
+	protected static final String FIRMWARE_UPDATE_STATION_SCENE = "/fxml/ui/users/FirmwareUpdateStation.fxml";
+	protected static final String REPAIR_STATION_SCENE = "/fxml/ui/users/RepairStationScene.fxml";
+	protected static final String PACKING_STATION_SCENE = "/fxml/ui/users/PackingStation.fxml";
+	protected static final String SHIPPING_STATION_SCENE = "/fxml/ui/users/ShippingStation.fxml";
 
 	// Hashing Password
 	private static final SecureRandom RAND = new SecureRandom();
@@ -101,7 +105,7 @@ public class Controller {
 	protected static final String SHIPPING_STATION = "Shipping Station";
 	protected static final String WAIT_TO_BURN_IN = "Wait_To_Burn_In";
 	protected static final String FIRMWARE_UPDATE_STATION = "Firmware Update Station";
-	
+
 	// Controllers Column
 	protected static final String MODEL = "model";
 	protected static final String CONTROLLER_BARCODE = "controller_barcode";
@@ -132,7 +136,7 @@ public class Controller {
 	protected static final String COL_NOTE_HISTORY = "Note";
 
 	// Controler Table
-	protected static final String TABLE_CONTROLER = "controllers";	
+	protected static final String TABLE_CONTROLER = "controllers";
 	protected static final String COL_ID_CONTROLER = "ID";
 	protected static final String COL_MODEL_CONTROLER = "Model";
 	protected static final String COL_SERIAL_NUMBER_CONTROLER = "Serial_Number";
@@ -485,6 +489,12 @@ public class Controller {
 					break;
 				case BURN_IN_STATION:
 					temp.addAll(dbHandler.getAllReadyToBurn());
+					break;
+				case FIRMWARE_UPDATE_STATION:
+					temp.addAll(dbHandler.getAllFirmwareUpdated());
+					break;
+				case PACKING_STATION:
+					temp.addAll(dbHandler.getAllPacked());
 					break;
 				default:
 					temp.clear();

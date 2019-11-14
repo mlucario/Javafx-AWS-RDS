@@ -31,6 +31,7 @@ public class DBHandler {
 	private static final String RECEIVING_STATION = "Receiving Station";
 	private static final String ASSEMBLY_STATION = "Assembly Station";
 	private static final String RE_ASSEMBLY_STATION = "Re_Assembly Station";
+	private static final String FIRMWARE_UPDATE_STATION = "Firmware Update Station";
 	private static final String BURN_IN_STATION = "Burn In Station";
 	private static final String RESULT_STATION = "Result Station";
 	private static final String REPAIR_STATION = "Repair Station";
@@ -423,6 +424,46 @@ public class DBHandler {
 		return result;
 	}
 
+	// GET ALL CURRENT FIRMWARE UPDATED
+	public List<String> getAllFirmwareUpdated() {
+		ArrayList<String> result = new ArrayList<>();
+		String query = "SELECT Serial_Number FROM controllers WHERE Current_Station=? AND Is_Received=? AND Is_Firmware_Updated=?";
+		try {
+			dbconnection = getConnection();
+			pst = dbconnection.prepareStatement(query);
+			pst.setString(1, "Firmware Update Station");
+			pst.setBoolean(2, true);
+			pst.setBoolean(3, true);
+
+			rs = pst.executeQuery();
+
+			while (rs.next()) {
+				result.add(rs.getString("Serial_Number").trim().replaceAll(" +", " ").toUpperCase());
+			}
+
+		} catch (SQLException e) {
+			LOGGER.error("getAllFirmwareUpdated " + CONNECTION_FAIL, e.getMessage());
+		} finally {
+
+			try {
+
+				if (pst != null) {
+					pst.close();
+				}
+
+				if (rs != null) {
+					rs.close();
+				}
+				shutdown();
+			} catch (SQLException e) {
+				LOGGER.error("getAllFirmwareUpdated " + CLOSE_CONNECTION_FAIL, e.getMessage());
+			}
+
+		}
+
+		return result;
+	}
+
 	public boolean duplicateRow(String serialNumber, String Id) {
 		boolean result = false;
 		String query = "INSERT INTO controllers(Lot_ID,Model,Serial_Number,Receiving_Time,Is_Received,Re_Work_Count) "
@@ -494,10 +535,10 @@ public class DBHandler {
 	}
 
 	// ASSEMBLY STATION
-	public String assembly(String id, String timestamp, int reworkCount) {
+	public String assembly(String id, String timestamp, int reworkCount, boolean isRework) {
 		String result = "";
 
-		String query = "UPDATE controllers SET Current_Station=?,Assembly_Time=?,Is_Assembly_Done=?,Re_work_count=? WHERE ID=?";
+		String query = "UPDATE controllers SET Current_Station=?,Assembly_Time=?,Is_Assembly_Done=?,Re_work_count=?,Is_ReWork=? WHERE ID=?";
 		try {
 			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
@@ -505,7 +546,8 @@ public class DBHandler {
 			pst.setString(2, timestamp);
 			pst.setBoolean(3, true);
 			pst.setInt(4, reworkCount);
-			pst.setString(5, id);
+			pst.setBoolean(5, isRework);
+			pst.setString(6, id);
 			if (pst.executeUpdate() != 0) {
 				result = id;
 			} else {
@@ -577,11 +619,11 @@ public class DBHandler {
 			pst.setBoolean(3, true);
 			pst.setString(4, "Burn In Processing");
 			pst.setString(5, iD);
-			if (pst.executeUpdate() !=0) {
+			if (pst.executeUpdate() != 0) {
 				result = iD;
 
 			} else {
-				result = "Cannot Start Burn_In at Row Record" + iD+"\r\b";
+				result = "Cannot Start Burn_In at Row Record" + iD + "\r\b";
 
 			}
 
@@ -612,7 +654,7 @@ public class DBHandler {
 		String query = "UPDATE controllers SET Current_Station=?,Burn_In_End=?,Burn_In_Result=?,Is_Burn_In_Done=?,Is_Passed=?,Symptoms_Fail=? WHERE ID=?";
 		try {
 			String rx = isPassed ? "PASS" : "FAIL";
-				
+
 			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
 			pst.setString(1, RESULT_STATION);
@@ -622,7 +664,7 @@ public class DBHandler {
 			pst.setBoolean(5, isPassed);
 			pst.setString(6, symptoms);
 			pst.setString(7, iD);
-			if (pst.executeUpdate() !=0) {
+			if (pst.executeUpdate() != 0) {
 				result = iD;
 
 			} else {
@@ -647,6 +689,117 @@ public class DBHandler {
 
 		}
 
+		return result;
+	}
+
+	// FIRMWARE UPDATED
+	public String firmwareUpdate(String iD, String timestamp, int reworkCount, boolean isRework) {
+		String result = "";
+
+		String query = "UPDATE controllers SET Current_Station=?,Firmware_Update_Time=?,Is_Firmware_Updated=?,Re_work_count=?,Is_ReWork=? WHERE ID=?";
+		try {
+			dbconnection = getConnection();
+			pst = dbconnection.prepareStatement(query);
+			pst.setString(1, FIRMWARE_UPDATE_STATION);
+			pst.setString(2, timestamp);
+			pst.setBoolean(3, true);
+			pst.setInt(4, reworkCount);
+			pst.setBoolean(5, isRework);
+			pst.setString(6, iD);
+			if (pst.executeUpdate() != 0) {
+				result = iD;
+			} else {
+				result = "Update Fimware Station Fail. Please check with manager.";
+			}
+
+		} catch (SQLException e) {
+			LOGGER.error(FIRMWARE_UPDATE_STATION + " " + CONNECTION_FAIL, e.getMessage());
+		} finally {
+
+			try {
+				if (pst != null) {
+					pst.close();
+				}
+				shutdown();
+			} catch (SQLException e) {
+				LOGGER.error(FIRMWARE_UPDATE_STATION + " " + CLOSE_CONNECTION_FAIL, e.getMessage());
+			}
+
+		}
+		return result;
+	}
+
+	// REPAIR
+	public String repairController(String iD, String timestamp, int reworkCount) {
+		String result = "";
+
+		String query = "UPDATE controllers SET Current_Station=?,Repair_Time=?,Is_Repaired_Done=?,Re_work_count=?,Is_ReWork=? WHERE ID=?";
+		try {
+			dbconnection = getConnection();
+			pst = dbconnection.prepareStatement(query);
+			pst.setString(1, ASSEMBLY_STATION);
+			pst.setString(2, timestamp);
+			pst.setBoolean(3, true);
+			pst.setInt(4, reworkCount);
+			pst.setBoolean(5, true);
+			pst.setString(6, iD);
+			if (pst.executeUpdate() != 0) {
+				result = iD;
+			} else {
+				result = "Update Database Repair FAIL. Please check with manager.";
+			}
+
+		} catch (SQLException e) {
+			LOGGER.error(REPAIR_STATION + " " + CONNECTION_FAIL, e.getMessage());
+		} finally {
+
+			try {
+				if (pst != null) {
+					pst.close();
+				}
+				shutdown();
+			} catch (SQLException e) {
+				LOGGER.error(REPAIR_STATION + " " + CLOSE_CONNECTION_FAIL, e.getMessage());
+			}
+
+		}
+		return result;
+	}
+
+	// UNREPAIRABLE
+	public String unRepairable(String iD, String timestamp) {
+		String result = "";
+
+		String query = "UPDATE controllers SET Current_Station=?,Repair_Time=?,Is_Repaired_Done=?,Is_Passed=?,Burn_In_Result=? WHERE ID=?";
+		try {
+			dbconnection = getConnection();
+			pst = dbconnection.prepareStatement(query);
+			pst.setString(1, "UNREPAIRABLE");
+			pst.setString(2, timestamp);
+			pst.setBoolean(3, false);
+			pst.setBoolean(4, false);
+			pst.setString(5, "Unrepairable");
+			pst.setString(6, iD);
+			if (pst.executeUpdate() != 0) {
+				result = iD;
+			} else {
+				result = "Update Database UNREPAIRABLE FAIL. Please check with manager.";
+			}
+
+		} catch (SQLException e) {
+			LOGGER.error(REPAIR_STATION + " " + CONNECTION_FAIL, e.getMessage());
+		} finally {
+
+			try {
+				if (pst != null) {
+					pst.close();
+				}
+				shutdown();
+			} catch (SQLException e) {
+				LOGGER.error(REPAIR_STATION + " " + CLOSE_CONNECTION_FAIL, e.getMessage());
+			}
+
+		}
 		return result;
 	}
 
@@ -685,6 +838,74 @@ public class DBHandler {
 		return result;
 	}
 
+	// PACKAGE
+	public String packed(String iD, String timestamp) {
+		String result = "";
+
+		String query = "UPDATE controllers SET Current_Station=?,Packing_Time=?,Is_Packing_Done=? WHERE ID=?";
+		try {
+			dbconnection = getConnection();
+			pst = dbconnection.prepareStatement(query);
+			pst.setString(1, PACKING_STATION);
+			pst.setString(2, timestamp);
+			pst.setBoolean(3, true);
+			pst.setString(4, iD);
+			if (pst.executeUpdate() != 0) {
+				result = iD;
+			} else {
+				result = "Update Database PACKAGE FAIL. Please check with manager.";
+			}
+
+		} catch (SQLException e) {
+			LOGGER.error(PACKING_STATION + " " + CONNECTION_FAIL, e.getMessage());
+		} finally {
+
+			try {
+				if (pst != null) {
+					pst.close();
+				}
+				shutdown();
+			} catch (SQLException e) {
+				LOGGER.error(PACKING_STATION + " " + CLOSE_CONNECTION_FAIL, e.getMessage());
+			}
+
+		}
+		return result;
+	}
+	// SHIPPING STATION
+		public String shipping(String id, String timestamp) {
+			String result = "";
+
+			String query = "UPDATE controllers SET Current_Station=?,Shipping_Time=?,Is_Shipping_Done=? WHERE ID=?";
+			try {
+				dbconnection = getConnection();
+				pst = dbconnection.prepareStatement(query);
+				pst.setString(1, SHIPPING_STATION);
+				pst.setString(2, timestamp);
+				pst.setBoolean(3, true);
+				pst.setString(4, id);
+				if (pst.executeUpdate() != 0) {
+					result = id;
+				} else {
+					result = "Update Shipping Station Fail. Please check with manager.";
+				}
+
+			} catch (SQLException e) {
+				LOGGER.error(SHIPPING_STATION + " " + CONNECTION_FAIL, e.getMessage());
+			} finally {
+
+				try {
+					if (pst != null) {
+						pst.close();
+					}
+					shutdown();
+				} catch (SQLException e) {
+					LOGGER.error(SHIPPING_STATION + " " + CLOSE_CONNECTION_FAIL, e.getMessage());
+				}
+
+			}
+			return result;
+		}
 	// =============FETCH DATA==================
 
 	// Fetch all model
@@ -885,18 +1106,22 @@ public class DBHandler {
 				result.add(rs.getString("controller_barcode").trim().replaceAll(" +", " ").toUpperCase());
 			}
 
-			System.out.println("All PASSED/FAIL controller is fetched");
+			LOGGER.info("All PASSED/FAIL controller is fetched");
 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.error(" getAllPassedOrFail " + CONNECTION_FAIL, e.getMessage());
 		} finally {
 
 			try {
-				pst.close();
-				rs.close();
+				if (rs != null) {
+					rs.close();
+				}
+				if (pst != null) {
+					pst.close();
+				}
 				shutdown();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				LOGGER.error(" getAllPassedOrFail " + CLOSE_CONNECTION_FAIL, e.getMessage());
 			}
 
 		}
@@ -904,6 +1129,45 @@ public class DBHandler {
 		return result;
 	}
 
+	// Fetch all packed
+	public List<String> getAllPacked() {
+		ArrayList<String> result = new ArrayList<>();
+		String query = "SELECT Serial_Number FROM controllers WHERE Current_Station=? AND Is_Received=? AND Is_Packing_Done=?";
+		try {
+			dbconnection = getConnection();
+			pst = dbconnection.prepareStatement(query);
+			pst.setString(1, PACKING_STATION);
+			pst.setBoolean(2, true);
+			pst.setBoolean(3, true);
+
+			rs = pst.executeQuery();
+
+			while (rs.next()) {
+				result.add(rs.getString("Serial_Number").trim().replaceAll(" +", " ").toUpperCase());
+			}
+
+		} catch (SQLException e) {
+			LOGGER.error("getAllPacked " + CONNECTION_FAIL, e.getMessage());
+		} finally {
+
+			try {
+
+				if (pst != null) {
+					pst.close();
+				}
+
+				if (rs != null) {
+					rs.close();
+				}
+				shutdown();
+			} catch (SQLException e) {
+				LOGGER.error("getAllPacked " + CLOSE_CONNECTION_FAIL, e.getMessage());
+			}
+
+		}
+
+		return result;
+	}
 	// ==========================================================
 
 }
