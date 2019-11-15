@@ -11,7 +11,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -19,6 +21,8 @@ import java.util.concurrent.Executors;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.controlsfx.control.Notifications;
 
 import com.jfoenix.controls.JFXButton;
@@ -38,43 +42,57 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBase;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
 public class Controller {
+	protected Stage home;
 	protected final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
-	protected final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
+	protected static final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
+	protected static final DateTimeFormatter dtf2 = DateTimeFormatter.ofPattern("MMddyy");
 	protected Date date;
 	protected java.sql.Date sqlDate;
 	protected java.sql.Timestamp sqlTime;
-	protected final String PATTERN_MODEL = "(SMC-)\\w+\\s{1}\\w+";
-	protected final String PATTERN_BARCODE = "(30N0)\\d{8}";
-
+	protected static final String PATTERN_MODEL = "(SMC-)\\w+\\s{1}\\w+";
+	protected static final String PATTERN_BARCODE = "(30N0)\\d{8}";
+	protected static final Logger LOGGER = LogManager.getLogger("Controller");
 	// List of scene
-	protected final String LOGIN_SCENE = "SignInScene";
-	protected final String SIGNUP_SCENE = "SignUpScene";
-	protected final String USER_DASHBOARD_SCENE = "UserDashboardScene";
-	protected final String ADMIN_DASHBOARD_SCENE = "AdminDashboardScene";
-	protected final String RECEIVING_STATION_SCENE = "/fxml/ui/users/ReceivingStationScene.fxml";
-	protected final String ASSEMBLY_STATION_SCENE = "/fxml/ui/users/AssemblyStationScene.fxml";
-	protected final String BURN_IN_STATION_SCENE = "/fxml/ui/users/BurnInStationScene.fxml";
-	protected final String RESULT_STATION_SCENE = "/fxml/ui/users/ResultStation.fxml";
+	protected static final String LOGIN_SCENE = "SignInScene";
+	protected static final String SIGNUP_SCENE = "SignUpScene";
+	protected static final String USER_DASHBOARD_SCENE = "UserDashboardScene";
+	protected static final String ADMIN_DASHBOARD_SCENE = "AdminDashboardScene";
+	protected static final String RECEIVING_STATION_SCENE = "/fxml/ui/users/ReceivingStationScene.fxml";
+	protected static final String ASSEMBLY_STATION_SCENE = "/fxml/ui/users/AssemblyStationScene.fxml";
+	protected static final String BURN_IN_STATION_SCENE = "/fxml/ui/users/BurnInStationScene.fxml";
+	protected static final String RESULT_STATION_SCENE = "/fxml/ui/users/ResultStationScene.fxml";
+	protected static final String FIRMWARE_UPDATE_STATION_SCENE = "/fxml/ui/users/FirmwareUpdateStation.fxml";
+	protected static final String REPAIR_STATION_SCENE = "/fxml/ui/users/RepairStationScene.fxml";
+	protected static final String PACKING_STATION_SCENE = "/fxml/ui/users/PackingStation.fxml";
+	protected static final String SHIPPING_STATION_SCENE = "/fxml/ui/users/ShippingStation.fxml";
+
+	// Admin Scene
+	protected static final String ADMIN_USERS_MANAGEMENT_SCENE = "/fxml/ui/admin/UsersManagementScene.fxml";
 
 	// Hashing Password
 	private static final SecureRandom RAND = new SecureRandom();
@@ -83,39 +101,90 @@ public class Controller {
 	private static final String ALGORITHM = "PBKDF2WithHmacSHA512";
 
 	// List Resource Path
-	protected final String IMAGE_PATH = "/images/";
+	protected static final String IMAGE_PATH = "/images/";
 
 	// List Stations
-	protected final String RECEIVING_STATION = "Receiving Station";
-	protected final String ASSEMBLY_STATION = "Assembly Station";
-	protected final String RE_ASSEMBLY_STATION = "Re_Assembly Station";
-	protected final String BURN_IN_STATION = "Burn In Station";
-	protected final String RESULT_STATION = "Result Station";
-	protected final String REPAIR_STATION = "Repair Station";
-	protected final String PACKING_STATION = "Packing Station";
-	protected final String SHIPPING_STATION = "Shipping Station";
+	protected static final String RECEIVING_STATION = "Receiving Station";
+	protected static final String ASSEMBLY_STATION = "Assembly Station";
+	protected static final String RE_ASSEMBLY_STATION = "Re_Assembly Station";
+	protected static final String BURN_IN_STATION = "Burn In Station";
+	protected static final String RESULT_STATION = "Result Station";
+	protected static final String REPAIR_STATION = "Repair Station";
+	protected static final String PACKING_STATION = "Packing Station";
+	protected static final String SHIPPING_STATION = "Shipping Station";
+	protected static final String WAIT_TO_BURN_IN = "Wait_To_Burn_In";
+	protected static final String FIRMWARE_UPDATE_STATION = "Firmware Update Station";
+
+	// Admin Panel
+	protected static final String ADMIN_PANEL_USERS_MANAGEMENT = "User Management";
 
 	// Controllers Column
-	protected final String MODEL = "model";
-	protected final String CONTROLLER_BARCODE = "controller_barcode";
-	protected final String CURRENT_STATION = "current_station";
-	protected final String TIME_RECEIVED = "time_received";
-	protected final String TIME_START_ASSEMBLY = "time_start_assembly";
-	protected final String TIME_START_RE_ASSEMBLY = "time_start_re_assembly";
-	protected final String TIME_START_BURN_IN = "time_start_burn_in";
-	protected final String TIME_FINISH_BURN_IN = "time_finish_burn_in";
-	protected final String TIME_PACKED = "time_packed";
-	protected final String TIME_SHIPPED = "time_shipped";
-	protected final String IS_RECEIVED = "Is_Received";
-	protected final String IS_ASSEMBLED = "Is_Assembled";
-	protected final String IS_RE_ASSEMBLED = "Is_Re_Assembled";
-	protected final String IS_BURN_IN_PROCESSING = "Is_Burn_In_Processing";
-	protected final String IS_BURN_IN_DONE = "Is_Burn_In_Done";
-	protected final String IS_PASSED = "Is_Passed";
-	protected final String IS_REPAIRED = "Is_Repaired";
-	protected final String IS_PACKED = "Is_Packed";
-	protected final String IS_SHIPPED = "is_Shipped";
-//	protected final String BURN_IN_PROCESSING = "Burn in processing";
+	protected static final String MODEL = "model";
+	protected static final String CONTROLLER_BARCODE = "controller_barcode";
+	protected static final String CURRENT_STATION = "current_station";
+	protected static final String TIME_RECEIVED = "time_received";
+	protected static final String TIME_START_ASSEMBLY = "time_start_assembly";
+	protected static final String TIME_START_RE_ASSEMBLY = "time_start_re_assembly";
+	protected static final String TIME_START_BURN_IN = "time_start_burn_in";
+	protected static final String TIME_FINISH_BURN_IN = "time_finish_burn_in";
+	protected static final String TIME_PACKED = "time_packed";
+	protected static final String TIME_SHIPPED = "time_shipped";
+	protected static final String IS_RECEIVED = "Is_Received";
+	protected static final String IS_ASSEMBLED = "Is_Assembled";
+	protected static final String IS_RE_ASSEMBLED = "Is_Re_Assembled";
+	protected static final String IS_BURN_IN_PROCESSING = "Is_Burn_In_Processing";
+	protected static final String IS_BURN_IN_DONE = "Is_Burn_In_Done";
+	protected static final String IS_PASSED = "Is_Passed";
+	protected static final String IS_REPAIRED = "Is_Repaired";
+	protected static final String IS_PACKED = "Is_Packed";
+	protected static final String IS_SHIPPED = "is_Shipped";
+
+	// History Table
+	protected static final String TABLE_HISTORY = "history";
+	protected static final String COL_QA_HISTORY = "QA";
+	protected static final String COL_TIME_HISTORY = "Time";
+	protected static final String COL_STATION_HISTORY = "Station";
+	protected static final String COL_SERIAL_NUMBER_HISTORY = "Controller_Serial_Number";
+	protected static final String COL_NOTE_HISTORY = "Note";
+
+	// Controler Table
+	protected static final String TABLE_CONTROLER = "controllers";
+	protected static final String COL_ID_CONTROLER = "ID";
+	protected static final String COL_MODEL_CONTROLER = "Model";
+	protected static final String COL_SERIAL_NUMBER_CONTROLER = "Serial_Number";
+	protected static final String COL_CURRENT_STATION_CONTROLER = "Current_Station";
+	protected static final String COL_RECEIVING_TIME_CONTROLER = "Receiving_Time";
+	protected static final String COL_ASSEMBLY_TIME_CONTROLER = "Assembly_Time";
+	protected static final String COL_RE_ASSEMBLY_TIME_CONTROLER = "Re_Assembly_Time";
+	protected static final String COL_BURN_IN_START_TIME_CONTROLER = "Burn_In_Start";
+	protected static final String COL_BURN_IN_END_TIME_CONTROLER = "Burn_In_End";
+	protected static final String COL_PACKING_TIME_CONTROLER = "Packing_Time";
+	protected static final String COL_SHIPPING_TIME_CONTROLER = "Shipping_Time";
+	protected static final String COL_REPAIR_TIME_CONTROLER = "Repair_Time";
+	protected static final String COL_BURN_IN_RESULT_CONTROLER = "Burn_In_Result";
+	protected static final String COL_LOT_ID_CONTROLER = "Lot_ID";
+	protected static final String COL_IS_RECEIVIING_CONTROLER = "Is_Received";
+	protected static final String COL_IS_ASSEMBLY_DONE_CONTROLER = "Is_Assembly_Done";
+	protected static final String COL_IS_RE_ASSEMBLY_DONE_CONTROLER = "Is_Re_Assembly_Done";
+	protected static final String COL_IS_BURIN_IN_DONE_CONTROLER = "Is_Burn_In_Done";
+	protected static final String COL_IS_BURIN_IN_PROCESSING_CONTROLER = "Is_Burn_In_Processing";
+	protected static final String COL_IS_PACKING_DONE_CONTROLER = "Is_Packing_Done";
+	protected static final String COL_IS_SHIPPING_DONE_CONTROLER = "Is_Shipping_Done";
+	protected static final String COL_IS_REPAIR_DONE_CONTROLER = "Is_Repaired_Done";
+	protected static final String COL_IS_PASSED_CONTROLER = "Is_Passed";
+	protected static final String COL_SYMPTOM_FAIL_CONTROLER = "Symptoms_Fail";
+	protected static final String COL_REWORK_COUNT_CONTROLER = "Re_work_count";
+	protected static final String COL_FIRMWARE_UPDATE_TIME_CONTROLER = "Firmware_Update_Time";
+	protected static final String COL_IS_FIRMWARE_UPDATED_CONTROLER = "Is_Firmware_Updated";
+
+	// User Table
+	protected static final String TABLE_USER = "users";
+	protected static final String COL_USERNAME_USER = "username";
+	protected static final String COL_HASHING_PASSWORD_USER = "hashing_password";
+	protected static final String COL_SALT_KEY_USER = "salt_key";
+	protected static final String COL_TYPE_USER = "user_type";
+	protected static final String COL_IS_ACTIVE_USER = "active";
+	protected static final String COL_CREATE_AT_USER = "created_at";
 
 	// Needed Notification
 	protected Notifications notification;
@@ -123,11 +192,24 @@ public class Controller {
 
 	// Some helper value
 
-	private ExecutorService exec;;
+	private ExecutorService exec;
 	private DBHandler dbHandler;
 
+	// HashMap error code
+	protected static final Map<String, String> errorCodes;
+
+	static {
+		errorCodes = new HashMap<>();
+		errorCodes.put("er001", "Serial Number doesn't exist.");
+		errorCodes.put("ar02", "Some article");
+	}
+
+	public String errorMessage(String errorCode) {
+		return errorCodes.get(errorCode);
+	}
+
 	public void textFieldFormat(JFXTextField txt, String warning, boolean isUpperCase) {
-//		txt.setStyle("-fx-text-inner-color: #8e44ad;");
+//		txt.setStyle("-fx-text-inner-color: #212121;");
 		if (isUpperCase) {
 			// This code will change all text to Upper Case
 			txt.setTextFormatter(new TextFormatter<>((change) -> {
@@ -146,7 +228,7 @@ public class Controller {
 	}
 
 	public void textFieldFormat(JFXPasswordField txt, String warning) {
-		txt.setStyle("-fx-text-inner-color: #8e44ad;");
+//		txt.setStyle("-fx-text-inner-color: #212121;");
 		RequiredFieldValidator validator = new RequiredFieldValidator();
 		validator.setMessage(warning);
 		txt.getValidators().add(validator);
@@ -162,6 +244,12 @@ public class Controller {
 		stage.close();
 	}
 
+	// Generate LOT_ID by date
+	public String generatorLotId() {
+		date = new Date();
+		sqlTime = new java.sql.Timestamp(date.getTime());
+		return dtf2.format(sqlTime.toLocalDateTime());
+	}
 	// Notification Builder
 
 	public Notifications notificatioBuilder(Pos pos, Node graphic, String title, String text, double timeToStay) {
@@ -186,8 +274,16 @@ public class Controller {
 		alert.setTitle("Error");
 		alert.setHeaderText(null);
 		alert.setContentText(msm);
+		DialogPane root = alert.getDialogPane();
+		root.getStylesheets().add(getClass().getResource("/styles/Styles.css").toExternalForm());
+		root.getStyleClass().add("warningPanelDialog");
+		Stage dialogStage = new Stage(StageStyle.UTILITY);
+		root.getScene().setRoot(new Group());
 
+		root.setPadding(new Insets(10, 0, 10, 0));
+		Scene scene = new Scene(root);
 		final Runnable runnable = (Runnable) Toolkit.getDefaultToolkit().getDesktopProperty("win.sound.exclamation");
+
 		if (runnable != null)
 			runnable.run();
 
@@ -195,12 +291,24 @@ public class Controller {
 		alert.getButtonTypes().add(ButtonType.CLOSE);
 		Button closeButton = (Button) alert.getDialogPane().lookupButton(ButtonType.CLOSE);
 		closeButton.setDefaultButton(false);
-
-		alert.show();
+		for (ButtonType buttonType : root.getButtonTypes()) {
+			ButtonBase button = (ButtonBase) root.lookupButton(buttonType);
+			button.setOnAction(evt -> {
+				root.setUserData(buttonType);
+				dialogStage.close();
+			});
+		}
+		
+		dialogStage.setScene(scene);
+		dialogStage.initModality(Modality.APPLICATION_MODAL);
+		dialogStage.setAlwaysOnTop(true);
+		dialogStage.setResizable(false);
+		dialogStage.showAndWait();
+//		alert.show();
 	}
 
 	// Comfirm warning
-	public boolean warningComfirmAlert(String headerText, String contentText) {
+	public boolean warningComfirmAlert(String headerText, String contentText, boolean isSetDefault) {
 		Alert alert = new Alert(AlertType.CONFIRMATION);
 		alert.setTitle("Confirmation alert");
 		alert.setHeaderText(null);
@@ -214,7 +322,7 @@ public class Controller {
 		alert.getButtonTypes().add(ButtonType.OK);
 		alert.getButtonTypes().add(ButtonType.CLOSE);
 		Button okButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
-		okButton.setDefaultButton(false);
+		okButton.setDefaultButton(isSetDefault);
 
 		Optional<javafx.scene.control.ButtonType> result = alert.showAndWait();
 		if (result.get() == javafx.scene.control.ButtonType.OK) {
@@ -230,8 +338,8 @@ public class Controller {
 	// sceneName name of file fxml we want to go
 	public void goToScene(String sceneName, JFXButton buttonOfCurentScene, boolean isFullScene) {
 		buttonOfCurentScene.getScene().getWindow().hide();
-
-		Stage home = new Stage();
+		home = new Stage();
+//		Stage home = new Stage();
 		try {
 
 			Screen screen = Screen.getPrimary();
@@ -256,8 +364,7 @@ public class Controller {
 			home.show();
 
 		} catch (IOException e1) {
-
-			e1.printStackTrace();
+			LOGGER.error("Cannot generate Scene {} ", e1.getMessage());
 		}
 	}
 
@@ -324,8 +431,8 @@ public class Controller {
 		return sqlTime.toString();
 	}
 
-	public boolean isBarcodeValid(String controller_barcode) {
-		return controller_barcode.matches(PATTERN_BARCODE);
+	public boolean isBarcodeValid(String serialNumber) {
+		return serialNumber.matches(PATTERN_BARCODE);
 	}
 
 	public boolean isModelValid(String model) {
@@ -336,11 +443,11 @@ public class Controller {
 		return txt.getText().trim().toUpperCase();
 	}
 
-	public void addBarcodeToTable(ObservableList<SMCController> barcode, String controller_barcode) {
-		barcode.add(new SMCController(controller_barcode));
+	public void addBarcodeToTable(ObservableList<SMCController> barcode, String serialNumber) {
+		barcode.add(new SMCController(serialNumber));
 	}
 
-	public String isModelvalid(JFXTextField txtModel) {
+	public String isModelValid(JFXTextField txtModel) {
 		String result = "";
 
 		if (txtModel.validate()) {
@@ -355,16 +462,16 @@ public class Controller {
 		return result;
 	}
 
-	public String isBarcodevalid(JFXTextField txtBarcode) {
+	public String isBarcodeValid(JFXTextField txtBarcode) {
 		String result = "";
 
 		if (txtBarcode.validate()) {
 			String barcode = txtBarcode.getText().toUpperCase().trim();
 			if (!isBarcodeValid(barcode)) {
-				result = "Your barcode is not valid. It should be style as 30N0xxxx";
+				result = "Your barcode is not valid. It should be style as 30N0xxxx\r\n";
 			}
 		} else {
-			result = "Controller barcode is missing! Enter valid barcode.";
+			result = "Controller barcode is missing! Enter valid barcode.\r\n";
 		}
 
 		return result;
@@ -374,6 +481,7 @@ public class Controller {
 	@SuppressWarnings("unchecked")
 	public void treeviewTableBuilder(JFXTreeTableView<SMCController> treeView, ObservableList<SMCController> barcode,
 			String station) {
+
 		JFXTreeTableColumn<SMCController, String> controlBarcode = new JFXTreeTableColumn<>("Serial Number");
 
 		controlBarcode.prefWidthProperty().bind(treeView.widthProperty().multiply(0.97));
@@ -386,8 +494,7 @@ public class Controller {
 				return controlBarcode.getComputedValue(param);
 		});
 
-		final TreeItem<SMCController> root = new RecursiveTreeItem<SMCController>(barcode,
-				RecursiveTreeObject::getChildren);
+		final TreeItem<SMCController> root = new RecursiveTreeItem<>(barcode, RecursiveTreeObject::getChildren);
 		treeView.getColumns().setAll(controlBarcode);
 		treeView.setRoot(root);
 		treeView.setShowRoot(false);
@@ -415,6 +522,12 @@ public class Controller {
 				case BURN_IN_STATION:
 					temp.addAll(dbHandler.getAllReadyToBurn());
 					break;
+				case FIRMWARE_UPDATE_STATION:
+					temp.addAll(dbHandler.getAllFirmwareUpdated());
+					break;
+				case PACKING_STATION:
+					temp.addAll(dbHandler.getAllPacked());
+					break;
 				default:
 					temp.clear();
 				}
@@ -433,6 +546,7 @@ public class Controller {
 			listBarcodeReceived.addAll(getAllReceivedTask.getValue());
 
 			for (String s : listBarcodeReceived) {
+
 				addBarcodeToTable(barcode, s);
 			}
 		});
@@ -460,6 +574,7 @@ public class Controller {
 		final TreeItem<SMCController> root = new RecursiveTreeItem<SMCController>(barcode,
 				RecursiveTreeObject::getChildren);
 		treeView.getColumns().setAll(controlBarcode);
+		treeView.setRoot(null);
 		treeView.setRoot(root);
 		treeView.setShowRoot(false);
 

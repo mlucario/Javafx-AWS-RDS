@@ -2,6 +2,7 @@
 package com.quy.controllers.user;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 import com.jfoenix.controls.JFXButton;
@@ -12,6 +13,7 @@ import com.quy.controllers.Controller;
 import com.quy.controllers.SignInController;
 import com.quy.database.DBHandler;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -23,6 +25,8 @@ import javafx.scene.text.Text;
 public class ReceivingController extends Controller implements Initializable {
 	@FXML
 	private Text txtCompleted;
+	@FXML
+	private Text txtCounter;
 
 	@FXML
 	private JFXTextField txtModel;
@@ -38,13 +42,10 @@ public class ReceivingController extends Controller implements Initializable {
 	@FXML
 	private JFXTreeTableView<SMCController> treeView;
 
-//	// Needed Notification
-//	private Notifications notification;
-//	private Node graphic;
-
 	private DBHandler dbHandler;
 	protected String currentUser = SignInController.getInstance().username();
 	private ObservableList<SMCController> barcode = FXCollections.observableArrayList();
+	private int count;
 
 	@FXML
 	void submit(ActionEvent event) {
@@ -66,26 +67,68 @@ public class ReceivingController extends Controller implements Initializable {
 		}
 
 		else {
-			String controller_barcode = getStringJFXTextField(txtControllerBarcode);
+			String serialNumber = getStringJFXTextField(txtControllerBarcode);
 			String model = getStringJFXTextField(txtModel);
-
-			if (!dbHandler.isBarcodeExist(controller_barcode)) {
-				String result = dbHandler.addNewController(model, controller_barcode, getCurrentTimeStamp());
-				if (result.equalsIgnoreCase(controller_barcode)) {
-					addBarcodeToTable(barcode, controller_barcode);
+			String lotId = generatorLotId();
+			int reworkTimes = 0;
+			if (!dbHandler.isBarcodeExist(serialNumber)) {
+				String result = dbHandler.addNewController(model, serialNumber, getCurrentTimeStamp(), lotId,
+						reworkTimes);
+				if (result.equalsIgnoreCase(serialNumber)) {
+					count++;
+					addBarcodeToTable(barcode, serialNumber);
 					notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null,
 							"Add New Controller Successfully", 2);
 					notification.showInformation();
-					dbHandler.addToHistoryRecord(currentUser, "Receiving Station", getCurrentTimeStamp(),
-							controller_barcode, "");
+					dbHandler.addToHistoryRecord(currentUser, RECEIVING_STATION, getCurrentTimeStamp(), serialNumber,
+							"");
 				} else {
 					warningAlert(result);
 				}
 			} else {
-				warningAlert(controller_barcode + " already added! Try add other controller.");
+				//
+				ArrayList<String> info = new ArrayList<>();
+				info.addAll(dbHandler.getLastestInfo(serialNumber));
+
+				if (!info.isEmpty()) {
+					reworkTimes = Integer.parseInt(info.get(0));
+
+					boolean isShippingDone = info.get(4).equals("1");
+					boolean isPackingDone = info.get(3).equals("1");
+//					if (!currentStation.equalsIgnoreCase(RECEIVING_STATION)
+//							&& dbHandler.getStatusDone(COL_IS_RECEIVIING_CONTROLER, serialNumber).equals("1"))
+					if (isPackingDone || isShippingDone) {
+						boolean action = warningComfirmAlert("Re-Work Confirmation",
+								"Are you sure want to do rework this controller " + serialNumber, true);
+
+						if (action) {
+							String result = dbHandler.addNewController(model, serialNumber, getCurrentTimeStamp(),
+									lotId, ++reworkTimes);
+							if (result.equalsIgnoreCase(serialNumber)) {
+								count++;
+								addBarcodeToTable(barcode, serialNumber);
+								notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null,
+										"Add Rework Controller Successfully", 3);
+								notification.showInformation();
+								dbHandler.addToHistoryRecord(currentUser, RECEIVING_STATION, getCurrentTimeStamp(),
+										serialNumber, "Rework Controller Recevied");
+							} else {
+								warningAlert(result);
+							}
+						}
+					} else {
+						warningAlert("This controller is received. Don't need to add again.");
+					}
+				}
+
+				else {
+					warningAlert(serialNumber + " is added into database today. Please check with manager.");
+				}
+
 			}
 		}
 
+		txtCounter.setText(count + "");
 		txtBoxBarcode.clear();
 		txtControllerBarcode.clear();
 		txtBoxBarcode.requestFocus();
@@ -100,48 +143,8 @@ public class ReceivingController extends Controller implements Initializable {
 		textFieldFormat(txtModel, "Controller Model is required", true);
 		btnSubmit.setDisable(true);
 
-//		listModels = new ArrayList<>();
-//
-//
-//		exec = Executors.newCachedThreadPool(runnable -> {
-//			Thread t = new Thread(runnable);
-//			t.setDaemon(true);
-//			return t;
-//		});
-//
-//		Task<List<String>> getModelsTask = new Task<List<String>>() {
-//			@Override
-//			public List<String> call() throws Exception {
-//				return dbHandler.getAllModels();
-//			}
-//		};
-//
-//		getModelsTask.setOnFailed(e -> {
-//			getModelsTask.getException().printStackTrace();
-//
-//			warningAlert("Cannot fetch models");
-//		});
-//
-//		getModelsTask.setOnSucceeded(e -> {
-//
-//			System.out.println("get all models");
-//			listModels.addAll(getModelsTask.getValue());
-//			comboModel.getItems().addAll(listModels);
-//		});
-//
-//		exec.execute(getModelsTask);
-//		comboModel.setOnAction(e -> {
-//			txtBoxBarcode.requestFocus();
-//		});
-
-//		txtModel.textProperty().addListener((observable, oldValue, newValue) -> {
-//			if (!oldValue.equalsIgnoreCase(newValue)) {
-//			
-//			}
-//		});
-
 		txtModel.setOnAction(e -> {
-			String tempModel = isModelvalid(txtModel);
+			String tempModel = isModelValid(txtModel);
 			if (tempModel.isEmpty()) {
 				txtBoxBarcode.requestFocus();
 			} else {
@@ -152,7 +155,7 @@ public class ReceivingController extends Controller implements Initializable {
 
 		});
 		txtBoxBarcode.setOnAction(e -> {
-			String tempboxBarcode = isBarcodevalid(txtBoxBarcode);
+			String tempboxBarcode = isBarcodeValid(txtBoxBarcode);
 			if (tempboxBarcode.isEmpty()) {
 				txtControllerBarcode.requestFocus();
 			} else {
@@ -162,7 +165,7 @@ public class ReceivingController extends Controller implements Initializable {
 			}
 		});
 		txtControllerBarcode.setOnAction(e -> {
-			String tempControllerBarcode = isBarcodevalid(txtControllerBarcode);
+			String tempControllerBarcode = isBarcodeValid(txtControllerBarcode);
 			if (tempControllerBarcode.isEmpty()) {
 				if (getStringJFXTextField(txtBoxBarcode)
 						.equalsIgnoreCase(getStringJFXTextField(txtControllerBarcode))) {
@@ -179,44 +182,28 @@ public class ReceivingController extends Controller implements Initializable {
 				txtControllerBarcode.requestFocus();
 			}
 		});
-
+		Platform.runLater(() -> txtModel.requestFocus());
 		// setup tree view
 		treeviewTableBuilder(treeView, barcode, RECEIVING_STATION);
 
-//		JFXTreeTableColumn<SMCController, String> controlBarcode = new JFXTreeTableColumn<>("Controller Barcode");
-//
-//		controlBarcode.prefWidthProperty().bind(treeView.widthProperty().multiply(0.975));
-//		controlBarcode.setResizable(false);
-//		controlBarcode.setSortable(false);
-//
-//		controlBarcode.setCellValueFactory((TreeTableColumn.CellDataFeatures<SMCController, String> param) -> {
-//			if (controlBarcode.validateValue(param))
-//				return param.getValue().getValue().getControllerBarcode();
-//			else
-//				return controlBarcode.getComputedValue(param);
-//		});
-//
-//
-//		final TreeItem<SMCController> root = new RecursiveTreeItem<SMCController>(barcode,
-//				RecursiveTreeObject::getChildren);
-//		treeView.getColumns().setAll(controlBarcode);
-//		treeView.setRoot(root);
-//		treeView.setShowRoot(false);
+		// TODO find the other way to improve this one
+		// don't have to fetch database 2 times
+
+		count = dbHandler.getAllReceived().size();
+		txtCounter.setText(count + "");
 
 	}
 
 	public boolean keyPressedAction() {
 		boolean result = false;
-		String temp1 = isModelvalid(this.txtModel);
-		String temp2 = isBarcodevalid(this.txtControllerBarcode);
-		String temp3 = isBarcodevalid(this.txtBoxBarcode);
-		if (temp1.isEmpty() && temp2.isEmpty() && temp3.isEmpty()) {
-			if (getStringJFXTextField(this.txtBoxBarcode)
-					.equalsIgnoreCase(getStringJFXTextField(this.txtControllerBarcode))) {
-				result = true;
-			} else {
-				result = false;
-			}
+		String temp1 = isModelValid(this.txtModel);
+		String temp2 = isBarcodeValid(this.txtControllerBarcode);
+		String temp3 = isBarcodeValid(this.txtBoxBarcode);
+		if (temp1.isEmpty() && temp2.isEmpty() && temp3.isEmpty() && (getStringJFXTextField(this.txtBoxBarcode)
+				.equalsIgnoreCase(getStringJFXTextField(this.txtControllerBarcode)))) {
+
+			result = true;
+
 		}
 		btnSubmit.setDisable(!result);
 		return result;

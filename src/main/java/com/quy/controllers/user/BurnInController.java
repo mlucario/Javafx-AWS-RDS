@@ -1,6 +1,9 @@
 package com.quy.controllers.user;
 
 import java.net.URL;
+import java.sql.Timestamp;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import com.quy.bizcom.SMCController;
@@ -15,6 +18,8 @@ import javafx.scene.text.Text;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.controls.JFXTreeTableView;
+
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -45,55 +50,38 @@ public class BurnInController extends Controller implements Initializable {
 
 	@FXML
 	void addToBurnInList(ActionEvent event) {
-		if (!txtControllerBarcode.validate()) {
-			warningAlert("Controller barcode is missing! Enter Controller barcode.");
-			txtControllerBarcode.clear();
-			txtControllerBarcode.requestFocus();
-		} else if (isValidIinput()) {
-			// add to database
-			String controller_barcode = getStringJFXTextField(txtControllerBarcode);
 
-			String result = dbHandler.addToBurnInWaitingList(controller_barcode);
-			if (result.equalsIgnoreCase(controller_barcode)) {
-				addBarcodeToTable(barcode, controller_barcode);
-				currentReadyToBurn.add(controller_barcode);
+		if (isValidIinput().isEmpty()) {
+			String serialNumber = getStringJFXTextField(txtControllerBarcode);
+			String iD = dbHandler.getStatusDone(COL_ID_CONTROLER, serialNumber);
+			String result = dbHandler.addToBurnInWaitingList(iD);
+			if (result.equals(iD)) {
+				addBarcodeToTable(barcode, serialNumber);
+				currentReadyToBurn.add(serialNumber);
 				totalInList++;
 				txtNumber.setText(totalInList + "");
-//				addBarcodeToTable(this.barcode, controller_barcode);
-				// Remove barcode if submit succeffull
-//				int index = 0;
-//				if(currentSelectedBarcode == null) {
-//					for(SMCController smc : barcode) {
-//						if(smc.getControllerBarcode().getValue().equalsIgnoreCase(controller_barcode)) {
-//							break;
-//						}else {
-//							index++;
-//						}
-//					}
-//					barcode.remove(index);
-//				}
-//				barcode.remove(currentSelectedBarcode);
-
 				dbHandler.addToHistoryRecord(currentUser, "Added to waiting list burn in", getCurrentTimeStamp(),
-						controller_barcode, "Get ready to burn in.");
+						serialNumber, "Added to burn in system.");
 				btnStart.setDisable(false);
 			} else {
 				warningAlert(result);
 			}
 		} else {
-			warningAlert("Controller serial number has problem. Check with manager.");
+			warningAlert(isValidIinput());
 		}
-
+		isBurnInStarted = false;
 		txtControllerBarcode.clear();
 		txtControllerBarcode.requestFocus();
 		btnAdd.setDisable(true);
+
 	}
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		dbHandler = new DBHandler();
 		isBurnInStarted = false;
-
+		
+		
 		btnAdd.setDisable(true);
 		btnStart.setDisable(true);
 		textFieldFormat(txtControllerBarcode, "Barcode input is required", true);
@@ -101,58 +89,80 @@ public class BurnInController extends Controller implements Initializable {
 		currentReadyToBurn.addAll(dbHandler.getAllReadyToBurn());
 		totalInList = currentReadyToBurn.size();
 		txtNumber.setText(totalInList + "");
+		Platform.runLater(() -> txtControllerBarcode.requestFocus());
 
 		if (totalInList != 0) {
-			
+
 			btnStart.setDisable(false);
 		} else {
 			btnStart.setDisable(true);
 		}
+
 		treeviewTableBuilder(treeview, barcode, currentReadyToBurn);
-		txtControllerBarcode.setOnAction(e -> {
-			addToBurnInList(e);
-		});
+		txtControllerBarcode.setOnAction(e -> addToBurnInList(e));
 
 	}
 
 	@FXML
-	public boolean isValidIinput() {
-		boolean result = false;
-
-		String temp = isBarcodevalid(this.txtControllerBarcode);
-
-		if (temp.isEmpty()) {
-			String barcode = getStringJFXTextField(txtControllerBarcode);
-			if (dbHandler.isBarcodeExist(barcode)) {
-				// Check Does it Received
-
-				if (dbHandler.getStatusDone(CURRENT_STATION, barcode).equalsIgnoreCase(ASSEMBLY_STATION)) {
-					result = true;
-				} else {
-					warningAlert("This controller DID NOT DO ASSEMBLY YET! Please go to assembly station to add.");
-					txtControllerBarcode.clear();
-					txtControllerBarcode.requestFocus();
-				}
+	public String isValidIinput() {
+		String result = "";
+		result = isBarcodeValid(txtControllerBarcode);
+		if (result.isEmpty()) {
+			String serialNumber = getStringJFXTextField(txtControllerBarcode);
+			String currentStatus = dbHandler.getStatusDone(COL_CURRENT_STATION_CONTROLER, serialNumber);
+			if (!dbHandler.isBarcodeExist(serialNumber)) {
+				result = "\r\n Serial Number does not exist!";
 			} else {
-				result = false;
+				if (currentStatus.equalsIgnoreCase(SHIPPING_STATION)) {
+					result = "\r\n Controller has been shipped. Please ask manager INTERMEDIATELY!!!";
+				} else {
+					switch (currentStatus) {
+					case ASSEMBLY_STATION:
+					case FIRMWARE_UPDATE_STATION:
+						result = "";
+						break;
+					case WAIT_TO_BURN_IN:
+						result = "\r\n Controller stayed in Burn_In System and Wait to Burn";
+						break;
+					case BURN_IN_STATION:
+						result = "\r\n Controller is BURN_IN!";
+						break;
+					case RECEIVING_STATION:
+					case PACKING_STATION:
+						result = "\r\n Please go to " + ASSEMBLY_STATION;
+						break;
+					default:
+						LOGGER.info("There is nothing here.");
+					}
+				}
 			}
 		}
-		// Enable button if barcode valid
-		btnAdd.setDisable(!result);
+
 		return result;
+
+	}
+
+	public void keyPressValidate() {
+		boolean result = false;
+		if (txtControllerBarcode.validate()) {
+			result = true;
+		}
+		btnAdd.setDisable(!result);
 	}
 
 	@FXML
 	void startBurnIn(ActionEvent event) {
 		String timeStamp = getCurrentTimeStamp();
+		int count = 0;
 		boolean flag = false;
 		if (!currentReadyToBurn.isEmpty()) {
-			for (String barcode : currentReadyToBurn) {
-				String result = dbHandler.burn_in(barcode, timeStamp);
-				if (result.equalsIgnoreCase(barcode)) {
-
-					dbHandler.addToHistoryRecord(currentUser, "Burn In Station", getCurrentTimeStamp(), barcode,
-							"Added to burn in station");
+			for (String serialNumber : currentReadyToBurn) {
+				String iD = dbHandler.getStatusDone(COL_ID_CONTROLER, serialNumber);
+				String result = dbHandler.burnIn(iD, timeStamp);
+				if (result.equalsIgnoreCase(iD)) {
+					count++;
+					dbHandler.addToHistoryRecord(currentUser, "Burn In Station", getCurrentTimeStamp(), serialNumber,
+							"Starting Burn In Process");
 					flag = true;
 				} else {
 					warningAlert(result);
@@ -160,7 +170,8 @@ public class BurnInController extends Controller implements Initializable {
 			}
 			if (flag) {
 				isBurnInStarted = true;
-				notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null, "Add to Burn in Successfully", 3);
+				notification = notificatioBuilder(Pos.CENTER, graphic, null, count + " Added to Burn in Successfully",
+						4);
 				notification.showInformation();
 				txtNumber.setText(dbHandler.getAllReadyToBurn().size() + "");
 				barcode.clear();

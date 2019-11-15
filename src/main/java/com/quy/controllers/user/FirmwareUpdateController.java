@@ -1,7 +1,11 @@
 package com.quy.controllers.user;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
+
+import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
@@ -14,27 +18,37 @@ import com.quy.database.DBHandler;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
 import javafx.scene.text.Text;
 
-public class AssemblyStationController extends Controller implements Initializable {
+public class FirmwareUpdateController extends Controller implements Initializable {
 	@FXML
 	private JFXTextField txtControllerBarcode;
-	@FXML
-	private Text txtCounter;
-	@FXML
-	private JFXTreeTableView<SMCController> treeView;
+
 	@FXML
 	private JFXButton btnSubmit;
+
+	@FXML
+	private JFXTreeTableView<SMCController> treeView;
+
+	@FXML
+	private Text txtCounter;
+
 	private DBHandler dbHandler;
 	private String currentUser = SignInController.getInstance().username();
 	private ObservableList<SMCController> barcode = FXCollections.observableArrayList();
 	private int count;
+	private ArrayList<String> listAdded;
 
 	@FXML
+	void keyPressValidate() {
+		boolean result = false;
+		if (txtControllerBarcode.validate()) {
+			result = true;
+		}
+		btnSubmit.setDisable(!result);
+	}
+
 	public String isValidInput() {
 		String result = "";
 		result = isBarcodeValid(txtControllerBarcode);
@@ -46,16 +60,6 @@ public class AssemblyStationController extends Controller implements Initializab
 			} else {
 				if (currentStatus.equalsIgnoreCase(SHIPPING_STATION)) {
 					result = "\r\n Controller has been shipped. Please ask manager intermediately.";
-				} else {
-					switch (currentStatus) {
-					case ASSEMBLY_STATION:
-					case BURN_IN_STATION:
-					case WAIT_TO_BURN_IN:
-						result = "\r\n Controller has Assemsbly DONE!";
-						break;
-					default:
-						LOGGER.info("There is nothing here.");
-					}
 				}
 			}
 		}
@@ -63,17 +67,8 @@ public class AssemblyStationController extends Controller implements Initializab
 		return result;
 	}
 
-	public void keyPressValidate() {
-		boolean result = false;
-		if (txtControllerBarcode.validate()) {
-			result = true;
-		}
-		btnSubmit.setDisable(!result);
-	}
-
 	@FXML
-	void submit(ActionEvent event) {
-
+	void submit() {
 		if (isValidInput().isEmpty()) {
 			String serialNumber = getStringJFXTextField(txtControllerBarcode);
 			String currentLastestStation = dbHandler.getStatusDone(COL_CURRENT_STATION_CONTROLER, serialNumber);
@@ -82,17 +77,21 @@ public class AssemblyStationController extends Controller implements Initializab
 			String iD = dbHandler.getStatusDone(COL_ID_CONTROLER, serialNumber);
 
 			// Normal sequence
-			if (currentLastestStation.equalsIgnoreCase(RECEIVING_STATION)) {
-				String result = dbHandler.assembly(iD, timestamp, reworkCount, false);
+			if (currentLastestStation.equalsIgnoreCase(ASSEMBLY_STATION)) {
+				String result = dbHandler.firmwareUpdate(iD, timestamp, reworkCount, false);
 				if (result.equalsIgnoreCase(iD)) {
+
 					count++;
-					addBarcodeToTable(barcode, serialNumber);
-					String history = dbHandler.addToHistoryRecord(currentUser, ASSEMBLY_STATION, timestamp,
-							serialNumber, RECEIVING_STATION + " to " + ASSEMBLY_STATION);
+					if (!listAdded.contains(serialNumber)) {
+						addBarcodeToTable(barcode, serialNumber);
+					}
+
+					String history = dbHandler.addToHistoryRecord(currentUser, FIRMWARE_UPDATE_STATION, timestamp,
+							serialNumber, ASSEMBLY_STATION + " to " + FIRMWARE_UPDATE_STATION);
 					if (!history.equalsIgnoreCase(serialNumber)) {
 						warningAlert(history);
 					} else {
-						notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null, "Assembler Successfully", 2);
+						notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null, "Added Successfully", 2);
 						notification.showInformation();
 					}
 				} else {
@@ -106,18 +105,21 @@ public class AssemblyStationController extends Controller implements Initializab
 				if (dbHandler.duplicateRow(serialNumber, iD)) {
 					dbHandler.updateCurrentStation(iD, "Re_Work");
 					String newId = dbHandler.getStatusDone(COL_ID_CONTROLER, serialNumber);
-					// do assembly
-					String result = dbHandler.assembly(newId, timestamp, ++reworkCount, true);
+					String result = dbHandler.firmwareUpdate(newId, timestamp, ++reworkCount, true);
 					if (result.equalsIgnoreCase(newId)) {
 						count++;
-						addBarcodeToTable(barcode, serialNumber);
-						String history = dbHandler.addToHistoryRecord(currentUser, ASSEMBLY_STATION, timestamp,
-								serialNumber, "Rework: From" + currentLastestStation + " to " + ASSEMBLY_STATION);
+						if (!listAdded.contains(serialNumber)) {
+							addBarcodeToTable(barcode, serialNumber);
+						}
+
+						String history = dbHandler.addToHistoryRecord(currentUser, FIRMWARE_UPDATE_STATION, timestamp,
+								serialNumber,
+								"Rework: From" + currentLastestStation + " to " + FIRMWARE_UPDATE_STATION);
 						if (!history.equalsIgnoreCase(serialNumber)) {
 							warningAlert(history);
 						} else {
 							notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null,
-									"Re_Assembler Successfully", 2);
+									"Re_Work Added Successfully", 2);
 							notification.showInformation();
 						}
 					} else {
@@ -148,35 +150,15 @@ public class AssemblyStationController extends Controller implements Initializab
 		textFieldFormat(txtControllerBarcode, "Controller barcode is required", true);
 		Platform.runLater(() -> txtControllerBarcode.requestFocus());
 		txtControllerBarcode.setOnAction(e -> {
-			submit(e);
+
+			submit();
 
 		});
-		// setup tree view
-		treeviewTableBuilder(treeView, barcode, ASSEMBLY_STATION);
+		listAdded = new ArrayList<>();
+		listAdded.addAll(dbHandler.getAllFirmwareUpdated());
+		treeviewTableBuilder(treeView, barcode, FIRMWARE_UPDATE_STATION);
 		count = dbHandler.getAllAssemblyDone().size();
 		txtCounter.setText(count + "");
-//		treeView.setOnMousePressed(new EventHandler<MouseEvent>() {
-//
-//			@Override
-//			public void handle(MouseEvent event) {
-//				if (event.getButton().equals(MouseButton.PRIMARY)) {
-//					if (event.getClickCount() == 2) {
-//						currentSelectedBarcode = treeView.getSelectionModel().getSelectedItem().getValue();
-//						System.out.println("current : " + currentSelectedBarcode.getControllerBarcode().getValue().toString());
-//						String currentSelectedBarcode = treeView.getSelectionModel().getSelectedItem().getValue()
-//								.getControllerBarcode().getValue().toString();
-//						txtControllerBarcode.setText(currentSelectedBarcode);
-//						isValidInput();
-//					} else {
-//						currentSelectedBarcode = null;
-//						txtControllerBarcode.clear();
-//					}
-//				}
-//
-//			}
-//
-//		});
-
 	}
 
 }
