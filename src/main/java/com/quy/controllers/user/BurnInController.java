@@ -1,6 +1,9 @@
 package com.quy.controllers.user;
 
 import java.net.URL;
+import java.sql.Timestamp;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import com.quy.bizcom.SMCController;
@@ -45,7 +48,6 @@ public class BurnInController extends Controller implements Initializable {
 	private int totalInList = 0;
 	private boolean isBurnInStarted;
 
-	
 	@FXML
 	void addToBurnInList(ActionEvent event) {
 
@@ -78,7 +80,8 @@ public class BurnInController extends Controller implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		dbHandler = new DBHandler();
 		isBurnInStarted = false;
-
+		
+		
 		btnAdd.setDisable(true);
 		btnStart.setDisable(true);
 		textFieldFormat(txtControllerBarcode, "Barcode input is required", true);
@@ -94,6 +97,7 @@ public class BurnInController extends Controller implements Initializable {
 		} else {
 			btnStart.setDisable(true);
 		}
+
 		treeviewTableBuilder(treeview, barcode, currentReadyToBurn);
 		txtControllerBarcode.setOnAction(e -> addToBurnInList(e));
 
@@ -167,7 +171,7 @@ public class BurnInController extends Controller implements Initializable {
 			if (flag) {
 				isBurnInStarted = true;
 				notification = notificatioBuilder(Pos.CENTER, graphic, null, count + " Added to Burn in Successfully",
-						6);
+						4);
 				notification.showInformation();
 				txtNumber.setText(dbHandler.getAllReadyToBurn().size() + "");
 				barcode.clear();

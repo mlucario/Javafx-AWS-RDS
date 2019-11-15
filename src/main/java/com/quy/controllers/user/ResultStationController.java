@@ -2,7 +2,13 @@
 package com.quy.controllers.user;
 
 import java.net.URL;
+
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.ResourceBundle;
 
 import com.jfoenix.controls.JFXRadioButton;
@@ -13,19 +19,23 @@ import com.quy.controllers.Controller;
 import com.quy.controllers.SignInController;
 import com.quy.database.DBHandler;
 
+import javafx.animation.KeyFrame;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.control.Label;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 
 public class ResultStationController extends Controller implements Initializable {
 	@FXML
@@ -61,6 +71,12 @@ public class ResultStationController extends Controller implements Initializable
 	@FXML
 	private JFXTextField txtSymptoms;
 
+	@FXML
+	private Label lbTimeRemain;
+
+	private Timestamp finishTimeRemain;
+	private Timestamp startedTime;
+
 	private DBHandler dbHandler;
 	private String currentUser = SignInController.getInstance().username();
 	private ObservableList<SMCController> barcodePassed = FXCollections.observableArrayList();
@@ -92,6 +108,10 @@ public class ResultStationController extends Controller implements Initializable
 		rdFail.setToggleGroup(result);
 		rdPassed.setUserData("PASSED");
 		rdFail.setUserData("FAIL");
+		String startedTimeControllers = dbHandler.getCurrentStartedBuring();
+		startedTime = Timestamp.valueOf(startedTimeControllers);
+
+		finishTimeRemain = Timestamp.from(startedTime.toInstant().plus(1, ChronoUnit.DAYS));
 
 		result.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
 
@@ -126,6 +146,34 @@ public class ResultStationController extends Controller implements Initializable
 		treeviewTableBuilder(treeviewFail, barcodeFail, currentFail);
 		treeviewTableBuilder(treeview, barcodeInBurnInSystem, inBurnInSystem);
 
+		
+		// Set Countdown TIme
+		
+       
+		
+	
+		
+	Thread td = new Thread(new Runnable() {
+		
+		@Override
+		public void run() {
+			Date date = new Date();
+			Date finishedDate = new Date(finishTimeRemain.getTime());
+			DateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+			
+			try {
+				while(finishedDate.getTime() - date.getTime() > 1) {
+					System.out.println(sdf.format(finishedDate.getTime() - date.getTime()));
+					lbTimeRemain.setText(sdf.format(finishedDate.getTime() - date.getTime()));
+					Thread.sleep(1000);
+				}
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+			
+		}
+	});
+	td.start();
 	}
 
 	@FXML

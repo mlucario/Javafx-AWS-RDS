@@ -13,6 +13,8 @@ public class MainApp extends Application {
 	public void start(Stage stage) throws Exception {
 
 		Parent root = FXMLLoader.load(getClass().getResource("/fxml/SignInScene.fxml"));
+//		Parent root = FXMLLoader.load(getClass().getResource("/fxml/AdminDashboardScene.fxml"));
+//		Parent root = FXMLLoader.load(getClass().getResource("/fxml/ui/admin/UsersManagementScene.fxml"));
 
 		Scene scene = new Scene(root);
 //		scene.getStylesheets().add(MainApp.class.getResource("/styles/fonts.css").toExternalForm());
@@ -23,9 +25,9 @@ public class MainApp extends Application {
 //		stage.setMaximized(true);
 		stage.setResizable(false);
 		stage.setMinWidth(700);
-		stage.setMinHeight(800);
+		stage.setMinHeight(600);
 
-		stage.setAlwaysOnTop(true);
+//		stage.setAlwaysOnTop(true);
 
 		stage.show();
 

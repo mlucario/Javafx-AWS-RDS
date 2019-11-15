@@ -76,7 +76,7 @@ public class Controller {
 	protected java.sql.Timestamp sqlTime;
 	protected static final String PATTERN_MODEL = "(SMC-)\\w+\\s{1}\\w+";
 	protected static final String PATTERN_BARCODE = "(30N0)\\d{8}";
-	protected static final Logger LOGGER = LogManager.getLogger("SQL Connector");
+	protected static final Logger LOGGER = LogManager.getLogger("Controller");
 	// List of scene
 	protected static final String LOGIN_SCENE = "SignInScene";
 	protected static final String SIGNUP_SCENE = "SignUpScene";
@@ -90,6 +90,9 @@ public class Controller {
 	protected static final String REPAIR_STATION_SCENE = "/fxml/ui/users/RepairStationScene.fxml";
 	protected static final String PACKING_STATION_SCENE = "/fxml/ui/users/PackingStation.fxml";
 	protected static final String SHIPPING_STATION_SCENE = "/fxml/ui/users/ShippingStation.fxml";
+
+	// Admin Scene
+	protected static final String ADMIN_USERS_MANAGEMENT_SCENE = "/fxml/ui/admin/UsersManagementScene.fxml";
 
 	// Hashing Password
 	private static final SecureRandom RAND = new SecureRandom();
@@ -111,6 +114,9 @@ public class Controller {
 	protected static final String SHIPPING_STATION = "Shipping Station";
 	protected static final String WAIT_TO_BURN_IN = "Wait_To_Burn_In";
 	protected static final String FIRMWARE_UPDATE_STATION = "Firmware Update Station";
+
+	// Admin Panel
+	protected static final String ADMIN_PANEL_USERS_MANAGEMENT = "User Management";
 
 	// Controllers Column
 	protected static final String MODEL = "model";
@@ -186,7 +192,7 @@ public class Controller {
 
 	// Some helper value
 
-	private ExecutorService exec;;
+	private ExecutorService exec;
 	private DBHandler dbHandler;
 
 	// HashMap error code
@@ -203,7 +209,7 @@ public class Controller {
 	}
 
 	public void textFieldFormat(JFXTextField txt, String warning, boolean isUpperCase) {
-//		txt.setStyle("-fx-text-inner-color: #8e44ad;");
+//		txt.setStyle("-fx-text-inner-color: #212121;");
 		if (isUpperCase) {
 			// This code will change all text to Upper Case
 			txt.setTextFormatter(new TextFormatter<>((change) -> {
@@ -222,7 +228,7 @@ public class Controller {
 	}
 
 	public void textFieldFormat(JFXPasswordField txt, String warning) {
-		txt.setStyle("-fx-text-inner-color: #8e44ad;");
+//		txt.setStyle("-fx-text-inner-color: #212121;");
 		RequiredFieldValidator validator = new RequiredFieldValidator();
 		validator.setMessage(warning);
 		txt.getValidators().add(validator);
@@ -269,6 +275,8 @@ public class Controller {
 		alert.setHeaderText(null);
 		alert.setContentText(msm);
 		DialogPane root = alert.getDialogPane();
+		root.getStylesheets().add(getClass().getResource("/styles/Styles.css").toExternalForm());
+		root.getStyleClass().add("warningPanelDialog");
 		Stage dialogStage = new Stage(StageStyle.UTILITY);
 		root.getScene().setRoot(new Group());
 
@@ -290,6 +298,7 @@ public class Controller {
 				dialogStage.close();
 			});
 		}
+		
 		dialogStage.setScene(scene);
 		dialogStage.initModality(Modality.APPLICATION_MODAL);
 		dialogStage.setAlwaysOnTop(true);
@@ -351,7 +360,7 @@ public class Controller {
 				home.setMinHeight(600);
 
 			}
-			home.setAlwaysOnTop(true);
+//			home.setAlwaysOnTop(true);
 			home.show();
 
 		} catch (IOException e1) {

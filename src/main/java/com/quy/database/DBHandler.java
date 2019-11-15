@@ -17,6 +17,8 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.quy.bizcom.User;
+
 public class DBHandler {
 
 	private Connection dbconnection;
@@ -30,7 +32,6 @@ public class DBHandler {
 	// List Stations
 	private static final String RECEIVING_STATION = "Receiving Station";
 	private static final String ASSEMBLY_STATION = "Assembly Station";
-	private static final String RE_ASSEMBLY_STATION = "Re_Assembly Station";
 	private static final String FIRMWARE_UPDATE_STATION = "Firmware Update Station";
 	private static final String BURN_IN_STATION = "Burn In Station";
 	private static final String RESULT_STATION = "Result Station";
@@ -235,6 +236,77 @@ public class DBHandler {
 		return result;
 	}
 
+	public List<User> getAllUsers() {
+
+		ArrayList<User> result = new ArrayList<>();
+		String query = "SELECT username,user_type,active,created_at FROM users WHERE user_type=?  ORDER BY ID";
+
+		try {
+			dbconnection = getConnection();
+			pst = dbconnection.prepareStatement(query);
+			pst.setString(1, "User");
+			rs = pst.executeQuery();
+			while (rs.next()) {
+				String userName = rs.getString("username");
+				String useType = rs.getString("user_type");
+				boolean isActive = rs.getBoolean("active");
+				String createdAt = rs.getString("created_at");
+				result.add(new User(userName, useType, isActive, createdAt));
+			}
+
+		} catch (SQLException e) {
+			LOGGER.error(" getAllUsers " + CONNECTION_FAIL, e.getMessage());
+		} finally {
+
+			try {
+				if (pst != null) {
+					pst.close();
+				}
+
+				if (rs != null) {
+					rs.close();
+				}
+				shutdown();
+			} catch (SQLException e) {
+				LOGGER.error(" getAllUsers " + CLOSE_CONNECTION_FAIL, e.getMessage());
+			}
+
+		}
+
+		return result;
+	}
+
+	public String activeOrLockUser(String username, boolean isActive) {
+		String result = "";
+
+		String query = "UPDATE users SET active=? WHERE username=?";
+		try {
+			dbconnection = getConnection();
+			pst = dbconnection.prepareStatement(query);
+			pst.setBoolean(1, isActive);
+			pst.setString(2, username);
+
+			if (pst.executeUpdate() != 0) {
+				result = username;
+			}
+
+		} catch (SQLException e) {
+			LOGGER.error("activeOrLockUser" + " " + CONNECTION_FAIL, e.getMessage());
+		} finally {
+
+			try {
+
+				pst.close();
+
+				shutdown();
+			} catch (SQLException e) {
+				LOGGER.error("activeOrLockUser" + " " + CLOSE_CONNECTION_FAIL, e.getMessage());
+			}
+
+		}
+
+		return result;
+	}
 	// ==================================================================================================
 
 	// SUPPORT METHODS
@@ -387,7 +459,7 @@ public class DBHandler {
 	// Fetch all Controller Which are ready to burn in
 	public List<String> getAllReadyToBurn() {
 		ArrayList<String> result = new ArrayList<>();
-		String query = "SELECT Serial_Number FROM controllers WHERE Current_Station=? AND Is_Received=? AND Is_Assembly_Done=?";
+		String query = "SELECT Serial_Number FROM controllers WHERE Current_Station=? AND Is_Received=? and Is_Assembly_Done=?";
 		try {
 			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
@@ -696,7 +768,7 @@ public class DBHandler {
 	public String firmwareUpdate(String iD, String timestamp, int reworkCount, boolean isRework) {
 		String result = "";
 
-		String query = "UPDATE controllers SET Current_Station=?,Firmware_Update_Time=?,Is_Firmware_Updated=?,Re_work_count=?,Is_ReWork=? WHERE ID=?";
+		String query = "UPDATE controllers SET Current_Station=?,Firmware_Update_Time=?,Is_Firmware_Updated=?,Re_work_count=?,Is_ReWork=?,Is_Assembly_Done=? WHERE ID=?";
 		try {
 			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
@@ -705,7 +777,8 @@ public class DBHandler {
 			pst.setBoolean(3, true);
 			pst.setInt(4, reworkCount);
 			pst.setBoolean(5, isRework);
-			pst.setString(6, iD);
+			pst.setBoolean(6, true);
+			pst.setString(7, iD);
 			if (pst.executeUpdate() != 0) {
 				result = iD;
 			} else {
@@ -1171,4 +1244,43 @@ public class DBHandler {
 	}
 	// ==========================================================
 
+	public String getCurrentStartedBuring() {
+		String result = "";
+		String query = "SELECT Burn_In_Start FROM controllers WHERE Current_Station=? AND Is_Received=? AND Is_Burn_In_Processing=? ORDER BY Burn_In_Start DESC";
+		try {
+			dbconnection = getConnection();
+			pst = dbconnection.prepareStatement(query);
+			pst.setString(1, BURN_IN_STATION);
+			pst.setBoolean(2, true);
+			pst.setBoolean(3, true);
+
+			rs = pst.executeQuery();
+
+			if (rs.next()) {
+				result = rs.getString("Burn_In_Start").trim().replaceAll(" +", " ").toUpperCase();
+			}
+
+		} catch (SQLException e) {
+			LOGGER.error("getAllPacked " + CONNECTION_FAIL, e.getMessage());
+		} finally {
+
+			try {
+
+				if (pst != null) {
+					pst.close();
+				}
+
+				if (rs != null) {
+					rs.close();
+				}
+				shutdown();
+			} catch (SQLException e) {
+				LOGGER.error("getAllPacked " + CLOSE_CONNECTION_FAIL, e.getMessage());
+			}
+
+		}
+
+		return result;
+
+	}
 }

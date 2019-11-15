@@ -80,7 +80,7 @@ public class SignInController extends Controller implements Initializable {
 
 	@FXML
 	void dragged(MouseEvent event) {
-		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+//		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 //		stage.setX(event.getScreenX() - x);
 //		stage.setY(event.getScreenY() - y);
 	}
