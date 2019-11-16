@@ -174,6 +174,41 @@ public class DBHandler {
 		return result;
 	}
 
+	// CHange password
+	public boolean changePassword(String username, String hashingPassword, String saltKey) {
+		boolean result = false;
+
+		String query = "UPDATE users SET hashing_password=?,salt_key=? WHERE username=?";
+		try {
+			dbconnection = getConnection();
+			pst = dbconnection.prepareStatement(query);
+			pst.setString(1, hashingPassword);
+			pst.setString(2, saltKey);
+			pst.setString(3, username);
+
+			if (pst.executeUpdate() != 0) {
+				System.out.println("Change pass woed done");
+				result = true;
+			}
+
+		} catch (SQLException e) {
+			LOGGER.error("changePassword" + " " + CONNECTION_FAIL, e.getMessage());
+		} finally {
+
+			try {
+
+				pst.close();
+
+				shutdown();
+			} catch (SQLException e) {
+				LOGGER.error("changePassword" + " " + CLOSE_CONNECTION_FAIL, e.getMessage());
+			}
+
+		}
+
+		return result;
+	}
+
 	public boolean signup(String username, String hashingPassword, String saltKey, String createdAt) {
 		boolean result = false;
 

@@ -22,7 +22,7 @@ public class MainApp extends Application {
 		stage.setTitle("SMC Controller Management");
 		stage.setScene(scene);
 		stage.initStyle(StageStyle.TRANSPARENT);
-//		stage.setMaximized(true);
+		stage.setMaximized(true);
 		stage.setResizable(false);
 		stage.setMinWidth(700);
 		stage.setMinHeight(600);

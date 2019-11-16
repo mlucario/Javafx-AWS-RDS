@@ -3,9 +3,12 @@ package com.quy.bizcom;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ObservableValue;
 
 public class User extends RecursiveTreeObject<User> {
 	private StringProperty username;
@@ -14,11 +17,13 @@ public class User extends RecursiveTreeObject<User> {
 	private StringProperty userType;
 	private BooleanProperty active;
 	private StringProperty createdAt;
-	private int studentId;
+	private ObservableValue<Number> studentId;
 	private static int studentIdAct = 1;
+
 	public User(StringProperty username, StringProperty hashing_password, StringProperty salt_key,
 			StringProperty userType, BooleanProperty active, StringProperty createdAt) {
-		studentId = studentIdAct++;
+		studentId = new SimpleIntegerProperty(studentIdAct++);
+
 		this.username = username;
 		this.hashingPassword = hashing_password;
 		this.saltKey = salt_key;
@@ -28,7 +33,7 @@ public class User extends RecursiveTreeObject<User> {
 	}
 
 	public User(String username, String userType, boolean active, String createdAt) {
-		studentId = studentIdAct++;
+		studentId = new SimpleIntegerProperty(studentIdAct++);
 		this.username = new SimpleStringProperty(username);
 		this.userType = new SimpleStringProperty(userType);
 		this.active = new SimpleBooleanProperty(active);
@@ -58,9 +63,9 @@ public class User extends RecursiveTreeObject<User> {
 	public StringProperty getCreatedAt() {
 		return createdAt;
 	}
-	
-	public String getStudentID() {
-		return String.valueOf(this.studentId);
+
+	public ObservableValue<Number> getStudentID() {
+		return this.studentId;
 	}
 
 }

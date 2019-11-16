@@ -111,15 +111,7 @@
                            <children>
                               <StackPane fx:id="panelAdmin" alignment="TOP_CENTER" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="5.0">
                                  <children>
-                                    <VBox fx:id="vBoxPanel" alignment="TOP_CENTER" StackPane.alignment="TOP_CENTER">
-                                       <children>
-                                          <Label fx:id="txtTitle" text="Admin Panel" textFill="#0d47a1">
-                                             <font>
-                                                <Font name="Roboto Medium" size="40.0" />
-                                             </font>
-                                          </Label>
-                                       </children>
-                                    </VBox>
+                                    <VBox fx:id="vBoxPanel" alignment="TOP_CENTER" StackPane.alignment="TOP_CENTER" />
                                  </children>
                               </StackPane>
                            </children>
