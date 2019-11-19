@@ -70,10 +70,11 @@ public class ReceivingController extends Controller implements Initializable {
 			String serialNumber = getStringJFXTextField(txtControllerBarcode);
 			String model = getStringJFXTextField(txtModel);
 			String lotId = generatorLotId();
-			int reworkTimes = 0;
+//			int reworkTimes = dbHandler.getStatusDone(COL_REWORK_COUNT_CONTROLER, serialNumber);
 			if (!dbHandler.isBarcodeExist(serialNumber)) {
+				
 				String result = dbHandler.addNewController(model, serialNumber, getCurrentTimeStamp(), lotId,
-						reworkTimes);
+						0);
 				if (result.equalsIgnoreCase(serialNumber)) {
 					count++;
 					addBarcodeToTable(barcode, serialNumber);
@@ -81,12 +82,14 @@ public class ReceivingController extends Controller implements Initializable {
 							"Add New Controller Successfully", 2);
 					notification.showInformation();
 					dbHandler.addToHistoryRecord(currentUser, RECEIVING_STATION, getCurrentTimeStamp(), serialNumber,
-							"");
+							"Add New Controller");
 				} else {
 					warningAlert(result);
 				}
 			} else {
-				//
+				// Re_Work
+				
+				/**
 				ArrayList<String> info = new ArrayList<>();
 				info.addAll(dbHandler.getLastestInfo(serialNumber));
 
@@ -125,6 +128,10 @@ public class ReceivingController extends Controller implements Initializable {
 					warningAlert(serialNumber + " is added into database today. Please check with manager.");
 				}
 
+				
+				*/
+				
+				
 			}
 		}
 
