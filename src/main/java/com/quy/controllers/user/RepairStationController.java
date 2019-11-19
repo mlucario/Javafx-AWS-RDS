@@ -3,20 +3,17 @@ package com.quy.controllers.user;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXTextArea;
+import com.jfoenix.controls.JFXTextField;
 import com.quy.controllers.Controller;
 import com.quy.controllers.SignInController;
 import com.quy.database.DBHandler;
 
+import javafx.application.Platform;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
-
-import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXTextArea;
-import com.jfoenix.controls.JFXTextField;
-
-import javafx.application.Platform;
-
-import javafx.fxml.FXML;
 
 public class RepairStationController extends Controller implements Initializable {
 	@FXML
@@ -42,9 +39,8 @@ public class RepairStationController extends Controller implements Initializable
 
 		String serialNumber = getStringJFXTextField(txtControllerBarcode);
 		String timestamp = getCurrentTimeStamp();
-		String iD = dbHandler.getStatusDone(COL_ID_CONTROLER, serialNumber);
-		String result = dbHandler.unRepairable(iD, timestamp);
-		if (result.equalsIgnoreCase(iD)) {
+		String result = dbHandler.unRepairable(serialNumber, timestamp);
+		if (result.equalsIgnoreCase(serialNumber)) {
 			notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null,
 					"Update Unrepairable Staion Successfully", 2);
 			notification.showInformation();
@@ -75,31 +71,24 @@ public class RepairStationController extends Controller implements Initializable
 		} else {
 
 			String serialNumber = getStringJFXTextField(txtControllerBarcode);
-			int reworkCount = Integer.parseInt(dbHandler.getStatusDone(COL_REWORK_COUNT_CONTROLER, serialNumber));
 			String timestamp = getCurrentTimeStamp();
-			String iD = dbHandler.getStatusDone(COL_ID_CONTROLER, serialNumber);
 
-			if (dbHandler.duplicateRow(serialNumber, iD)) {
-				dbHandler.updateCurrentStation(iD, "Repaired");
-				String newId = dbHandler.getStatusDone(COL_ID_CONTROLER, serialNumber);
+			String result = dbHandler.repairController(serialNumber, timestamp);
+			if (result.equalsIgnoreCase(serialNumber)) {
 
-				String result = dbHandler.repairController(newId, timestamp, ++reworkCount);
-				if (result.equalsIgnoreCase(newId)) {
-
-					String history = dbHandler.addToHistoryRecord(currentUser, REPAIR_STATION, timestamp, serialNumber,
-							"REPAIR: " + txtRepairStep.getText());
-					if (!history.equalsIgnoreCase(serialNumber)) {
-						warningAlert(history);
-					} else {
-						notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null, "Repaired Successfully", 2);
-						notification.showInformation();
-					}
+				String history = dbHandler.addToHistoryRecord(currentUser, REPAIR_STATION, timestamp, serialNumber,
+						"REPAIR: " + txtRepairStep.getText());
+				if (!history.equalsIgnoreCase(serialNumber)) {
+					warningAlert(history);
 				} else {
-					warningAlert(result);
+					notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null,
+							"Repaired Successfully. Ready for Burn In.", 2);
+					notification.showInformation();
 				}
 			} else {
-				warningAlert("Cannot duplicate record!");
+				warningAlert(result);
 			}
+
 		}
 
 		txtControllerBarcode.clear();
@@ -128,7 +117,6 @@ public class RepairStationController extends Controller implements Initializable
 
 		});
 
-		
 	}
 
 	public String isValidInput() {
@@ -146,7 +134,6 @@ public class RepairStationController extends Controller implements Initializable
 					result = "\r\n Controller has been shipped. Please ask manager intermediately.";
 				} else {
 					switch (currentStatus) {
-					case RE_ASSEMBLY_STATION:
 					case RECEIVING_STATION:
 					case PACKING_STATION:
 					case ASSEMBLY_STATION:

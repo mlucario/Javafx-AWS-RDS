@@ -2,7 +2,6 @@
 package com.quy.controllers.user;
 
 import java.net.URL;
-
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -19,14 +18,12 @@ import com.quy.controllers.Controller;
 import com.quy.controllers.SignInController;
 import com.quy.database.DBHandler;
 
-import javafx.animation.KeyFrame;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -35,7 +32,6 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
-import javafx.util.Duration;
 
 public class ResultStationController extends Controller implements Initializable {
 	@FXML
@@ -109,10 +105,6 @@ public class ResultStationController extends Controller implements Initializable
 		rdPassed.setUserData("PASSED");
 		rdFail.setUserData("FAIL");
 		String startedTimeControllers = dbHandler.getCurrentStartedBuring();
-		startedTime = Timestamp.valueOf(startedTimeControllers);
-
-		finishTimeRemain = Timestamp.from(startedTime.toInstant().plus(1, ChronoUnit.DAYS));
-
 		result.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
 
 			@Override
@@ -136,44 +128,43 @@ public class ResultStationController extends Controller implements Initializable
 
 			}
 		});
+		if (!startedTimeControllers.isEmpty()) {
+			startedTime = Timestamp.valueOf(startedTimeControllers);
+
+			finishTimeRemain = Timestamp.from(startedTime.toInstant().plus(1, ChronoUnit.DAYS));
+
+			// Set Countdown TIme
+
+			Thread td = new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					Date date = new Date();
+					Date finishedDate = new Date(finishTimeRemain.getTime());
+					DateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+
+					try {
+						while (finishedDate.getTime() - date.getTime() > 1) {
+							lbTimeRemain.setText(sdf.format(finishedDate.getTime() - date.getTime()));
+							Thread.sleep(1000);
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+
+				}
+			});
+			td.start();
+		}
+
 		txtControllerBarcode.setOnAction(e -> {
 			resultAction(e);
 		});
 		inBurnInSystem.addAll(dbHandler.getAllBurning());
-//		currentPassed.addAll(dbHandler.getAllPassedOrFail(true));
-//		currentFail.addAll(dbHandler.getAllPassedOrFail(false));
 		treeviewTableBuilder(treeviewPassed, barcodePassed, currentPassed);
 		treeviewTableBuilder(treeviewFail, barcodeFail, currentFail);
 		treeviewTableBuilder(treeview, barcodeInBurnInSystem, inBurnInSystem);
 
-		
-		// Set Countdown TIme
-		
-       
-		
-	
-		
-	Thread td = new Thread(new Runnable() {
-		
-		@Override
-		public void run() {
-			Date date = new Date();
-			Date finishedDate = new Date(finishTimeRemain.getTime());
-			DateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-			
-			try {
-				while(finishedDate.getTime() - date.getTime() > 1) {
-					System.out.println(sdf.format(finishedDate.getTime() - date.getTime()));
-					lbTimeRemain.setText(sdf.format(finishedDate.getTime() - date.getTime()));
-					Thread.sleep(1000);
-				}
-			}catch(Exception e) {
-				e.printStackTrace();
-			}
-			
-		}
-	});
-	td.start();
 	}
 
 	@FXML
@@ -228,18 +219,18 @@ public class ResultStationController extends Controller implements Initializable
 	void resultAction(ActionEvent event) {
 
 		if (isValidInput().isEmpty()) {
+
 			String timeStamp = getCurrentTimeStamp();
 			resultChoosen = result.getSelectedToggle().getUserData().toString().equalsIgnoreCase("PASSED");
 			String serialNumber = getStringJFXTextField(txtControllerBarcode);
 			String currentStation = dbHandler.getStatusDone(COL_CURRENT_STATION_CONTROLER, serialNumber);
-			String iD = dbHandler.getStatusDone(COL_ID_CONTROLER, serialNumber);
 			String resultStatus = dbHandler.getStatusDone(COL_BURN_IN_RESULT_CONTROLER, serialNumber);
 			if (currentStation.equalsIgnoreCase(BURN_IN_STATION)
 					&& resultStatus.equalsIgnoreCase("Burn In Processing")) {
 				// RESULT PASSED
 				if (resultChoosen) {
-					String resultAc = dbHandler.setResult(iD, timeStamp, true, "No Trouble Found.");
-					if (resultAc.equals(iD)) {
+					String resultAc = dbHandler.setResult(serialNumber, timeStamp, true, "No Trouble Found.");
+					if (resultAc.equals(serialNumber)) {
 						passedCount++;
 						txtPass.setText("PASSED: " + passedCount + "");
 						addBarcodeToTable(barcodePassed, serialNumber);
@@ -261,8 +252,8 @@ public class ResultStationController extends Controller implements Initializable
 				else {
 					// Add auto completed at here
 					if (!txtSymptoms.getText().isEmpty()) {
-						String resultAc = dbHandler.setResult(iD, timeStamp, false, txtSymptoms.getText());
-						if (resultAc.equals(iD)) {
+						String resultAc = dbHandler.setResult(serialNumber, timeStamp, false, txtSymptoms.getText());
+						if (resultAc.equals(serialNumber)) {
 							failCount++;
 							txtFail.setText("FAIL: " + failCount + "");
 							addBarcodeToTable(barcodeFail, serialNumber);

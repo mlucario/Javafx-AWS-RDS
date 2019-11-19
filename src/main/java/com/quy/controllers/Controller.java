@@ -90,6 +90,7 @@ public class Controller {
 	protected static final String REPAIR_STATION_SCENE = "/fxml/ui/users/RepairStationScene.fxml";
 	protected static final String PACKING_STATION_SCENE = "/fxml/ui/users/PackingStation.fxml";
 	protected static final String SHIPPING_STATION_SCENE = "/fxml/ui/users/ShippingStation.fxml";
+	protected static final String RE_WORK_STATION_SCENE = "/fxml/ui/users/ReWorkScene.fxml";
 
 	// Admin Scene
 	protected static final String ADMIN_USERS_MANAGEMENT_SCENE = "/fxml/ui/admin/UsersManagementScene.fxml";
@@ -106,7 +107,7 @@ public class Controller {
 	// List Stations
 	protected static final String RECEIVING_STATION = "Receiving Station";
 	protected static final String ASSEMBLY_STATION = "Assembly Station";
-	protected static final String RE_ASSEMBLY_STATION = "Re_Assembly Station";
+	protected static final String RE_WORK_STATION = "Re_Work Station";
 	protected static final String BURN_IN_STATION = "Burn In Station";
 	protected static final String RESULT_STATION = "Result Station";
 	protected static final String REPAIR_STATION = "Repair Station";
@@ -173,7 +174,7 @@ public class Controller {
 	protected static final String COL_IS_REPAIR_DONE_CONTROLER = "Is_Repaired_Done";
 	protected static final String COL_IS_PASSED_CONTROLER = "Is_Passed";
 	protected static final String COL_SYMPTOM_FAIL_CONTROLER = "Symptoms_Fail";
-	protected static final String COL_REWORK_COUNT_CONTROLER = "Re_work_count";
+	protected static final String COL_REWORK_COUNT_CONTROLER = "Re_Work_Count";
 	protected static final String COL_FIRMWARE_UPDATE_TIME_CONTROLER = "Firmware_Update_Time";
 	protected static final String COL_IS_FIRMWARE_UPDATED_CONTROLER = "Is_Firmware_Updated";
 
@@ -298,7 +299,7 @@ public class Controller {
 				dialogStage.close();
 			});
 		}
-		
+
 		dialogStage.setScene(scene);
 		dialogStage.initModality(Modality.APPLICATION_MODAL);
 		dialogStage.setAlwaysOnTop(true);

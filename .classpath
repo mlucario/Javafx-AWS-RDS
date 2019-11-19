@@ -30,5 +30,9 @@
 	<classpathentry kind="lib" path="libs/mysql-connector-java-8.0.18.jar"/>
 	<classpathentry kind="con" path="org.eclipse.fx.ide.jdt.core.JAVAFX_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bizCom"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
+	<classpathentry kind="lib" path="libs/assertj-core-3.13.2.jar"/>
+	<classpathentry kind="lib" path="libs/testfx-core-4.0.16-alpha.jar"/>
+	<classpathentry kind="lib" path="libs/testfx-junit5-4.0.16-alpha.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

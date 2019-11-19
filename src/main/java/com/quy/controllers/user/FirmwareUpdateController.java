@@ -4,9 +4,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
-import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
-
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.controls.JFXTreeTableView;
@@ -19,6 +16,8 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.text.Text;
 
 public class FirmwareUpdateController extends Controller implements Initializable {
@@ -72,14 +71,11 @@ public class FirmwareUpdateController extends Controller implements Initializabl
 		if (isValidInput().isEmpty()) {
 			String serialNumber = getStringJFXTextField(txtControllerBarcode);
 			String currentLastestStation = dbHandler.getStatusDone(COL_CURRENT_STATION_CONTROLER, serialNumber);
-			int reworkCount = Integer.parseInt(dbHandler.getStatusDone(COL_REWORK_COUNT_CONTROLER, serialNumber));
 			String timestamp = getCurrentTimeStamp();
-			String iD = dbHandler.getStatusDone(COL_ID_CONTROLER, serialNumber);
 
-			// Normal sequence
 			if (currentLastestStation.equalsIgnoreCase(ASSEMBLY_STATION)) {
-				String result = dbHandler.firmwareUpdate(iD, timestamp, reworkCount, false);
-				if (result.equalsIgnoreCase(iD)) {
+				String result = dbHandler.firmwareUpdate(serialNumber, timestamp);
+				if (result.equalsIgnoreCase(serialNumber)) {
 
 					count++;
 					if (!listAdded.contains(serialNumber)) {
@@ -87,7 +83,7 @@ public class FirmwareUpdateController extends Controller implements Initializabl
 					}
 
 					String history = dbHandler.addToHistoryRecord(currentUser, FIRMWARE_UPDATE_STATION, timestamp,
-							serialNumber, ASSEMBLY_STATION + " to " + FIRMWARE_UPDATE_STATION);
+							serialNumber, "Firmware update");
 					if (!history.equalsIgnoreCase(serialNumber)) {
 						warningAlert(history);
 					} else {
@@ -99,34 +95,13 @@ public class FirmwareUpdateController extends Controller implements Initializabl
 				}
 
 			} else {
-				// REWORK PROCESS
-
-				// Duplicate Row and Clear all result
-				if (dbHandler.duplicateRow(serialNumber, iD)) {
-					dbHandler.updateCurrentStation(iD, "Re_Work");
-					String newId = dbHandler.getStatusDone(COL_ID_CONTROLER, serialNumber);
-					String result = dbHandler.firmwareUpdate(newId, timestamp, ++reworkCount, true);
-					if (result.equalsIgnoreCase(newId)) {
-						count++;
-						if (!listAdded.contains(serialNumber)) {
-							addBarcodeToTable(barcode, serialNumber);
-						}
-
-						String history = dbHandler.addToHistoryRecord(currentUser, FIRMWARE_UPDATE_STATION, timestamp,
-								serialNumber,
-								"Rework: From" + currentLastestStation + " to " + FIRMWARE_UPDATE_STATION);
-						if (!history.equalsIgnoreCase(serialNumber)) {
-							warningAlert(history);
-						} else {
-							notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null,
-									"Re_Work Added Successfully", 2);
-							notification.showInformation();
-						}
-					} else {
-						warningAlert(result);
-					}
+				// Check if it is updated
+				boolean isFirmwareUpdated = dbHandler.getStatusDone(COL_IS_FIRMWARE_UPDATED_CONTROLER, serialNumber)
+						.equalsIgnoreCase("1");
+				if (isFirmwareUpdated) {
+					warningAlert("Controller (SN: " + serialNumber + ") was updated. Please use re-work to re_update!");
 				} else {
-					warningAlert("Cannot duplicate record!");
+					warningAlert("WRONG STATION");
 				}
 
 			}

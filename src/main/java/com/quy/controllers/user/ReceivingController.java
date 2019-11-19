@@ -2,7 +2,6 @@
 package com.quy.controllers.user;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 import com.jfoenix.controls.JFXButton;
@@ -70,11 +69,9 @@ public class ReceivingController extends Controller implements Initializable {
 			String serialNumber = getStringJFXTextField(txtControllerBarcode);
 			String model = getStringJFXTextField(txtModel);
 			String lotId = generatorLotId();
-//			int reworkTimes = dbHandler.getStatusDone(COL_REWORK_COUNT_CONTROLER, serialNumber);
 			if (!dbHandler.isBarcodeExist(serialNumber)) {
-				
-				String result = dbHandler.addNewController(model, serialNumber, getCurrentTimeStamp(), lotId,
-						0);
+
+				String result = dbHandler.addNewController(model, serialNumber, getCurrentTimeStamp(), lotId, 0);
 				if (result.equalsIgnoreCase(serialNumber)) {
 					count++;
 					addBarcodeToTable(barcode, serialNumber);
@@ -82,56 +79,14 @@ public class ReceivingController extends Controller implements Initializable {
 							"Add New Controller Successfully", 2);
 					notification.showInformation();
 					dbHandler.addToHistoryRecord(currentUser, RECEIVING_STATION, getCurrentTimeStamp(), serialNumber,
-							"Add New Controller");
+							"Received Controller Serial Number : " + serialNumber);
 				} else {
 					warningAlert(result);
 				}
 			} else {
-				// Re_Work
-				
-				/**
-				ArrayList<String> info = new ArrayList<>();
-				info.addAll(dbHandler.getLastestInfo(serialNumber));
 
-				if (!info.isEmpty()) {
-					reworkTimes = Integer.parseInt(info.get(0));
+				warningAlert("Controller serial number is exist. Please go to RE-WORK!");
 
-					boolean isShippingDone = info.get(4).equals("1");
-					boolean isPackingDone = info.get(3).equals("1");
-//					if (!currentStation.equalsIgnoreCase(RECEIVING_STATION)
-//							&& dbHandler.getStatusDone(COL_IS_RECEIVIING_CONTROLER, serialNumber).equals("1"))
-					if (isPackingDone || isShippingDone) {
-						boolean action = warningComfirmAlert("Re-Work Confirmation",
-								"Are you sure want to do rework this controller " + serialNumber, true);
-
-						if (action) {
-							String result = dbHandler.addNewController(model, serialNumber, getCurrentTimeStamp(),
-									lotId, ++reworkTimes);
-							if (result.equalsIgnoreCase(serialNumber)) {
-								count++;
-								addBarcodeToTable(barcode, serialNumber);
-								notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null,
-										"Add Rework Controller Successfully", 3);
-								notification.showInformation();
-								dbHandler.addToHistoryRecord(currentUser, RECEIVING_STATION, getCurrentTimeStamp(),
-										serialNumber, "Rework Controller Recevied");
-							} else {
-								warningAlert(result);
-							}
-						}
-					} else {
-						warningAlert("This controller is received. Don't need to add again.");
-					}
-				}
-
-				else {
-					warningAlert(serialNumber + " is added into database today. Please check with manager.");
-				}
-
-				
-				*/
-				
-				
 			}
 		}
 

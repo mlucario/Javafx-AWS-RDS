@@ -3,22 +3,20 @@ package com.quy.controllers.user;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXTextField;
+import com.jfoenix.controls.JFXTreeTableView;
 import com.quy.bizcom.SMCController;
 import com.quy.controllers.Controller;
 import com.quy.controllers.SignInController;
 import com.quy.database.DBHandler;
 
-import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
-
-import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXTextField;
-import com.jfoenix.controls.JFXTreeTableView;
-
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.text.Text;
 
 public class ShippingStationController extends Controller implements Initializable {
@@ -87,11 +85,10 @@ public class ShippingStationController extends Controller implements Initializab
 			String serialNumber = getStringJFXTextField(txtControllerBarcode);
 			String currentLastestStation = dbHandler.getStatusDone(COL_CURRENT_STATION_CONTROLER, serialNumber);
 			String timestamp = getCurrentTimeStamp();
-			String iD = dbHandler.getStatusDone(COL_ID_CONTROLER, serialNumber);
 
 			if (currentLastestStation.equalsIgnoreCase(PACKING_STATION)) {
-				String result = dbHandler.shipping(iD, timestamp);
-				if (result.equalsIgnoreCase(iD)) {
+				String result = dbHandler.shipping(serialNumber, timestamp);
+				if (result.equalsIgnoreCase(serialNumber)) {
 					count++;
 					addBarcodeToTable(barcode, serialNumber);
 					String history = dbHandler.addToHistoryRecord(currentUser, SHIPPING_STATION, timestamp,
