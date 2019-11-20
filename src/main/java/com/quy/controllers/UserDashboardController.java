@@ -48,7 +48,7 @@ public class UserDashboardController extends Controller implements Initializable
 	private JFXButton btnShipping;
 
 	@FXML
-	private JFXButton btnLogout;
+	private JFXButton btnRework;
 
 	@FXML
 	private Text txtTitleStation;
@@ -86,8 +86,8 @@ public class UserDashboardController extends Controller implements Initializable
 	}
 
 	@FXML
-	void logout(ActionEvent event) {
-
+	void reWorkOnClick(ActionEvent event) {
+		switchScence(RE_WORK_STATION_SCENE, RE_WORK_STATION);
 	}
 
 	@FXML

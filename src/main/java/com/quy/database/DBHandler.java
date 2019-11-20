@@ -360,7 +360,7 @@ public class DBHandler {
 
 			if (rs.next()) {
 				result = rs.getString(column).trim();
-				System.out.println("RESULLTTT " + result);
+//				System.out.println("RESULLTTT " + result);
 			}
 
 		} catch (SQLException e) {
@@ -1316,5 +1316,60 @@ public class DBHandler {
 
 		return result;
 
+	}
+
+	public String rework(String serialNumber, String timestamp, int reworkCount) {
+		String result = "";
+
+		String query = "UPDATE controllers SET Current_Station=?,Re_Work_Start=?,Assembly_Time=?,Burn_In_Start=?, Burn_In_End=?, Packing_Time=? ,Shipping_Time=?, Burn_In_Result=?,"
+				+ "Firmware_Update_Time=?,Repair_Time=?,Is_Assembly_Done=?, Is_Firmware_Updated=?, Is_Burn_In_Processing=?, Is_Burn_In_Done=?,"
+				+ "Is_Packing_Done=?, Is_Shipping_Done=?, Is_Repaired_Done=?, Is_ReWork=?, Is_Passed=?, Symptoms_Fail=?, Re_work_count=? WHERE Serial_Number=?";
+		try {
+			dbconnection = getConnection();
+			pst = dbconnection.prepareStatement(query);
+			pst.setString(1, RECEIVING_STATION);
+			pst.setString(2, timestamp);
+			pst.setString(3, null);
+			pst.setString(4, null);
+			pst.setString(5, null);
+			pst.setString(6, null);
+			pst.setString(7, null);
+			pst.setString(8, null);
+			pst.setString(9, null);
+			pst.setString(10, null);
+			pst.setBoolean(11, false);
+			pst.setBoolean(12, false);
+			pst.setBoolean(13, false);
+			pst.setBoolean(14, false);
+			pst.setBoolean(15, false);
+			pst.setBoolean(16, false);
+			pst.setBoolean(17, false);
+			pst.setBoolean(18, false);
+			pst.setBoolean(19, false);
+			pst.setString(20, null);
+			pst.setInt(21, reworkCount);
+			pst.setString(22, serialNumber);
+			
+			if (pst.executeUpdate() != 0) {
+				result = serialNumber;
+			} else {
+				result = "Update Re_Work. Please check with manager.";
+			}
+
+		} catch (SQLException e) {
+			LOGGER.error(SHIPPING_STATION + " " + CONNECTION_FAIL, e.getMessage());
+		} finally {
+			try {
+				if (pst != null) {
+					pst.close();
+				}
+				shutdown();
+			} catch (SQLException e) {
+				LOGGER.error(SHIPPING_STATION + " " + CLOSE_CONNECTION_FAIL, e.getMessage());
+			}
+
+		}
+
+		return result;
 	}
 }

@@ -16,13 +16,11 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class SignInController extends Controller implements Initializable {
@@ -56,8 +54,8 @@ public class SignInController extends Controller implements Initializable {
 	private HBox hboxPassword;
 
 	private DBHandler dbHandler;
-	private double x;
-	private double y;
+//	private double x;
+//	private double y;
 	private int count;
 	private static SignInController instance;
 	private String role;
@@ -87,8 +85,8 @@ public class SignInController extends Controller implements Initializable {
 
 	@FXML
 	void pressed(MouseEvent event) {
-		x = event.getSceneX();
-		y = event.getSceneY();
+//		x = event.getSceneX();
+//		y = event.getSceneY();
 	}
 
 	/**

@@ -79,7 +79,7 @@ public class ResultStationController extends Controller implements Initializable
 	private ObservableList<SMCController> barcodeFail = FXCollections.observableArrayList();
 	private ObservableList<SMCController> barcodeInBurnInSystem = FXCollections.observableArrayList();
 	private boolean resultChoosen;
-	private int testingHour;
+//	private int testingHour;
 	private ArrayList<String> currentPassed;
 	private ArrayList<String> currentFail;
 	private ArrayList<String> inBurnInSystem;
@@ -90,7 +90,7 @@ public class ResultStationController extends Controller implements Initializable
 	public void initialize(URL location, ResourceBundle resources) {
 		hBoxSymptoms.setVisible(false);
 		resultChoosen = true;
-		testingHour = 0;
+//		testingHour = 0;
 		passedCount = 0;
 		failCount = 0;
 		dbHandler = new DBHandler();

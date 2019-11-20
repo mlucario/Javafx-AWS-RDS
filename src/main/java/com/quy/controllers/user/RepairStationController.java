@@ -36,16 +36,21 @@ public class RepairStationController extends Controller implements Initializable
 
 	@FXML
 	void canNotRepair() {
-
-		String serialNumber = getStringJFXTextField(txtControllerBarcode);
-		String timestamp = getCurrentTimeStamp();
-		String result = dbHandler.unRepairable(serialNumber, timestamp);
-		if (result.equalsIgnoreCase(serialNumber)) {
-			notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null,
-					"Update Unrepairable Staion Successfully", 2);
-			notification.showInformation();
+		if (!isValidInput().isEmpty()) {
+			warningAlert(isValidInput());
+			txtRepairStep.requestFocus();
 		} else {
-			warningAlert(result);
+			String serialNumber = getStringJFXTextField(txtControllerBarcode);
+			String timestamp = getCurrentTimeStamp();
+			String result = dbHandler.unRepairable(serialNumber, timestamp);
+			if (result.equalsIgnoreCase(serialNumber)) {
+				notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null,
+						"Update Unrepairable Staion Successfully", 2);
+				notification.showInformation();
+			} else {
+				warningAlert(result);
+			}
+
 		}
 
 		txtControllerBarcode.clear();

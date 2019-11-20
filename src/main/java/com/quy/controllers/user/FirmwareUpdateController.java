@@ -100,7 +100,10 @@ public class FirmwareUpdateController extends Controller implements Initializabl
 						.equalsIgnoreCase("1");
 				if (isFirmwareUpdated) {
 					warningAlert("Controller (SN: " + serialNumber + ") was updated. Please use re-work to re_update!");
-				} else {
+				}else if(!currentLastestStation.equalsIgnoreCase(ASSEMBLY_STATION)) {
+					warningAlert(ASSEMBLY_STATION + " is required!");
+				}
+				else {
 					warningAlert("WRONG STATION");
 				}
 
