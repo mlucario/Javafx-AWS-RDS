@@ -92,7 +92,7 @@ public class ShippingStationController extends Controller implements Initializab
 					count++;
 					addBarcodeToTable(barcode, serialNumber);
 					String history = dbHandler.addToHistoryRecord(currentUser, SHIPPING_STATION, timestamp,
-							serialNumber, "");
+							serialNumber, "Shipped Out", false);
 					if (!history.equalsIgnoreCase(serialNumber)) {
 						warningAlert(history);
 					} else {

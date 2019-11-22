@@ -79,7 +79,7 @@ public class ReceivingController extends Controller implements Initializable {
 							"Add New Controller Successfully", 2);
 					notification.showInformation();
 					dbHandler.addToHistoryRecord(currentUser, RECEIVING_STATION, getCurrentTimeStamp(), serialNumber,
-							"Received Controller Serial Number : " + serialNumber);
+							"Received Controller Serial Number : " + serialNumber, false);
 				} else {
 					warningAlert(result);
 				}

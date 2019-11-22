@@ -44,7 +44,7 @@ public class ReWorkController extends Controller implements Initializable {
 			String result = dbHandler.rework(serialNumber, timestamp, ++reworkCount);
 			if (result.equalsIgnoreCase(serialNumber)) {
 				String history = dbHandler.addToHistoryRecord(currentUser, RE_WORK_STATION, timestamp, serialNumber,
-						reason);
+						reason,true);
 				if (!history.equalsIgnoreCase(serialNumber)) {
 					warningAlert(history);
 				} else {

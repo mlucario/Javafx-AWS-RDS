@@ -853,6 +853,7 @@ public class DBHandler {
 			pst.setBoolean(8, false);
 			pst.setString(9, serialNumber);
 			if (pst.executeUpdate() != 0) {
+				System.out.println("Repair sucessfully .." + serialNumber);
 				result = serialNumber;
 			} else {
 				result = "Update Database Repair FAIL. Please check with manager.";
@@ -913,10 +914,10 @@ public class DBHandler {
 	}
 
 	// Insert to history record
-	public String addToHistoryRecord(String QA, String station, String time, String serialNumber, String note) {
+	public String addToHistoryRecord(String QA, String station, String time, String serialNumber, String note, boolean isRework) {
 		String result = "";
 
-		String query = "INSERT INTO history(QA,Station,time,Controller_Serial_Number,note) VALUES (?,?,?,?,?)";
+		String query = "INSERT INTO history(QA,Station,Time,Controller_Serial_Number,Note,Is_Re_Work) VALUES (?,?,?,?,?,?)";
 		try {
 			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
@@ -925,6 +926,7 @@ public class DBHandler {
 			pst.setString(3, time);
 			pst.setString(4, serialNumber);
 			pst.setString(5, note);
+			pst.setBoolean(6, isRework);
 			if (pst.executeUpdate() != 0) {
 				result = serialNumber;
 			} else {

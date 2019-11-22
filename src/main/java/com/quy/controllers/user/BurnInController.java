@@ -56,7 +56,7 @@ public class BurnInController extends Controller implements Initializable {
 				totalInList++;
 				txtNumber.setText(totalInList + "");
 				dbHandler.addToHistoryRecord(currentUser, "Added to waiting list burn in", getCurrentTimeStamp(),
-						serialNumber, "Added to burn in system.");
+						serialNumber, "Added to burn in system. SN: " + serialNumber, false);
 				btnStart.setDisable(false);
 			} else {
 				warningAlert(result);
@@ -158,7 +158,7 @@ public class BurnInController extends Controller implements Initializable {
 				if (result.equalsIgnoreCase(serialNumber)) {
 					count++;
 					dbHandler.addToHistoryRecord(currentUser, "Burn In Station", getCurrentTimeStamp(), serialNumber,
-							"Started Burn In Process");
+							"Started Burn In Process SN " + serialNumber, false);
 					flag = true;
 				} else {
 					warningAlert(result);

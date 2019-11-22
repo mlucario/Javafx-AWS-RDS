@@ -235,7 +235,7 @@ public class ResultStationController extends Controller implements Initializable
 						txtPass.setText("PASSED: " + passedCount + "");
 						addBarcodeToTable(barcodePassed, serialNumber);
 						String history = dbHandler.addToHistoryRecord(currentUser, RESULT_STATION, timeStamp,
-								serialNumber, "Marked Passed!");
+								serialNumber, "Marked Passed!", false);
 						if (!history.equalsIgnoreCase(serialNumber)) {
 							warningAlert(history);
 						} else {
@@ -258,7 +258,7 @@ public class ResultStationController extends Controller implements Initializable
 							txtFail.setText("FAIL: " + failCount + "");
 							addBarcodeToTable(barcodeFail, serialNumber);
 							String history = dbHandler.addToHistoryRecord(currentUser, RESULT_STATION, timeStamp,
-									serialNumber, "Marked Fail: " + txtSymptoms.getText());
+									serialNumber, "Marked Fail: " + txtSymptoms.getText(), false);
 							if (!history.equalsIgnoreCase(serialNumber)) {
 								warningAlert(history);
 							} else {

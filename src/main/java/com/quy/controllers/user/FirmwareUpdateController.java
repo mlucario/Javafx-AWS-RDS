@@ -83,7 +83,7 @@ public class FirmwareUpdateController extends Controller implements Initializabl
 					}
 
 					String history = dbHandler.addToHistoryRecord(currentUser, FIRMWARE_UPDATE_STATION, timestamp,
-							serialNumber, "Firmware update");
+							serialNumber, "Firmware updated SN: " + serialNumber, false);
 					if (!history.equalsIgnoreCase(serialNumber)) {
 						warningAlert(history);
 					} else {

@@ -88,7 +88,7 @@ public class AssemblyController extends Controller implements Initializable {
 					count++;
 					addBarcodeToTable(barcode, serialNumber);
 					String history = dbHandler.addToHistoryRecord(currentUser, ASSEMBLY_STATION, timestamp,
-							serialNumber, "Assembler Controller Serial Number : " + serialNumber);
+							serialNumber, "Assembler Controller Serial Number : " + serialNumber, false);
 					if (!history.equalsIgnoreCase(serialNumber)) {
 						warningAlert(history);
 					} else {
