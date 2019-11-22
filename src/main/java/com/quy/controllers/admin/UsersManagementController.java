@@ -1,6 +1,8 @@
 package com.quy.controllers.admin;
 
 import java.net.URL;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Optional;
 import java.util.Random;
 import java.util.ResourceBundle;
@@ -21,9 +23,9 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
@@ -60,6 +62,7 @@ public class UsersManagementController extends Controller implements Initializab
 	public void initialize(URL location, ResourceBundle resources) {
 		dbHandler = new DBHandler();
 		vBoxuserPanel.setVisible(false);
+		textFieldFormat(txtNewPassword, "Password is required!", false);
 		btnActivate.setDisable(true);
 		btnLock.setDisable(true);
 //		btnChangePass.setDisable(true);
@@ -119,6 +122,7 @@ public class UsersManagementController extends Controller implements Initializab
 			public void handle(MouseEvent event) {
 				if (event.getButton().equals(MouseButton.PRIMARY)) {
 					if (event.getClickCount() == 1) {
+
 						currentUserNameClicked = treetableUsers.getSelectionModel().getSelectedItem().getValue()
 								.getUsername().getValue();
 						isCurrentUserActivate = treetableUsers.getSelectionModel().getSelectedItem().getValue()
@@ -153,10 +157,16 @@ public class UsersManagementController extends Controller implements Initializab
 
 						if (!btnChangePass.isDisable()) {
 
-							String newPassword = txtNewPassword.getText();
 							btnChangePass.setOnAction(e -> {
 
-								changePassword(currentUserNameClicked, newPassword);
+								try {
+									changePassword(currentUserNameClicked, txtNewPassword.getText());
+									System.out.println("newPassword    " + txtNewPassword.getText());
+									btnChangePass.setDisable(true);
+								} catch (NoSuchAlgorithmException e1) {
+									//
+									e1.printStackTrace();
+								}
 								txtNewPassword.clear();
 							});
 
@@ -203,13 +213,31 @@ public class UsersManagementController extends Controller implements Initializab
 		btnChangePass.setDisable(!result);
 	}
 
-	public void changePassword(String username, String newPassword) {
+	public void changePassword(String username, String newPassword) throws NoSuchAlgorithmException {
+		rd = SecureRandom.getInstanceStrong();
 		int tempRandomInt = rd.nextInt(256) + 1;
 		Optional<String> tempSalt = generateSalt(tempRandomInt);
-		String tempStringSalt = tempSalt.get();
-		Optional<String> hashPassword = hashPassword(newPassword, tempStringSalt);
-		String hashingPassword = hashPassword.get();
-		dbHandler.changePassword(username, hashingPassword, tempStringSalt);
+		if (tempSalt.isPresent()) {
+			String tempStringSalt = tempSalt.get();
+			Optional<String> hashPassword = hashPassword(newPassword, tempStringSalt);
+			if (hashPassword.isPresent()) {
+				String hashingPasswordKey = hashPassword.get();
+				boolean result = dbHandler.changePassword(username, hashingPasswordKey, tempStringSalt);
+				if (result) {
+					notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null, "Change Password Successfully",
+							2);
+					notification.showInformation();
+				} else {
+					warningAlert("Cannot connect and change password on database!");
+				}
+			}
+
+		} else {
+			warningAlert("Can not change password! Database connections fails");
+			txtNewPassword.clear();
+			txtNewPassword.requestFocus();
+
+		}
 
 	}
 

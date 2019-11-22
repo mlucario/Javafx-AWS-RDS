@@ -139,7 +139,7 @@ public class DBHandler {
 	public List<String> login(String username) {
 		ArrayList<String> result = new ArrayList<>();
 
-		String query = "SELECT hashing_password,salt_key,user_type FROM users WHERE username=?";
+		String query = "SELECT hashing_password,salt_key,user_type,active FROM users WHERE username=?";
 		try {
 			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
@@ -150,6 +150,7 @@ public class DBHandler {
 				result.add(rs.getString("salt_key"));
 				result.add(rs.getString("hashing_password"));
 				result.add(rs.getString("user_type"));
+				result.add(rs.getString("active"));
 
 			}
 
@@ -914,7 +915,8 @@ public class DBHandler {
 	}
 
 	// Insert to history record
-	public String addToHistoryRecord(String QA, String station, String time, String serialNumber, String note, boolean isRework) {
+	public String addToHistoryRecord(String QA, String station, String time, String serialNumber, String note,
+			boolean isRework) {
 		String result = "";
 
 		String query = "INSERT INTO history(QA,Station,Time,Controller_Serial_Number,Note,Is_Re_Work) VALUES (?,?,?,?,?,?)";
@@ -1351,7 +1353,7 @@ public class DBHandler {
 			pst.setString(20, null);
 			pst.setInt(21, reworkCount);
 			pst.setString(22, serialNumber);
-			
+
 			if (pst.executeUpdate() != 0) {
 				result = serialNumber;
 			} else {

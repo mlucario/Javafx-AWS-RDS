@@ -101,7 +101,7 @@ public class SignInController extends Controller implements Initializable {
 			String username = txtUsername.getText();
 			String password = txtPassword.getText();
 			List<String> result = dbHandler.login(username);
-			if (result.size() == 3) {
+			if (result.size() == 4) {
 				// Verify input
 				if (verifyPassword(password, result.get(1), result.get(0))) {
 					// Go to dashboard
@@ -110,7 +110,11 @@ public class SignInController extends Controller implements Initializable {
 					if (type.equalsIgnoreCase("admin")) {
 						goToScene(ADMIN_DASHBOARD_SCENE, btnSignIn, true);
 					} else {
-						goToScene(USER_DASHBOARD_SCENE, btnSignIn, true);
+						if (result.get(3).equalsIgnoreCase("1")) {
+							goToScene(USER_DASHBOARD_SCENE, btnSignIn, true);
+						} else {
+							warningAlert("Your account was LOCKED. Ask manager to unlock it.");
+						}
 					}
 
 				} else {
@@ -185,8 +189,9 @@ public class SignInController extends Controller implements Initializable {
 		});
 
 		// TODO Remove after test done
-		txtUsername.setText("a1956");
-		txtPassword.setText("1234567Aa@");
+		txtUsername.setText("smc_bizcom");
+		txtPassword.setText("bizcom1171");
+
 		pt.play();
 		Platform.runLater(() -> txtUsername.requestFocus());
 		txtUsername.setOnAction(e -> txtPassword.requestFocus());
