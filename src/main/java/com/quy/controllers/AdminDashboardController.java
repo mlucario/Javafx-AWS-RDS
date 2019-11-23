@@ -32,6 +32,11 @@ public class AdminDashboardController extends Controller implements Initializabl
 	public void usersManagemenOnClick() {
 		switchScence(ADMIN_USERS_MANAGEMENT_SCENE, ADMIN_PANEL_USERS_MANAGEMENT);
 	}
+	
+    @FXML
+    void controllersManagementOnlClick() {
+    	switchScence(ADMIN_CONTROLLERS_MANAGEMENT_SCENE, ADMIN_CONTROLLER_MANAGEMENT);
+    }
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {

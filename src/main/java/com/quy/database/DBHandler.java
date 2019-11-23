@@ -17,6 +17,7 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.quy.bizcom.SMCController;
 import com.quy.bizcom.User;
 
 public class DBHandler {
@@ -312,6 +313,119 @@ public class DBHandler {
 		return result;
 	}
 
+	public int countControllers(String where, boolean value) {
+		int result = 0;
+		String query = "SELECT COUNT(Serial_Number) FROM controllers " + where;
+
+		try {
+			dbconnection = getConnection();
+			pst = dbconnection.prepareStatement(query);
+			pst.setBoolean(1, value);
+			rs = pst.executeQuery();
+			if (rs.next()) {
+				result = rs.getInt(1);
+			}
+
+		} catch (SQLException e) {
+			LOGGER.error(" getAllUsers " + CONNECTION_FAIL, e.getMessage());
+		} finally {
+
+			try {
+				if (pst != null) {
+					pst.close();
+				}
+
+				if (rs != null) {
+					rs.close();
+				}
+				shutdown();
+			} catch (SQLException e) {
+				LOGGER.error(" getAllUsers " + CLOSE_CONNECTION_FAIL, e.getMessage());
+			}
+
+		}
+		return result;
+	}
+
+	public String getWork(String serialNumber) {
+		String result = "";
+		String query = "SELECT Station FROM history WHERE Controller_Serial_Number=? AND isPaid=?";
+
+		try {
+			dbconnection = getConnection();
+			pst = dbconnection.prepareStatement(query);
+			pst.setString(1, serialNumber);
+			pst.setBoolean(2, false);
+			rs = pst.executeQuery();
+			result = serialNumber + " : ";
+			while (rs.next()) {
+				result += rs.getString("Station") + ";";
+			}
+
+		} catch (SQLException e) {
+			LOGGER.error(" getAllUsers " + CONNECTION_FAIL, e.getMessage());
+		} finally {
+
+			try {
+				if (pst != null) {
+					pst.close();
+				}
+
+				if (rs != null) {
+					rs.close();
+				}
+				shutdown();
+			} catch (SQLException e) {
+				LOGGER.error(" getAllUsers " + CLOSE_CONNECTION_FAIL, e.getMessage());
+			}
+
+		}
+
+		return result;
+	}
+
+	public List<SMCController> getAllControllers() {
+
+		ArrayList<SMCController> result = new ArrayList<>();
+		String query = "SELECT Model,Lot_ID,Serial_Number,Current_Station,Burn_In_Result,Re_Work_Count FROM controllers WHERE Is_Shipping_Done=?  ORDER BY ID";
+
+		try {
+			dbconnection = getConnection();
+			pst = dbconnection.prepareStatement(query);
+			pst.setBoolean(1, false);
+			rs = pst.executeQuery();
+			while (rs.next()) {
+				String model = rs.getString("Model");
+				String lotID = rs.getString("Lot_ID");
+				String sn = rs.getString("Serial_Number");
+				String currentStation = rs.getString("Current_Station");
+				String burnInResult = rs.getString("Burn_In_Result");
+				int reWorkCoung = rs.getInt("Re_Work_Count");
+				result.add(new SMCController(model, lotID, sn, currentStation, burnInResult, reWorkCoung));
+			}
+
+		} catch (SQLException e) {
+			LOGGER.error(" getAllUsers " + CONNECTION_FAIL, e.getMessage());
+		} finally {
+
+			try {
+				if (pst != null) {
+					pst.close();
+				}
+
+				if (rs != null) {
+					rs.close();
+				}
+				shutdown();
+			} catch (SQLException e) {
+				LOGGER.error(" getAllUsers " + CLOSE_CONNECTION_FAIL, e.getMessage());
+			}
+
+		}
+
+		return result;
+	}
+
 	public String activeOrLockUser(String username, boolean isActive) {
 		String result = "";
 
@@ -572,10 +686,40 @@ public class DBHandler {
 		return result;
 	}
 
+//	public boolean finishShipping(String timestamp, int quality, String qa, String listSerialNumber, String info, String listWork) {
+//		boolean result = false;
+//		String query = "INSERT INTO shipping(Shipping_Date,Quality,Shipper,List_Serial_Number,Info,Work_Count) VALUE=(?,?,?,?,?) ";
+//
+//		try {
+//			dbconnection = getConnection();
+//			pst = dbconnection.prepareStatement(query);
+//			pst.setString(1, timestamp);
+//			pst.setInt(2, quality);
+//			pst.setString(1, timestamp);
+//			if (pst.executeUpdate() != 0) {
+//				result = true;
+//			}
+//
+//		} catch (SQLException e) {
+//			LOGGER.error("duplicateRow " + CONNECTION_FAIL, e.getMessage());
+//
+//		} finally {
+//
+//			try {
+//				pst.close();
+//				shutdown();
+//			} catch (SQLException e) {
+//				LOGGER.error("duplicateRow " + CLOSE_CONNECTION_FAIL, e.getMessage());
+//			}
+//		}
+//		return result;
+//	}
+	
 	public boolean duplicateRow(String serialNumber, String Id) {
 		boolean result = false;
 		String query = "INSERT INTO controllers(Lot_ID,Model,Serial_Number,Receiving_Time,Is_Received,Re_Work_Count) "
 				+ "SELECT Lot_ID,Model,Serial_Number,Receiving_Time,Is_Received,Re_Work_Count FROM controllers WHERE Serial_Number=? AND ID=?";
+
 		try {
 			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);

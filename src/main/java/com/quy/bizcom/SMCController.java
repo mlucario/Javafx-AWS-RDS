@@ -4,6 +4,7 @@ import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
@@ -35,6 +36,8 @@ public class SMCController extends RecursiveTreeObject<SMCController> {
 	private BooleanProperty isPassed;
 	private StringProperty symptomsFails;
 	private IntegerProperty reWorkCount;
+	private static int stt = 1;
+	private ObservableValue<Number> sttID;
 
 	public SMCController(StringProperty serialNumber, StringProperty model, StringProperty lotId,
 			StringProperty currentStation, StringProperty receivingTime, StringProperty assemblyTime,
@@ -70,20 +73,43 @@ public class SMCController extends RecursiveTreeObject<SMCController> {
 		this.isPassed = isPassed;
 		this.symptomsFails = symptomsFails;
 		this.reWorkCount = reWorkCount;
+		sttID = new SimpleIntegerProperty(stt++);
 	}
 
 	public SMCController(String controllerBarcode) {
 		this.serialNumber = new SimpleStringProperty(controllerBarcode);
+		sttID = new SimpleIntegerProperty(stt++);
 	}
 
 	public SMCController(StringProperty serialNumber, StringProperty model) {
 		super();
 		this.serialNumber = serialNumber;
 		this.serialNumber = model;
+		sttID = new SimpleIntegerProperty(stt++);
+	}
+
+	public SMCController(String model2, String lotID2, String sn, String currentStation2, String burnInResult2,
+			int reWorkCoung) {
+		super();
+		this.model = new SimpleStringProperty(model2);
+		this.lotId = new SimpleStringProperty(lotID2);
+		this.serialNumber = new SimpleStringProperty(sn);
+		this.currentStation = new SimpleStringProperty(currentStation2);
+		this.burnInResult = new SimpleStringProperty(burnInResult2);
+		this.reWorkCount = new SimpleIntegerProperty(reWorkCoung);
+		sttID = new SimpleIntegerProperty(stt++);
+	}
+
+	public ObservableValue<Number> getSTT() {
+		return this.sttID;
 	}
 
 	public ObservableValue<String> getControllerBarcode() {
 		return this.serialNumber;
+	}
+
+	public ObservableValue<String> getResultBurnIn() {
+		return this.burnInResult;
 	}
 
 	public void setFail() {
@@ -95,7 +121,7 @@ public class SMCController extends RecursiveTreeObject<SMCController> {
 	}
 
 	public StringProperty getSerialNumber() {
-		return serialNumber;
+		return this.serialNumber;
 	}
 
 	public void setSerialNumber(StringProperty serialNumber) {

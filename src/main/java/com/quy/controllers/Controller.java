@@ -94,6 +94,7 @@ public class Controller {
 
 	// Admin Scene
 	protected static final String ADMIN_USERS_MANAGEMENT_SCENE = "/fxml/ui/admin/UsersManagementScene.fxml";
+	protected static final String ADMIN_CONTROLLERS_MANAGEMENT_SCENE = "/fxml/ui/admin/ControllerCurrentStatusScene.fxml";
 
 	// Hashing Password
 	private static final SecureRandom RAND = new SecureRandom();
@@ -118,6 +119,7 @@ public class Controller {
 
 	// Admin Panel
 	protected static final String ADMIN_PANEL_USERS_MANAGEMENT = "User Management";
+	protected static final String ADMIN_CONTROLLER_MANAGEMENT = "Controller Management";
 
 	// Controllers Column
 	protected static final String MODEL = "model";
