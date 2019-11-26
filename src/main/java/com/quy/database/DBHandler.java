@@ -714,7 +714,7 @@ public class DBHandler {
 //		}
 //		return result;
 //	}
-	
+
 	public boolean duplicateRow(String serialNumber, String Id) {
 		boolean result = false;
 		String query = "INSERT INTO controllers(Lot_ID,Model,Serial_Number,Receiving_Time,Is_Received,Re_Work_Count) "
@@ -1231,9 +1231,10 @@ public class DBHandler {
 	}
 
 	// Fetch all Controller At Receiving Station
-	public List<String> getAllReceived() {
-		ArrayList<String> result = new ArrayList<>();
-		String query = SELECT_SERIAL_NUMBER + " Current_Station=? AND Is_Received=?";
+	public List<SMCController> getAllReceived() {
+		ArrayList<SMCController> result = new ArrayList<>();
+		String query = "SELECT Model,Serial_Number FROM controllers WHERE Current_Station=? AND Is_Received=?";
+		SMCController.stt = 1;
 		try {
 			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
@@ -1243,7 +1244,9 @@ public class DBHandler {
 			rs = pst.executeQuery();
 
 			while (rs.next()) {
-				result.add(rs.getString("Serial_Number").trim().replaceAll(" +", " ").toUpperCase());
+				String model = rs.getString("Model");
+				String serialNumber = rs.getString("Serial_Number");
+				result.add(new SMCController(serialNumber, model));
 			}
 
 			LOGGER.info("All Receving Station is fetched");
@@ -1266,9 +1269,9 @@ public class DBHandler {
 	}
 
 	// Fetch all Controller Which are ready to burn in
-	public List<String> getAllAssemblyDone() {
-		ArrayList<String> result = new ArrayList<>();
-		String query = "SELECT Serial_Number FROM controllers WHERE current_station=? AND Is_Received=? AND Is_Assembly_Done=?";
+	public List<SMCController> getAllAssemblyDone() {
+		ArrayList<SMCController> result = new ArrayList<>();
+		String query = "SELECT Model,Serial_Number FROM controllers WHERE current_station=? AND Is_Received=? AND Is_Assembly_Done=?";
 		try {
 			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
@@ -1279,7 +1282,9 @@ public class DBHandler {
 			rs = pst.executeQuery();
 
 			while (rs.next()) {
-				result.add(rs.getString("Serial_Number").trim().replaceAll(" +", " ").toUpperCase());
+				String model = rs.getString("Model");
+				String serialNumber = rs.getString("Serial_Number");
+				result.add(new SMCController(serialNumber, model));
 			}
 
 			LOGGER.info("All Controller Assemblied Serial_Number are fetched");

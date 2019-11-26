@@ -128,7 +128,7 @@ public class PackingStationController extends Controller implements Initializabl
 
 		});
 
-		treeviewTableBuilder(treeView, barcode, PACKING_STATION);
+		treeviewTableBuilder(treeView, barcode);
 
 	}
 

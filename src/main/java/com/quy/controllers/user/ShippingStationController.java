@@ -3,7 +3,6 @@ package com.quy.controllers.user;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
-import java.util.concurrent.ArrayBlockingQueue;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
@@ -18,7 +17,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
 import javafx.scene.text.Text;
 
 public class ShippingStationController extends Controller implements Initializable {
@@ -114,13 +112,13 @@ public class ShippingStationController extends Controller implements Initializab
 	void submit() {
 		String timestamp = getCurrentTimeStamp();
 		String today = getCurrentTimeStamp();
-		
+
 		if (!listSerialNumber.isEmpty()) {
 			int quality = listSerialNumber.size();
-			
+
 			String listStringSN = "";
 			for (String s : listSerialNumber) {
-				listStringSN += s+";";
+				listStringSN += s + ";";
 				String result = dbHandler.shipping(s, timestamp);
 				if (!result.equalsIgnoreCase(s)) {
 					warningAlert("Fail to update Shippng to database");
@@ -128,11 +126,10 @@ public class ShippingStationController extends Controller implements Initializab
 				}
 			}
 			String info = "";
-			for(String ss : listWork) {
-				info+=ss;
+			for (String ss : listWork) {
+				info += ss;
 			}
-			
-			
+
 			String result = "";
 		} else {
 			warningAlert("No any controller to shipping list");
@@ -153,7 +150,7 @@ public class ShippingStationController extends Controller implements Initializab
 
 		});
 
-		treeviewTableBuilder(treeView, barcode, "");
+		treeviewTableBuilder(treeView, barcode);
 		txtCounter.setText(count + "");
 	}
 

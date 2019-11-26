@@ -12,6 +12,7 @@ import com.quy.controllers.SignInController;
 import com.quy.database.DBHandler;
 
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -81,12 +82,13 @@ public class AssemblyController extends Controller implements Initializable {
 			String currentLastestStation = dbHandler.getStatusDone(COL_CURRENT_STATION_CONTROLER, serialNumber);
 			int reworkCount = Integer.parseInt(dbHandler.getStatusDone(COL_REWORK_COUNT_CONTROLER, serialNumber));
 			String timestamp = getCurrentTimeStamp();
+			String model = dbHandler.getStatusDone(COL_MODEL_CONTROLER, serialNumber);
 
 			if (currentLastestStation.equalsIgnoreCase(RECEIVING_STATION)) {
 				String result = dbHandler.assembly(serialNumber, timestamp, reworkCount, false);
 				if (result.equalsIgnoreCase(serialNumber)) {
 					count++;
-					addBarcodeToTable(barcode, serialNumber);
+					addBarcodeToTable(barcode, serialNumber, model);
 					String history = dbHandler.addToHistoryRecord(currentUser, ASSEMBLY_STATION, timestamp,
 							serialNumber, "Assembler Controller Serial Number : " + serialNumber, false);
 					if (!history.equalsIgnoreCase(serialNumber)) {
@@ -118,7 +120,7 @@ public class AssemblyController extends Controller implements Initializable {
 		txtControllerBarcode.clear();
 		txtControllerBarcode.requestFocus();
 		btnSubmit.setDisable(true);
-		txtCounter.setText(count + "");
+		txtCounter.textProperty().bind(Bindings.format("%d", barcode.size()));
 
 	}
 
@@ -134,9 +136,10 @@ public class AssemblyController extends Controller implements Initializable {
 
 		});
 		// setup tree view
-		treeviewTableBuilder(treeView, barcode, ASSEMBLY_STATION);
-		count = dbHandler.getAllAssemblyDone().size();
-		txtCounter.setText(count + "");
+		barcode.addAll(dbHandler.getAllAssemblyDone());
+		treeviewTableBuilder(treeView, barcode);
+
+		txtCounter.textProperty().bind(Bindings.format("%d", barcode.size()));
 //		treeView.setOnMousePressed(new EventHandler<MouseEvent>() {
 //
 //			@Override

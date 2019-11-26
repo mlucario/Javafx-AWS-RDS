@@ -91,7 +91,7 @@ public class BurnInController extends Controller implements Initializable {
 			btnStart.setDisable(true);
 		}
 
-		treeviewTableBuilder(treeview, barcode, currentReadyToBurn);
+//		treeviewTableBuilder(treeview, barcode, currentReadyToBurn);
 		txtControllerBarcode.setOnAction(e -> addToBurnInList(e));
 
 	}

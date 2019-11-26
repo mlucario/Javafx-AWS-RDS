@@ -100,10 +100,9 @@ public class FirmwareUpdateController extends Controller implements Initializabl
 						.equalsIgnoreCase("1");
 				if (isFirmwareUpdated) {
 					warningAlert("Controller (SN: " + serialNumber + ") was updated. Please use re-work to re_update!");
-				}else if(!currentLastestStation.equalsIgnoreCase(ASSEMBLY_STATION)) {
+				} else if (!currentLastestStation.equalsIgnoreCase(ASSEMBLY_STATION)) {
 					warningAlert(ASSEMBLY_STATION + " is required!");
-				}
-				else {
+				} else {
 					warningAlert("WRONG STATION");
 				}
 
@@ -134,7 +133,7 @@ public class FirmwareUpdateController extends Controller implements Initializabl
 		});
 		listAdded = new ArrayList<>();
 		listAdded.addAll(dbHandler.getAllFirmwareUpdated());
-		treeviewTableBuilder(treeView, barcode, FIRMWARE_UPDATE_STATION);
+		treeviewTableBuilder(treeView, barcode);
 		count = dbHandler.getAllAssemblyDone().size();
 		txtCounter.setText(count + "");
 	}

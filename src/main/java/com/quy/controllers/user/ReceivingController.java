@@ -13,6 +13,7 @@ import com.quy.controllers.SignInController;
 import com.quy.database.DBHandler;
 
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -44,7 +45,6 @@ public class ReceivingController extends Controller implements Initializable {
 	private DBHandler dbHandler;
 	protected String currentUser = SignInController.getInstance().username();
 	private ObservableList<SMCController> barcode = FXCollections.observableArrayList();
-	private int count;
 
 	@FXML
 	void submit(ActionEvent event) {
@@ -73,8 +73,7 @@ public class ReceivingController extends Controller implements Initializable {
 
 				String result = dbHandler.addNewController(model, serialNumber, getCurrentTimeStamp(), lotId, 0);
 				if (result.equalsIgnoreCase(serialNumber)) {
-					count++;
-					addBarcodeToTable(barcode, serialNumber);
+					addBarcodeToTable(barcode, serialNumber, model);
 					notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null,
 							"Add New Controller Successfully", 2);
 					notification.showInformation();
@@ -90,7 +89,7 @@ public class ReceivingController extends Controller implements Initializable {
 			}
 		}
 
-		txtCounter.setText(count + "");
+		txtCounter.textProperty().bind(Bindings.format("%d", barcode.size()));
 		txtBoxBarcode.clear();
 		txtControllerBarcode.clear();
 		txtBoxBarcode.requestFocus();
@@ -146,13 +145,13 @@ public class ReceivingController extends Controller implements Initializable {
 		});
 		Platform.runLater(() -> txtModel.requestFocus());
 		// setup tree view
-		treeviewTableBuilder(treeView, barcode, RECEIVING_STATION);
+		barcode.addAll(dbHandler.getAllReceived());
+		treeviewTableBuilder(treeView, barcode);
 
 		// TODO find the other way to improve this one
 		// don't have to fetch database 2 times
 
-		count = dbHandler.getAllReceived().size();
-		txtCounter.setText(count + "");
+		txtCounter.textProperty().bind(Bindings.format("%d", barcode.size()));
 
 	}
 

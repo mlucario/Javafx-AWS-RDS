@@ -7,16 +7,12 @@ import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
@@ -35,10 +31,8 @@ import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import com.jfoenix.validation.RequiredFieldValidator;
 import com.quy.bizcom.MainApp;
 import com.quy.bizcom.SMCController;
-import com.quy.database.DBHandler;
 
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -195,8 +189,8 @@ public class Controller {
 
 	// Some helper value
 
-	private ExecutorService exec;
-	private DBHandler dbHandler;
+//	private ExecutorService exec;
+//	private DBHandler dbHandler;
 
 	// HashMap error code
 	protected static final Map<String, String> errorCodes;
@@ -450,6 +444,10 @@ public class Controller {
 		barcode.add(new SMCController(serialNumber));
 	}
 
+	public void addBarcodeToTable(ObservableList<SMCController> barcode, String serialNumber, String model) {
+		barcode.add(new SMCController(serialNumber, model));
+	}
+
 	public String isModelValid(JFXTextField txtModel) {
 		String result = "";
 
@@ -482,108 +480,47 @@ public class Controller {
 
 	// Treeview Builder
 	@SuppressWarnings("unchecked")
-	public void treeviewTableBuilder(JFXTreeTableView<SMCController> treeView, ObservableList<SMCController> barcode,
-			String station) {
+	public void treeviewTableBuilder(JFXTreeTableView<SMCController> treeView, ObservableList<SMCController> barcode) {
 
 		JFXTreeTableColumn<SMCController, String> controlBarcode = new JFXTreeTableColumn<>("Serial Number");
 
-		controlBarcode.prefWidthProperty().bind(treeView.widthProperty().multiply(0.97));
+		controlBarcode.prefWidthProperty().bind(treeView.widthProperty().multiply(0.4));
 		controlBarcode.setResizable(false);
 		controlBarcode.setSortable(false);
 		controlBarcode.setCellValueFactory((TreeTableColumn.CellDataFeatures<SMCController, String> param) -> {
 			if (controlBarcode.validateValue(param))
-				return param.getValue().getValue().getControllerBarcode();
+				return param.getValue().getValue().getSerialNumber();
 			else
 				return controlBarcode.getComputedValue(param);
+		});
+
+		JFXTreeTableColumn<SMCController, Number> sttCol = new JFXTreeTableColumn<>("STT");
+		sttCol.prefWidthProperty().bind(treeView.widthProperty().multiply(0.2));
+		sttCol.setResizable(false);
+		sttCol.setSortable(false);
+		sttCol.setCellValueFactory((TreeTableColumn.CellDataFeatures<SMCController, Number> param) -> {
+			if (sttCol.validateValue(param))
+				return param.getValue().getValue().getSTT();
+			else
+				return sttCol.getComputedValue(param);
+		});
+
+		JFXTreeTableColumn<SMCController, String> modelCol = new JFXTreeTableColumn<>("Model");
+
+		modelCol.prefWidthProperty().bind(treeView.widthProperty().multiply(0.39));
+		modelCol.setResizable(false);
+		modelCol.setSortable(false);
+		modelCol.setCellValueFactory((TreeTableColumn.CellDataFeatures<SMCController, String> param) -> {
+			if (modelCol.validateValue(param))
+				return param.getValue().getValue().getModel();
+			else
+				return modelCol.getComputedValue(param);
 		});
 
 		final TreeItem<SMCController> root = new RecursiveTreeItem<>(barcode, RecursiveTreeObject::getChildren);
-		treeView.getColumns().setAll(controlBarcode);
+		treeView.getColumns().setAll(sttCol, controlBarcode, modelCol);
 		treeView.setRoot(root);
 		treeView.setShowRoot(false);
-
-		ArrayList<String> listBarcodeReceived = new ArrayList<>();
-
-		exec = Executors.newCachedThreadPool(runnable -> {
-			Thread t = new Thread(runnable);
-			t.setDaemon(true);
-			return t;
-		});
-
-		Task<List<String>> getAllReceivedTask = new Task<List<String>>() {
-			@Override
-			public List<String> call() throws Exception {
-				dbHandler = new DBHandler();
-				ArrayList<String> temp = new ArrayList<>();
-				switch (station) {
-				case RECEIVING_STATION:
-					temp.addAll(dbHandler.getAllReceived());
-					break;
-				case ASSEMBLY_STATION:
-					temp.addAll(dbHandler.getAllAssemblyDone());
-					break;
-				case BURN_IN_STATION:
-					temp.addAll(dbHandler.getAllReadyToBurn());
-					break;
-				case FIRMWARE_UPDATE_STATION:
-					temp.addAll(dbHandler.getAllFirmwareUpdated());
-					break;
-				case PACKING_STATION:
-					temp.addAll(dbHandler.getAllPacked());
-					break;
-				default:
-					temp.clear();
-				}
-				return temp;
-			}
-		};
-
-		getAllReceivedTask.setOnFailed(e -> {
-			getAllReceivedTask.getException().printStackTrace();
-
-			warningAlert("Cannot fetch barcode");
-		});
-
-		getAllReceivedTask.setOnSucceeded(e -> {
-
-			listBarcodeReceived.addAll(getAllReceivedTask.getValue());
-
-			for (String s : listBarcodeReceived) {
-
-				addBarcodeToTable(barcode, s);
-			}
-		});
-
-		exec.execute(getAllReceivedTask);
-
 	}
 
-	// Treeview Builder
-	@SuppressWarnings("unchecked")
-	public void treeviewTableBuilder(JFXTreeTableView<SMCController> treeView, ObservableList<SMCController> barcode,
-			List<String> listControllers) {
-		JFXTreeTableColumn<SMCController, String> controlBarcode = new JFXTreeTableColumn<>("Serial Number");
-
-		controlBarcode.prefWidthProperty().bind(treeView.widthProperty().multiply(0.97));
-		controlBarcode.setResizable(false);
-		controlBarcode.setSortable(false);
-		controlBarcode.setCellValueFactory((TreeTableColumn.CellDataFeatures<SMCController, String> param) -> {
-			if (controlBarcode.validateValue(param))
-				return param.getValue().getValue().getControllerBarcode();
-			else
-				return controlBarcode.getComputedValue(param);
-		});
-
-		final TreeItem<SMCController> root = new RecursiveTreeItem<SMCController>(barcode,
-				RecursiveTreeObject::getChildren);
-		treeView.getColumns().setAll(controlBarcode);
-		treeView.setRoot(null);
-		treeView.setRoot(root);
-		treeView.setShowRoot(false);
-
-		for (String s : listControllers) {
-			addBarcodeToTable(barcode, s);
-		}
-
-	}
 }

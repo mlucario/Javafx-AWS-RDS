@@ -161,9 +161,9 @@ public class ResultStationController extends Controller implements Initializable
 			resultAction(e);
 		});
 		inBurnInSystem.addAll(dbHandler.getAllBurning());
-		treeviewTableBuilder(treeviewPassed, barcodePassed, currentPassed);
-		treeviewTableBuilder(treeviewFail, barcodeFail, currentFail);
-		treeviewTableBuilder(treeview, barcodeInBurnInSystem, inBurnInSystem);
+//		treeviewTableBuilder(treeviewPassed, barcodePassed, currentPassed);
+//		treeviewTableBuilder(treeviewFail, barcodeFail, currentFail);
+//		treeviewTableBuilder(treeview, barcodeInBurnInSystem, inBurnInSystem);
 
 	}
 
