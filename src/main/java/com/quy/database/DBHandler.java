@@ -40,7 +40,6 @@ public class DBHandler {
 	private static final String PACKING_STATION = "Packing Station";
 	private static final String SHIPPING_STATION = "Shipping Station";
 
-	private static final String SELECT_SERIAL_NUMBER = "SELECT Serial_Number FROM controllers WHERE ";
 
 	public Connection getConnectionAWS() {
 

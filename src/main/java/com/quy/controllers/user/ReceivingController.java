@@ -61,7 +61,7 @@ public class ReceivingController extends Controller implements Initializable {
 			txtControllerBarcode.clear();
 			txtControllerBarcode.requestFocus();
 		} else if (!txtBoxBarcode.getText().equalsIgnoreCase(txtControllerBarcode.getText())) {
-			warningAlert("Box and controller barcode DO NOT MATCH. Please verify them again.");
+			warningAlert("Box and controller serial numbers DO NOT MATCH");
 			txtControllerBarcode.requestFocus();
 		}
 
@@ -70,15 +70,18 @@ public class ReceivingController extends Controller implements Initializable {
 			String model = getStringJFXTextField(txtModel);
 			String lotId = generatorLotId();
 			if (!dbHandler.isBarcodeExist(serialNumber)) {
-
 				String result = dbHandler.addNewController(model, serialNumber, getCurrentTimeStamp(), lotId, 0);
 				if (result.equalsIgnoreCase(serialNumber)) {
-					addBarcodeToTable(barcode, serialNumber, model);
-					notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null,
-							"Add New Controller Successfully", 2);
-					notification.showInformation();
-					dbHandler.addToHistoryRecord(currentUser, RECEIVING_STATION, getCurrentTimeStamp(), serialNumber,
+					addBarcodeToTable(barcode, serialNumber,model);				
+					result = dbHandler.addToHistoryRecord(currentUser, RECEIVING_STATION, getCurrentTimeStamp(), serialNumber,
 							"Received Controller Serial Number : " + serialNumber, false);
+					if(result.equalsIgnoreCase(serialNumber)) {
+						notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null,
+								"Add New Controller Successfully", 2);
+						notification.showInformation();
+					}else {
+						warningAlert(result);
+					}
 				} else {
 					warningAlert(result);
 				}
@@ -148,8 +151,6 @@ public class ReceivingController extends Controller implements Initializable {
 		barcode.addAll(dbHandler.getAllReceived());
 		treeviewTableBuilder(treeView, barcode);
 
-		// TODO find the other way to improve this one
-		// don't have to fetch database 2 times
 
 		txtCounter.textProperty().bind(Bindings.format("%d", barcode.size()));
 

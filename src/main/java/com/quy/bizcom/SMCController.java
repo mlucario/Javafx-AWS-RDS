@@ -82,8 +82,8 @@ public class SMCController extends RecursiveTreeObject<SMCController> {
 	}
 
 	public SMCController(String serialNumber, String model) {
-		this.serialNumber = new SimpleStringProperty(serialNumber);
-		this.model = new SimpleStringProperty(model);
+		this.serialNumber = new SimpleStringProperty(serialNumber);		
+		this.model =  new SimpleStringProperty(model);
 		sttID = new SimpleIntegerProperty(stt++);
 	}
 

@@ -443,11 +443,9 @@ public class Controller {
 	public void addBarcodeToTable(ObservableList<SMCController> barcode, String serialNumber) {
 		barcode.add(new SMCController(serialNumber));
 	}
-
 	public void addBarcodeToTable(ObservableList<SMCController> barcode, String serialNumber, String model) {
 		barcode.add(new SMCController(serialNumber, model));
 	}
-
 	public String isModelValid(JFXTextField txtModel) {
 		String result = "";
 
