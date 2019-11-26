@@ -49,7 +49,7 @@
 								</HBox>
 							</center>
 						</JFXToolbar>
-						<HBox>
+						<HBox VBox.vgrow="ALWAYS">
 							<children>
 								<VBox alignment="TOP_CENTER" prefWidth="200.0" style="-fx-background-color: white;">
 									<children>
@@ -211,12 +211,15 @@
 									<children>
 										<StackPane fx:id="paneIntro" alignment="TOP_CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="0.0">
 											<children>
-												<VBox fx:id="vboxLoad" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
+												<VBox fx:id="vboxLoad" alignment="TOP_CENTER">
 													<children>
-														<Text id="sampleLabel" fx:id="txtTitleStation" strokeType="OUTSIDE" strokeWidth="0.0" text="Title Station" textAlignment="CENTER">
+														<Text id="sampleLabel" fx:id="txtTitleStation" fill="#0033ff" strokeType="OUTSIDE" strokeWidth="0.0" text="Title Station" textAlignment="CENTER">
 															<font>
-																<Font name="Roboto Bold" size="45.0" />
+																<Font name="Roboto Black" size="45.0" />
 															</font>
+                                             <VBox.margin>
+                                                <Insets top="20.0" />
+                                             </VBox.margin>
 														</Text>
 													</children>
 												</VBox>

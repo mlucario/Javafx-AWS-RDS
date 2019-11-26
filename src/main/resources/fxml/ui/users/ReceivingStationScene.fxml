@@ -61,9 +61,9 @@
 								</JFXButton>
 							</children>
 						</VBox>
-						<VBox alignment="TOP_CENTER" prefHeight="410.0" prefWidth="477.0">
+						<VBox alignment="TOP_CENTER" prefWidth="477.0" HBox.hgrow="ALWAYS">
 							<children>
-								<JFXTreeTableView fx:id="treeView" currentItemsCount="1" style="-fx-font-size: 1.2em; -fx-font-family: Roboto; -fx-border-color: Black; -fx-alignment: Center; -fx-border-width: 1;" />
+								<JFXTreeTableView fx:id="treeView" currentItemsCount="1" style="-fx-font-size: 1.2em; -fx-font-family: Roboto; -fx-border-color: Black; -fx-alignment: Center; -fx-border-width: 1;" VBox.vgrow="ALWAYS" />
 								<Text fx:id="txtCounter" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
 									<VBox.margin>
 										<Insets top="25.0" />
@@ -83,6 +83,6 @@
 		</StackPane>
 	</children>
 	<padding>
-		<Insets top="20.0" />
+		<Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
 	</padding>
 </AnchorPane>

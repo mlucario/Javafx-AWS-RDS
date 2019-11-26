@@ -33,7 +33,6 @@ public class AssemblyController extends Controller implements Initializable {
 	private DBHandler dbHandler;
 	private String currentUser = SignInController.getInstance().username();
 	private ObservableList<SMCController> barcode = FXCollections.observableArrayList();
-	private int count;
 
 	@FXML
 	public String isValidInput() {
@@ -87,7 +86,7 @@ public class AssemblyController extends Controller implements Initializable {
 			if (currentLastestStation.equalsIgnoreCase(RECEIVING_STATION)) {
 				String result = dbHandler.assembly(serialNumber, timestamp, reworkCount, false);
 				if (result.equalsIgnoreCase(serialNumber)) {
-					count++;
+
 					addBarcodeToTable(barcode, serialNumber, model);
 					String history = dbHandler.addToHistoryRecord(currentUser, ASSEMBLY_STATION, timestamp,
 							serialNumber, "Assembler Controller Serial Number : " + serialNumber, false);
@@ -128,7 +127,7 @@ public class AssemblyController extends Controller implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		dbHandler = new DBHandler();
 		btnSubmit.setDisable(true);
-		count = 0;
+
 		textFieldFormat(txtControllerBarcode, "Controller barcode is required", true);
 		Platform.runLater(() -> txtControllerBarcode.requestFocus());
 		txtControllerBarcode.setOnAction(e -> {

@@ -13,6 +13,7 @@ import com.quy.controllers.SignInController;
 import com.quy.database.DBHandler;
 
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -36,7 +37,6 @@ public class FirmwareUpdateController extends Controller implements Initializabl
 	private DBHandler dbHandler;
 	private String currentUser = SignInController.getInstance().username();
 	private ObservableList<SMCController> barcode = FXCollections.observableArrayList();
-	private int count;
 	private ArrayList<String> listAdded;
 
 	@FXML
@@ -72,14 +72,12 @@ public class FirmwareUpdateController extends Controller implements Initializabl
 			String serialNumber = getStringJFXTextField(txtControllerBarcode);
 			String currentLastestStation = dbHandler.getStatusDone(COL_CURRENT_STATION_CONTROLER, serialNumber);
 			String timestamp = getCurrentTimeStamp();
-
+			String model = dbHandler.getStatusDone(COL_MODEL_CONTROLER, serialNumber);
 			if (currentLastestStation.equalsIgnoreCase(ASSEMBLY_STATION)) {
 				String result = dbHandler.firmwareUpdate(serialNumber, timestamp);
 				if (result.equalsIgnoreCase(serialNumber)) {
-
-					count++;
 					if (!listAdded.contains(serialNumber)) {
-						addBarcodeToTable(barcode, serialNumber);
+						addBarcodeToTable(barcode, serialNumber, model);
 					}
 
 					String history = dbHandler.addToHistoryRecord(currentUser, FIRMWARE_UPDATE_STATION, timestamp,
@@ -87,7 +85,8 @@ public class FirmwareUpdateController extends Controller implements Initializabl
 					if (!history.equalsIgnoreCase(serialNumber)) {
 						warningAlert(history);
 					} else {
-						notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null, "Added Successfully", 2);
+						notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null,
+								"Firmware Update Successfully", 2);
 						notification.showInformation();
 					}
 				} else {
@@ -99,7 +98,8 @@ public class FirmwareUpdateController extends Controller implements Initializabl
 				boolean isFirmwareUpdated = dbHandler.getStatusDone(COL_IS_FIRMWARE_UPDATED_CONTROLER, serialNumber)
 						.equalsIgnoreCase("1");
 				if (isFirmwareUpdated) {
-					warningAlert("Controller (SN: " + serialNumber + ") was updated. Please use re-work to re_update!");
+					warningAlert("Controller (SN: " + serialNumber
+							+ ") was updated firmware. Please use re-work to re_update!");
 				} else if (!currentLastestStation.equalsIgnoreCase(ASSEMBLY_STATION)) {
 					warningAlert(ASSEMBLY_STATION + " is required!");
 				} else {
@@ -115,7 +115,7 @@ public class FirmwareUpdateController extends Controller implements Initializabl
 		txtControllerBarcode.clear();
 		txtControllerBarcode.requestFocus();
 		btnSubmit.setDisable(true);
-		txtCounter.setText(count + "");
+		txtCounter.textProperty().bind(Bindings.format("%d", barcode.size()));
 
 	}
 
@@ -123,7 +123,7 @@ public class FirmwareUpdateController extends Controller implements Initializabl
 	public void initialize(URL location, ResourceBundle resources) {
 		dbHandler = new DBHandler();
 		btnSubmit.setDisable(true);
-		count = 0;
+
 		textFieldFormat(txtControllerBarcode, "Controller barcode is required", true);
 		Platform.runLater(() -> txtControllerBarcode.requestFocus());
 		txtControllerBarcode.setOnAction(e -> {
@@ -131,11 +131,9 @@ public class FirmwareUpdateController extends Controller implements Initializabl
 			submit();
 
 		});
-		listAdded = new ArrayList<>();
-		listAdded.addAll(dbHandler.getAllFirmwareUpdated());
+		barcode.addAll(dbHandler.getAllFirmwareUpdated());
 		treeviewTableBuilder(treeView, barcode);
-		count = dbHandler.getAllAssemblyDone().size();
-		txtCounter.setText(count + "");
+		txtCounter.textProperty().bind(Bindings.format("%d", barcode.size()));
 	}
 
 }

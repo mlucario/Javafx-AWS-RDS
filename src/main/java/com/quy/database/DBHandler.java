@@ -40,7 +40,6 @@ public class DBHandler {
 	private static final String PACKING_STATION = "Packing Station";
 	private static final String SHIPPING_STATION = "Shipping Station";
 
-
 	public Connection getConnectionAWS() {
 
 		LOGGER.info("MySQL JDBC Driver Registered!");
@@ -606,9 +605,10 @@ public class DBHandler {
 	}
 
 	// Fetch all Controller Which are ready to burn in
-	public List<String> getAllReadyToBurn() {
-		ArrayList<String> result = new ArrayList<>();
-		String query = "SELECT Serial_Number FROM controllers WHERE Current_Station=? AND Is_Received=? and Is_Assembly_Done=?";
+	public List<SMCController> getAllReadyToBurn() {
+		ArrayList<SMCController> result = new ArrayList<>();
+		SMCController.stt = 1;
+		String query = "SELECT Model,Serial_Number FROM controllers WHERE Current_Station=? AND Is_Received=? and Is_Assembly_Done=?";
 		try {
 			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
@@ -619,7 +619,9 @@ public class DBHandler {
 			rs = pst.executeQuery();
 
 			while (rs.next()) {
-				result.add(rs.getString("Serial_Number").trim().replaceAll(" +", " ").toUpperCase());
+				String model = rs.getString("Model");
+				String serialNumber = rs.getString("Serial_Number");
+				result.add(new SMCController(serialNumber, model));
 			}
 
 		} catch (SQLException e) {
@@ -646,20 +648,23 @@ public class DBHandler {
 	}
 
 	// GET ALL CURRENT FIRMWARE UPDATED
-	public List<String> getAllFirmwareUpdated() {
-		ArrayList<String> result = new ArrayList<>();
-		String query = "SELECT Serial_Number FROM controllers WHERE Current_Station=? AND Is_Received=? AND Is_Firmware_Updated=?";
+	public List<SMCController> getAllFirmwareUpdated() {
+		ArrayList<SMCController> result = new ArrayList<>();
+		SMCController.stt = 1;
+		String query = "SELECT Model,Serial_Number FROM controllers WHERE Current_Station=? AND Is_Received=? AND Is_Firmware_Updated=?";
 		try {
 			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
-			pst.setString(1, "Firmware Update Station");
+			pst.setString(1, FIRMWARE_UPDATE_STATION);
 			pst.setBoolean(2, true);
 			pst.setBoolean(3, true);
 
 			rs = pst.executeQuery();
 
 			while (rs.next()) {
-				result.add(rs.getString("Serial_Number").trim().replaceAll(" +", " ").toUpperCase());
+				String model = rs.getString("Model");
+				String serialNumber = rs.getString("Serial_Number");
+				result.add(new SMCController(serialNumber, model));
 			}
 
 		} catch (SQLException e) {
@@ -1271,6 +1276,7 @@ public class DBHandler {
 	public List<SMCController> getAllAssemblyDone() {
 		ArrayList<SMCController> result = new ArrayList<>();
 		String query = "SELECT Model,Serial_Number FROM controllers WHERE current_station=? AND Is_Received=? AND Is_Assembly_Done=?";
+		SMCController.stt = 1;
 		try {
 			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);

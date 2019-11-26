@@ -13,6 +13,7 @@ import com.quy.controllers.SignInController;
 import com.quy.database.DBHandler;
 
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -40,31 +41,34 @@ public class BurnInController extends Controller implements Initializable {
 	private DBHandler dbHandler;
 	protected String currentUser = SignInController.getInstance().username();
 	private ObservableList<SMCController> barcode = FXCollections.observableArrayList();
-	private ArrayList<String> currentReadyToBurn;
-	private int totalInList = 0;
 
 	@FXML
 	void addToBurnInList(ActionEvent event) {
 
 		if (isValidIinput().isEmpty()) {
 			String serialNumber = getStringJFXTextField(txtControllerBarcode);
-
+			String model = dbHandler.getStatusDone(COL_MODEL_CONTROLER, serialNumber);
 			String result = dbHandler.addToBurnInWaitingList(serialNumber);
 			if (result.equals(serialNumber)) {
-				addBarcodeToTable(barcode, serialNumber);
-				currentReadyToBurn.add(serialNumber);
-				totalInList++;
-				txtNumber.setText(totalInList + "");
-				dbHandler.addToHistoryRecord(currentUser, "Added to waiting list burn in", getCurrentTimeStamp(),
-						serialNumber, "Added to burn in system. SN: " + serialNumber, false);
+				addBarcodeToTable(barcode, serialNumber, model);
 				btnStart.setDisable(false);
+				String history = dbHandler.addToHistoryRecord(currentUser, "Added to waiting list burn in",
+						getCurrentTimeStamp(), serialNumber, "Added to burn in system. SN: " + serialNumber, false);
+				if (!history.equalsIgnoreCase(serialNumber)) {
+					warningAlert(history);
+				} else {
+					notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null,
+							"Add to burn-in list Successfully", 2);
+					notification.showInformation();
+				}
+
 			} else {
 				warningAlert(result);
 			}
 		} else {
 			warningAlert(isValidIinput());
 		}
-
+		txtNumber.textProperty().bind(Bindings.format("%d", barcode.size()));
 		txtControllerBarcode.clear();
 		txtControllerBarcode.requestFocus();
 		btnAdd.setDisable(true);
@@ -78,20 +82,19 @@ public class BurnInController extends Controller implements Initializable {
 		btnAdd.setDisable(true);
 		btnStart.setDisable(true);
 		textFieldFormat(txtControllerBarcode, "Barcode input is required", true);
-		currentReadyToBurn = new ArrayList<>();
-		currentReadyToBurn.addAll(dbHandler.getAllReadyToBurn());
-		totalInList = currentReadyToBurn.size();
-		txtNumber.setText(totalInList + "");
+		barcode.addAll(dbHandler.getAllReadyToBurn());
+
+		txtNumber.textProperty().bind(Bindings.format("%d", barcode.size()));
 		Platform.runLater(() -> txtControllerBarcode.requestFocus());
 
-		if (totalInList != 0) {
+		if (!txtNumber.getText().equalsIgnoreCase("0")) {
 
 			btnStart.setDisable(false);
 		} else {
 			btnStart.setDisable(true);
 		}
 
-//		treeviewTableBuilder(treeview, barcode, currentReadyToBurn);
+		treeviewTableBuilder(treeview, barcode);
 		txtControllerBarcode.setOnAction(e -> addToBurnInList(e));
 
 	}
@@ -150,28 +153,41 @@ public class BurnInController extends Controller implements Initializable {
 	void startBurnIn(ActionEvent event) {
 		String timeStamp = getCurrentTimeStamp();
 		int count = 0;
-		boolean flag = false;
-		if (!currentReadyToBurn.isEmpty()) {
-			for (String serialNumber : currentReadyToBurn) {
 
+		if (!barcode.isEmpty()) {
+			boolean flag = false;
+			ArrayList<SMCController> myList = new ArrayList<>();
+			myList.addAll(dbHandler.getAllReadyToBurn());
+			for (SMCController c : myList) {
+
+				String serialNumber = c.getSerialNumber().getValue();
 				String result = dbHandler.burnIn(serialNumber, timeStamp);
 				if (result.equalsIgnoreCase(serialNumber)) {
 					count++;
-					dbHandler.addToHistoryRecord(currentUser, "Burn In Station", getCurrentTimeStamp(), serialNumber,
-							"Started Burn In Process SN " + serialNumber, false);
-					flag = true;
+					String history = dbHandler.addToHistoryRecord(currentUser, "Burn In Station", getCurrentTimeStamp(),
+							serialNumber, "Started Burn In Process SN " + serialNumber, false);
+
+					if (!history.equalsIgnoreCase(serialNumber)) {
+						warningAlert(history);
+					} else {
+						flag = true;
+					}
+
 				} else {
 					warningAlert(result);
 				}
 			}
-			if (flag) {
 
+			if (flag) {
 				notification = notificatioBuilder(Pos.CENTER, graphic, null, count + " Added to Burn in Successfully",
 						3);
 				notification.showInformation();
-				txtNumber.setText(dbHandler.getAllReadyToBurn().size() + "");
+
 				barcode.clear();
+				SMCController.stt = 1;
+				txtNumber.textProperty().bind(Bindings.format("%d", barcode.size()));
 			}
+
 		}
 	}
 
