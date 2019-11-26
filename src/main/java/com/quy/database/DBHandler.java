@@ -40,7 +40,6 @@ public class DBHandler {
 	private static final String PACKING_STATION = "Packing Station";
 	private static final String SHIPPING_STATION = "Shipping Station";
 
-	private static final String SELECT_SERIAL_NUMBER = "SELECT Serial_Number FROM controllers WHERE ";
 
 	public Connection getConnectionAWS() {
 
@@ -1231,9 +1230,10 @@ public class DBHandler {
 	}
 
 	// Fetch all Controller At Receiving Station
-	public List<String> getAllReceived() {
-		ArrayList<String> result = new ArrayList<>();
-		String query = SELECT_SERIAL_NUMBER + " Current_Station=? AND Is_Received=?";
+	public List<SMCController> getAllReceived() {
+		ArrayList<SMCController> result = new ArrayList<>();
+		SMCController.stt = 0;
+		String query = "SELECT Model,Serial_Number FROM controllers WHERE Current_Station=? AND Is_Received=?";
 		try {
 			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
@@ -1242,8 +1242,10 @@ public class DBHandler {
 
 			rs = pst.executeQuery();
 
-			while (rs.next()) {
-				result.add(rs.getString("Serial_Number").trim().replaceAll(" +", " ").toUpperCase());
+			while (rs.next()) {				
+				String model = rs.getString("Model");
+				String serialNumber = rs.getString("Serial_Number");
+				result.add(new SMCController(serialNumber,model));
 			}
 
 			LOGGER.info("All Receving Station is fetched");

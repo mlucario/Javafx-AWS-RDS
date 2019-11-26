@@ -36,7 +36,7 @@ public class SMCController extends RecursiveTreeObject<SMCController> {
 	private BooleanProperty isPassed;
 	private StringProperty symptomsFails;
 	private IntegerProperty reWorkCount;
-	private static int stt = 1;
+	public static int stt = 1;
 	private ObservableValue<Number> sttID;
 
 	public SMCController(StringProperty serialNumber, StringProperty model, StringProperty lotId,
@@ -81,10 +81,9 @@ public class SMCController extends RecursiveTreeObject<SMCController> {
 		sttID = new SimpleIntegerProperty(stt++);
 	}
 
-	public SMCController(StringProperty serialNumber, StringProperty model) {
-		super();
-		this.serialNumber = serialNumber;
-		this.serialNumber = model;
+	public SMCController(String serialNumber, String model) {
+		this.serialNumber = new SimpleStringProperty(serialNumber);		
+		this.model =  new SimpleStringProperty(model);
 		sttID = new SimpleIntegerProperty(stt++);
 	}
 

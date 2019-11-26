@@ -13,6 +13,7 @@ import com.quy.controllers.SignInController;
 import com.quy.database.DBHandler;
 
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -44,7 +45,6 @@ public class ReceivingController extends Controller implements Initializable {
 	private DBHandler dbHandler;
 	protected String currentUser = SignInController.getInstance().username();
 	private ObservableList<SMCController> barcode = FXCollections.observableArrayList();
-	private int count;
 
 	@FXML
 	void submit(ActionEvent event) {
@@ -61,7 +61,7 @@ public class ReceivingController extends Controller implements Initializable {
 			txtControllerBarcode.clear();
 			txtControllerBarcode.requestFocus();
 		} else if (!txtBoxBarcode.getText().equalsIgnoreCase(txtControllerBarcode.getText())) {
-			warningAlert("Box and controller barcode DO NOT MATCH. Please verify them again.");
+			warningAlert("Box and controller serial numbers DO NOT MATCH");
 			txtControllerBarcode.requestFocus();
 		}
 
@@ -70,16 +70,18 @@ public class ReceivingController extends Controller implements Initializable {
 			String model = getStringJFXTextField(txtModel);
 			String lotId = generatorLotId();
 			if (!dbHandler.isBarcodeExist(serialNumber)) {
-
 				String result = dbHandler.addNewController(model, serialNumber, getCurrentTimeStamp(), lotId, 0);
 				if (result.equalsIgnoreCase(serialNumber)) {
-					count++;
-					addBarcodeToTable(barcode, serialNumber);
-					notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null,
-							"Add New Controller Successfully", 2);
-					notification.showInformation();
-					dbHandler.addToHistoryRecord(currentUser, RECEIVING_STATION, getCurrentTimeStamp(), serialNumber,
+					addBarcodeToTable(barcode, serialNumber,model);				
+					result = dbHandler.addToHistoryRecord(currentUser, RECEIVING_STATION, getCurrentTimeStamp(), serialNumber,
 							"Received Controller Serial Number : " + serialNumber, false);
+					if(result.equalsIgnoreCase(serialNumber)) {
+						notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null,
+								"Add New Controller Successfully", 2);
+						notification.showInformation();
+					}else {
+						warningAlert(result);
+					}
 				} else {
 					warningAlert(result);
 				}
@@ -90,7 +92,7 @@ public class ReceivingController extends Controller implements Initializable {
 			}
 		}
 
-		txtCounter.setText(count + "");
+		txtCounter.textProperty().bind(Bindings.format("%d", barcode.size()));
 		txtBoxBarcode.clear();
 		txtControllerBarcode.clear();
 		txtBoxBarcode.requestFocus();
@@ -146,13 +148,9 @@ public class ReceivingController extends Controller implements Initializable {
 		});
 		Platform.runLater(() -> txtModel.requestFocus());
 		// setup tree view
-		treeviewTableBuilder(treeView, barcode, RECEIVING_STATION);
-
-		// TODO find the other way to improve this one
-		// don't have to fetch database 2 times
-
-		count = dbHandler.getAllReceived().size();
-		txtCounter.setText(count + "");
+		barcode.addAll(dbHandler.getAllReceived());
+		treeviewTableBuilder(treeView, barcode);
+		txtCounter.textProperty().bind(Bindings.format("%d", barcode.size()));
 
 	}
 

@@ -449,7 +449,9 @@ public class Controller {
 	public void addBarcodeToTable(ObservableList<SMCController> barcode, String serialNumber) {
 		barcode.add(new SMCController(serialNumber));
 	}
-
+	public void addBarcodeToTable(ObservableList<SMCController> barcode, String serialNumber, String model) {
+		barcode.add(new SMCController(serialNumber, model));
+	}
 	public String isModelValid(JFXTextField txtModel) {
 		String result = "";
 
@@ -517,7 +519,7 @@ public class Controller {
 				ArrayList<String> temp = new ArrayList<>();
 				switch (station) {
 				case RECEIVING_STATION:
-					temp.addAll(dbHandler.getAllReceived());
+//					temp.addAll(dbHandler.getAllReceived());
 					break;
 				case ASSEMBLY_STATION:
 					temp.addAll(dbHandler.getAllAssemblyDone());
@@ -556,6 +558,52 @@ public class Controller {
 
 		exec.execute(getAllReceivedTask);
 
+	}
+	@SuppressWarnings("unchecked")
+	public void treeviewTableBuilder(JFXTreeTableView<SMCController> treeView, ObservableList<SMCController> barcode) {
+		
+		
+		JFXTreeTableColumn<SMCController, Number> sttCol = new JFXTreeTableColumn<>("STT");
+		sttCol.prefWidthProperty().bind(treeView.widthProperty().multiply(0.2));
+		sttCol.setResizable(false);
+		sttCol.setSortable(false);
+		sttCol.setCellValueFactory((TreeTableColumn.CellDataFeatures<SMCController, Number> param) -> {
+			if (sttCol.validateValue(param))
+				return param.getValue().getValue().getSTT();
+			else
+				return sttCol.getComputedValue(param);
+		});
+		
+		JFXTreeTableColumn<SMCController, String> serialCol = new JFXTreeTableColumn<>("Serial Number");
+		serialCol.prefWidthProperty().bind(treeView.widthProperty().multiply(0.4));
+		serialCol.setResizable(false);
+		serialCol.setSortable(false);
+		serialCol.setCellValueFactory((TreeTableColumn.CellDataFeatures<SMCController, String> param) -> {
+			if (serialCol.validateValue(param))
+				return param.getValue().getValue().getControllerBarcode();
+			else
+				return serialCol.getComputedValue(param);
+		});
+		
+		JFXTreeTableColumn<SMCController, String> modelCol = new JFXTreeTableColumn<>("Model");
+		modelCol.prefWidthProperty().bind(treeView.widthProperty().multiply(0.4));
+		modelCol.setResizable(false);
+		modelCol.setSortable(false);
+		modelCol.setCellValueFactory((TreeTableColumn.CellDataFeatures<SMCController, String> param) -> {
+			if (modelCol.validateValue(param))
+				return param.getValue().getValue().getModel();
+			else
+				return modelCol.getComputedValue(param);
+		});
+		
+		
+		final TreeItem<SMCController> root = new RecursiveTreeItem<>(barcode, RecursiveTreeObject::getChildren);
+		treeView.getColumns().setAll(sttCol,modelCol,serialCol);
+		treeView.setRoot(root);
+		treeView.setShowRoot(false);
+		
+		
+		
 	}
 
 	// Treeview Builder

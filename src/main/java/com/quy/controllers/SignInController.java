@@ -189,8 +189,8 @@ public class SignInController extends Controller implements Initializable {
 		});
 
 		// TODO Remove after test done
-		txtUsername.setText("smc_bizcom");
-		txtPassword.setText("bizcom1171");
+		txtUsername.setText("a1956");
+		txtPassword.setText("1234567Aa@");
 
 		pt.play();
 		Platform.runLater(() -> txtUsername.requestFocus());
