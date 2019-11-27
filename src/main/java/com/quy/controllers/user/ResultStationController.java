@@ -195,6 +195,7 @@ public class ResultStationController extends Controller implements Initializable
 						resultInput = "\r\n Controller has been set RESULT!";
 						break;
 					default:
+						
 						LOGGER.info("There is nothing here.");
 					}
 				}

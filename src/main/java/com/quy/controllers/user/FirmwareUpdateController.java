@@ -1,7 +1,6 @@
 package com.quy.controllers.user;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 import com.jfoenix.controls.JFXButton;
@@ -37,7 +36,7 @@ public class FirmwareUpdateController extends Controller implements Initializabl
 	private DBHandler dbHandler;
 	private String currentUser = SignInController.getInstance().username();
 	private ObservableList<SMCController> barcode = FXCollections.observableArrayList();
-	private ArrayList<String> listAdded;
+
 
 	@FXML
 	void keyPressValidate() {
@@ -76,10 +75,7 @@ public class FirmwareUpdateController extends Controller implements Initializabl
 			if (currentLastestStation.equalsIgnoreCase(ASSEMBLY_STATION)) {
 				String result = dbHandler.firmwareUpdate(serialNumber, timestamp);
 				if (result.equalsIgnoreCase(serialNumber)) {
-					if (!listAdded.contains(serialNumber)) {
-						addBarcodeToTable(barcode, serialNumber, model);
-					}
-
+					addBarcodeToTable(barcode, serialNumber, model);
 					String history = dbHandler.addToHistoryRecord(currentUser, FIRMWARE_UPDATE_STATION, timestamp,
 							serialNumber, "Firmware updated SN: " + serialNumber, false);
 					if (!history.equalsIgnoreCase(serialNumber)) {
@@ -93,7 +89,9 @@ public class FirmwareUpdateController extends Controller implements Initializabl
 					warningAlert(result);
 				}
 
-			} else {
+			}
+
+			else {
 				// Check if it is updated
 				boolean isFirmwareUpdated = dbHandler.getStatusDone(COL_IS_FIRMWARE_UPDATED_CONTROLER, serialNumber)
 						.equalsIgnoreCase("1");
@@ -108,7 +106,9 @@ public class FirmwareUpdateController extends Controller implements Initializabl
 
 			}
 
-		} else {
+		} else
+
+		{
 			warningAlert(isValidInput());
 		}
 
@@ -126,11 +126,9 @@ public class FirmwareUpdateController extends Controller implements Initializabl
 
 		textFieldFormat(txtControllerBarcode, "Controller barcode is required", true);
 		Platform.runLater(() -> txtControllerBarcode.requestFocus());
-		txtControllerBarcode.setOnAction(e -> {
+		txtControllerBarcode.setOnAction(e -> submit()
 
-			submit();
-
-		});
+		);
 		barcode.addAll(dbHandler.getAllFirmwareUpdated());
 		treeviewTableBuilder(treeView, barcode);
 		txtCounter.textProperty().bind(Bindings.format("%d", barcode.size()));

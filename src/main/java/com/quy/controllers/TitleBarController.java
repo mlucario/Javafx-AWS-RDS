@@ -15,6 +15,7 @@ public class TitleBarController implements Initializable{
     @FXML
     void close(MouseEvent event) {
     	 Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+    	 System.exit(0);
 		stage.close();
     }
 
@@ -36,7 +37,7 @@ public class TitleBarController implements Initializable{
     }
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
