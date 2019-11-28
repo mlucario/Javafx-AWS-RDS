@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXTabPane?>
+<?import com.jfoenix.controls.JFXTreeTableView?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.quy.controllers.user.ResultStationController">
+	<children>
+		<StackPane alignment="TOP_LEFT" layoutY="25.0" prefHeight="574.0" prefWidth="853.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+         <children>
+            <JFXTabPane>
+               <tabs>
+                  <Tab text="Burn In Summary">
+                    <content>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <StackPane alignment="TOP_LEFT" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+                                 <children>
+                                    <HBox>
+                                       <children>
+                                          <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                                             <children>
+                                                <JFXTreeTableView fx:id="treeview" VBox.vgrow="ALWAYS" />
+                                                <Pane>
+                                                   <children>
+                                                      <JFXComboBox />
+                                                   </children>
+                                                </Pane>
+                                             </children>
+                                          </VBox>
+                                          <Pane prefWidth="200.0" style="-fx-border-color: Grey;">
+                                             <children>
+                                                <VBox alignment="TOP_CENTER" prefWidth="200.0">
+                                                   <children>
+                                                      <HBox alignment="TOP_CENTER" prefWidth="200.0">
+                                                         <children>
+                                                            <Label text="Summary" textFill="BLUE">
+                                                               <font>
+                                                                  <Font name="Roboto Medium" size="35.0" />
+                                                               </font>
+                                                            </Label>
+                                                         </children>
+                                                      </HBox>
+                                                   </children>
+                                                </VBox>
+                                             </children>
+                                          </Pane>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </StackPane>
+                           </children>
+                        </AnchorPane>
+                    </content>
+                  </Tab>
+                  <Tab text="Pass" />
+                  <Tab text="Fail">
+                    <content>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                    </content>
+                  </Tab>
+               </tabs>
+            </JFXTabPane>
+         </children>
+		</StackPane>
+	</children>
+</AnchorPane>
