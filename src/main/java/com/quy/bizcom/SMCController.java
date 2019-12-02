@@ -82,8 +82,8 @@ public class SMCController extends RecursiveTreeObject<SMCController> {
 	}
 
 	public SMCController(String serialNumber, String model) {
-		this.serialNumber = new SimpleStringProperty(serialNumber);		
-		this.model =  new SimpleStringProperty(model);
+		this.serialNumber = new SimpleStringProperty(serialNumber);
+		this.model = new SimpleStringProperty(model);
 		sttID = new SimpleIntegerProperty(stt++);
 	}
 
@@ -97,6 +97,10 @@ public class SMCController extends RecursiveTreeObject<SMCController> {
 		this.burnInResult = new SimpleStringProperty(burnInResult2);
 		this.reWorkCount = new SimpleIntegerProperty(reWorkCoung);
 		sttID = new SimpleIntegerProperty(stt++);
+	}
+
+	public void setSTT(int stt) {
+		sttID = new SimpleIntegerProperty(stt);
 	}
 
 	public ObservableValue<Number> getSTT() {

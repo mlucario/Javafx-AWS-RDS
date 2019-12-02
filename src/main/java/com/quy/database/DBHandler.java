@@ -904,10 +904,10 @@ public class DBHandler {
 	}
 
 	// RESULT STATION
-	public String setResult(String serialNumber, String timestamp, boolean isPassed, String symptoms) {
+	public String setResultPass(String serialNumber, String timestamp, boolean isPassed, String symptoms) {
 		String result = "";
 
-		String query = "UPDATE controllers SET Current_Station=?,Burn_In_End=?,Burn_In_Result=?,Is_Burn_In_Done=?,Is_Passed=?,Symptoms_Fail=? WHERE Serial_Number=?";
+		String query = "UPDATE controllers SET Current_Station=?,Burn_In_End=?,Burn_In_Result=?,Is_Burn_In_Done=?,Is_Passed=?,Symptoms_Fail=?,Is_Burn_In_Processing=? WHERE Serial_Number=?";
 		try {
 			String rx = isPassed ? "PASS" : "FAIL";
 
@@ -919,7 +919,52 @@ public class DBHandler {
 			pst.setBoolean(4, true);
 			pst.setBoolean(5, isPassed);
 			pst.setString(6, symptoms);
-			pst.setString(7, serialNumber);
+			pst.setBoolean(7, false);
+			pst.setString(8, serialNumber);
+			if (pst.executeUpdate() != 0) {
+				result = serialNumber;
+
+			} else {
+				result = "Cannot change/update into database.";
+
+			}
+
+		} catch (SQLException e) {
+			LOGGER.error("setResult " + CONNECTION_FAIL, e.getMessage());
+			result = e.getMessage();
+		} finally {
+
+			try {
+				if (pst != null) {
+					pst.close();
+				}
+
+				shutdown();
+			} catch (SQLException e) {
+				LOGGER.error("setResult " + CLOSE_CONNECTION_FAIL, e.getMessage());
+			}
+
+		}
+
+		return result;
+	}
+
+	public String setResultFail(String serialNumber, String timestamp, boolean isPassed, boolean isBurnInDone,
+			boolean isFirmwareUpdated, String symptoms) {
+		String result = "";
+
+		String query = "UPDATE controllers SET Current_Station=?,Burn_In_End=?,Burn_In_Result=?,Is_Burn_In_Done=?,Is_Passed=?,Symptoms_Fail=?,Is_Firmware_Updated=? WHERE Serial_Number=?";
+		try {
+			dbconnection = getConnection();
+			pst = dbconnection.prepareStatement(query);
+			pst.setString(1, RESULT_STATION);
+			pst.setString(2, timestamp);
+			pst.setString(3, "FAIL");
+			pst.setBoolean(4, isBurnInDone);
+			pst.setBoolean(5, isPassed);
+			pst.setString(6, symptoms);
+			pst.setBoolean(7, isFirmwareUpdated);
+			pst.setString(8, serialNumber);
 			if (pst.executeUpdate() != 0) {
 				result = serialNumber;
 
@@ -1317,18 +1362,21 @@ public class DBHandler {
 	}
 
 	// Fetch all Controller Which are burning in
-	public List<String> getAllBurning() {
-		ArrayList<String> result = new ArrayList<>();
-		String query = "SELECT Serial_Number FROM controllers WHERE Current_Station=? AND Burn_In_Result=?";
+	public List<SMCController> getAllBurning() {
+		ArrayList<SMCController> result = new ArrayList<>();
+		String query = "SELECT Model,Serial_Number FROM controllers WHERE Current_Station=? AND Burn_In_Result=? AND Is_Burn_In_Processing=?";
 		try {
 			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
 			pst.setString(1, "Burn In Station");
 			pst.setString(2, "Burn In Processing");
+			pst.setBoolean(3, true);
 			rs = pst.executeQuery();
 
 			while (rs.next()) {
-				result.add(rs.getString("Serial_Number").trim().replaceAll(" +", " ").toUpperCase());
+				String model = rs.getString("Model");
+				String serialNumber = rs.getString("Serial_Number");
+				result.add(new SMCController(serialNumber, model));
 			}
 
 			LOGGER.info("All BURN IN Controller is fetched");

@@ -60,7 +60,7 @@
 
 
 .warningPanelDialog{
-    -fx-background-color: #BDBDBD;
+    -fx-background-color: #ecf0f1;
 }
 .warningPanelDialog > *.button-bar > *.container{
  /*   -fx-background-color: #a59c31; */

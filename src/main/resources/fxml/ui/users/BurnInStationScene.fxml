@@ -17,9 +17,9 @@
 	<children>
 		<StackPane alignment="TOP_LEFT" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
 			<children>
-				<HBox StackPane.alignment="TOP_CENTER">
+				<HBox StackPane.alignment="TOP_LEFT">
 					<children>
-						<VBox alignment="TOP_CENTER" HBox.hgrow="ALWAYS">
+						<VBox alignment="TOP_CENTER">
 							<children>
 								<HBox alignment="CENTER">
 									<children>
@@ -126,9 +126,9 @@
 								</HBox>
 							</children>
 						</VBox>
-						<VBox alignment="TOP_CENTER" prefHeight="490.0" prefWidth="531.0" HBox.hgrow="ALWAYS">
+						<VBox alignment="TOP_CENTER" HBox.hgrow="ALWAYS">
 							<children>
-								<JFXTreeTableView fx:id="treeview" style="-fx-font-size: 1.2em; -fx-font-family: Roboto; -fx-border-color: Black; -fx-alignment: Center; -fx-border-width: 1;" VBox.vgrow="ALWAYS" />
+								<JFXTreeTableView fx:id="treeview" maxHeight="1.7976931348623157E308" style="-fx-font-size: 1.2em; -fx-font-family: Roboto; -fx-border-color: Black; -fx-alignment: Center; -fx-border-width: 1;" VBox.vgrow="ALWAYS" />
 								<JFXButton fx:id="btnStart" onAction="#startBurnIn" prefHeight="60.0" prefWidth="200.0" ripplerFill="#105c82" style="-fx-background-color: #2B98C6; -fx-background-radius: 100; -fx-font-family: Roboto; -fx-font-weight: Bold; -fx-font-size: 2em;" text="Start" textFill="WHITE">
 									<VBox.margin>
 										<Insets top="30.0" />

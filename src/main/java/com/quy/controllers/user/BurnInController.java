@@ -122,7 +122,8 @@ public class BurnInController extends Controller implements Initializable {
 						result = "\r\n Controller stayed in Burn_In System and Wait to Burn";
 						break;
 					case BURN_IN_STATION:
-						result = "\r\n Controller is BURN_IN!";
+					case RESULT_STATION:
+						result = "\r\n Controller is burn-in done!";
 						break;
 					case RECEIVING_STATION:
 						result = "\r\n Please go to " + ASSEMBLY_STATION;

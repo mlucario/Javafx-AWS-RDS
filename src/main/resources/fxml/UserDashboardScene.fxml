@@ -15,7 +15,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane onMouseDragged="#dragged" onMousePressed="#pressed" prefHeight="600.0" prefWidth="1100.0" style="-fx-background-color: transparent;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.quy.controllers.UserDashboardController">
+<AnchorPane maxHeight="1.7976931348623157E308" onMouseDragged="#dragged" onMousePressed="#pressed" style="-fx-background-color: transparent;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.quy.controllers.UserDashboardController">
 	<children>
 		<StackPane alignment="TOP_CENTER" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
 			<children>
@@ -207,11 +207,11 @@
 										<Insets left="10.0" />
 									</HBox.margin>
 								</VBox>
-								<AnchorPane HBox.hgrow="SOMETIMES">
+								<AnchorPane maxHeight="1.7976931348623157E308" HBox.hgrow="ALWAYS">
 									<children>
-										<StackPane fx:id="paneIntro" alignment="TOP_CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="0.0">
+										<StackPane fx:id="paneIntro" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="0.0">
 											<children>
-												<VBox fx:id="vboxLoad" alignment="TOP_CENTER">
+												<VBox fx:id="vboxLoad" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308">
 													<children>
 														<Text id="sampleLabel" fx:id="txtTitleStation" fill="#0033ff" strokeType="OUTSIDE" strokeWidth="0.0" text="Title Station" textAlignment="CENTER">
 															<font>

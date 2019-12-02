@@ -79,7 +79,7 @@ public class Controller {
 	protected static final String RECEIVING_STATION_SCENE = "/fxml/ui/users/ReceivingStationScene.fxml";
 	protected static final String ASSEMBLY_STATION_SCENE = "/fxml/ui/users/AssemblyStationScene.fxml";
 	protected static final String BURN_IN_STATION_SCENE = "/fxml/ui/users/BurnInStationScene.fxml";
-	protected static final String RESULT_STATION_SCENE = "/fxml/ui/users/ResultStationScene.fxml";
+	protected static final String RESULT_STATION_SCENE = "/fxml/ui/users/ResultStationScene3.fxml";
 	protected static final String FIRMWARE_UPDATE_STATION_SCENE = "/fxml/ui/users/FirmwareUpdateStation.fxml";
 	protected static final String REPAIR_STATION_SCENE = "/fxml/ui/users/RepairStationScene.fxml";
 	protected static final String PACKING_STATION_SCENE = "/fxml/ui/users/PackingStation.fxml";
@@ -169,6 +169,8 @@ public class Controller {
 	protected static final String COL_IS_SHIPPING_DONE_CONTROLER = "Is_Shipping_Done";
 	protected static final String COL_IS_REPAIR_DONE_CONTROLER = "Is_Repaired_Done";
 	protected static final String COL_IS_PASSED_CONTROLER = "Is_Passed";
+	protected static final String COL_IS_REWORK_CONTROLER = "Is_ReWork";
+
 	protected static final String COL_SYMPTOM_FAIL_CONTROLER = "Symptoms_Fail";
 	protected static final String COL_REWORK_COUNT_CONTROLER = "Re_Work_Count";
 	protected static final String COL_FIRMWARE_UPDATE_TIME_CONTROLER = "Firmware_Update_Time";
@@ -443,9 +445,17 @@ public class Controller {
 	public void addBarcodeToTable(ObservableList<SMCController> barcode, String serialNumber) {
 		barcode.add(new SMCController(serialNumber));
 	}
+
 	public void addBarcodeToTable(ObservableList<SMCController> barcode, String serialNumber, String model) {
 		barcode.add(new SMCController(serialNumber, model));
 	}
+
+	public void addBarcodeToTable(ObservableList<SMCController> barcode, String serialNumber, String model, int stt) {
+		SMCController temp = new SMCController(serialNumber, model);
+		temp.setSTT(stt);
+		barcode.add(temp);
+	}
+
 	public String isModelValid(JFXTextField txtModel) {
 		String result = "";
 
