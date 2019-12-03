@@ -87,6 +87,7 @@ public class ResultStationController1 extends Controller implements Initializabl
 	private String stationFail;
 	private int currentPass;
 	private int currentFail;
+	private int currentRemainBurnIn;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -145,8 +146,8 @@ public class ResultStationController1 extends Controller implements Initializabl
 		});
 
 		burnInDoneList.addAll(dbHandler.getAllBurning());
-
-		txtRemain.textProperty().bind(Bindings.format("%s", burnInDoneList.size()));
+		currentRemainBurnIn = burnInDoneList.size();
+		txtRemain.textProperty().bind(Bindings.format("Remain: %d", currentRemainBurnIn));
 
 		Platform.runLater(() -> txtControllerBarcode.requestFocus());
 	}
@@ -171,10 +172,11 @@ public class ResultStationController1 extends Controller implements Initializabl
 					case FIRMWARE_UPDATE_STATION:
 					case BURN_IN_STATION:
 					case RECEIVING_STATION:
-					case RESULT_STATION:
 						resultInput = "";
 						break;
-
+					case RESULT_STATION:
+						resultInput = "Controller was set result.";
+						break;
 					case WAIT_TO_BURN_IN:
 					case PACKING_STATION:
 					case REPAIR_STATION:
@@ -193,7 +195,7 @@ public class ResultStationController1 extends Controller implements Initializabl
 
 	@FXML
 	void resultAction(ActionEvent event) {
-		txtPass.textProperty().bind(Bindings.format("PASSED : %d", barcodePassed.size()));
+
 		if (isValidInput().isEmpty()) {
 			String timeStamp = getCurrentTimeStamp();
 			resultChoosen = result.getSelectedToggle().getUserData().toString().equalsIgnoreCase("PASSED");
@@ -206,6 +208,8 @@ public class ResultStationController1 extends Controller implements Initializabl
 				String resultAc = dbHandler.setResultPass(serialNumber, timeStamp, true, "No Trouble Found.");
 				if (resultAc.equals(serialNumber)) {
 					addBarcodeToTable(barcodePassed, serialNumber, model, currentPass);
+					currentRemainBurnIn--;
+					txtPass.textProperty().bind(Bindings.format("PASSED : %d", barcodePassed.size()));
 					String history = dbHandler.addToHistoryRecord(currentUser, RESULT_STATION, timeStamp, serialNumber,
 							"Marked Passed!", isRework);
 					if (!history.equalsIgnoreCase(serialNumber)) {
@@ -228,7 +232,8 @@ public class ResultStationController1 extends Controller implements Initializabl
 					String tempText = "Fail at " + stationFail + " (" + txtSymptoms.getText() + ")";
 					currentFail++;
 					String resultQuery = "";
-					switch (stationFail) {
+					String currentStation = dbHandler.getStatusDone(COL_CURRENT_STATION_CONTROLER, serialNumber);
+					switch (currentStation) {
 					case ASSEMBLY_STATION:
 						resultQuery = dbHandler.setResultFail(serialNumber, null, false, false, false, tempText);
 						break;
@@ -248,6 +253,7 @@ public class ResultStationController1 extends Controller implements Initializabl
 					if (resultQuery.equals(serialNumber)) {
 
 						addBarcodeToTable(barcodeFail, serialNumber, model, currentFail);
+						currentRemainBurnIn--;
 						txtFail.textProperty().bind(Bindings.format("FAIL : %d", barcodeFail.size()));
 						String history = dbHandler.addToHistoryRecord(currentUser, RESULT_STATION, timeStamp,
 								serialNumber, "Marked Fail: " + tempText, isRework);
@@ -255,6 +261,7 @@ public class ResultStationController1 extends Controller implements Initializabl
 							warningAlert(history);
 						} else {
 							notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null,
+
 									"Set Result FAIL Successfully", 2);
 							notification.showInformation();
 
@@ -273,6 +280,7 @@ public class ResultStationController1 extends Controller implements Initializabl
 			warningAlert(isValidInput());
 		}
 
+		txtRemain.textProperty().bind(Bindings.format("%d", currentRemainBurnIn));
 		txtControllerBarcode.clear();
 		txtControllerBarcode.requestFocus();
 	}
