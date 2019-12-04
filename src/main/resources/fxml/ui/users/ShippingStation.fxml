@@ -36,13 +36,21 @@
 								</HBox>
 								<JFXButton fx:id="btnAdd" alignment="CENTER" onAction="#addToList" prefHeight="60.0" prefWidth="300.0" ripplerFill="#105c82" style="-fx-font-size: 2em; -fx-font-family: Roboto; -fx-font-weight: Bold; -fx-background-color: #2B98C6; -fx-background-radius: 100px;" text="Add To Waiting List" textFill="WHITE" VBox.vgrow="SOMETIMES">
 									<VBox.margin>
-										<Insets bottom="40.0" top="60.0" />
+										<Insets bottom="20.0" top="60.0" />
 									</VBox.margin>
 									<padding>
 										<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
 									</padding>
 								</JFXButton>
                         <JFXButton fx:id="btnSubmit" alignment="CENTER" layoutX="38.0" layoutY="286.0" onAction="#submit" prefHeight="60.0" prefWidth="300.0" ripplerFill="#105c82" style="-fx-font-size: 2em; -fx-font-family: Roboto; -fx-font-weight: Bold; -fx-background-color: #2B98C6; -fx-background-radius: 100px;" text="Finish" textFill="WHITE">
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                           <VBox.margin>
+                              <Insets bottom="20.0" />
+                           </VBox.margin>
+                        </JFXButton>
+                        <JFXButton fx:id="btnCancel" alignment="CENTER" layoutX="38.0" layoutY="265.0" onAction="#submit" prefHeight="60.0" prefWidth="300.0" ripplerFill="#00aaff" style="-fx-font-size: 2em; -fx-font-family: Roboto; -fx-font-weight: Bold; -fx-background-color: grey; -fx-background-radius: 100px;" text="Cancel" textFill="WHITE">
                            <padding>
                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                            </padding>

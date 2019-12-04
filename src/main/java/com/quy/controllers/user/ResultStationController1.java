@@ -147,7 +147,7 @@ public class ResultStationController1 extends Controller implements Initializabl
 
 		burnInDoneList.addAll(dbHandler.getAllBurning());
 		currentRemainBurnIn = burnInDoneList.size();
-		txtRemain.textProperty().bind(Bindings.format("Remain: %d", currentRemainBurnIn));
+		txtRemain.textProperty().bind(Bindings.format("%d", currentRemainBurnIn));
 
 		Platform.runLater(() -> txtControllerBarcode.requestFocus());
 	}
@@ -172,11 +172,12 @@ public class ResultStationController1 extends Controller implements Initializabl
 					case FIRMWARE_UPDATE_STATION:
 					case BURN_IN_STATION:
 					case RECEIVING_STATION:
+					case RESULT_STATION:
 						resultInput = "";
 						break;
-					case RESULT_STATION:
-						resultInput = "Controller was set result.";
-						break;
+//					case RESULT_STATION:
+//						resultInput = "Controller was set result.";
+//						break;
 					case WAIT_TO_BURN_IN:
 					case PACKING_STATION:
 					case REPAIR_STATION:

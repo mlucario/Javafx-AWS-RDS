@@ -39,7 +39,8 @@ public class ShippingStationController extends Controller implements Initializab
 	private ArrayList<String> listSerialNumber = new ArrayList<>();
 	private ArrayList<String> listWork = new ArrayList<>();
 	private int count;
-
+    @FXML
+    private JFXButton btnCancel;
 	@FXML
 	void addToList() {
 		if (isValidInput().isEmpty()) {
