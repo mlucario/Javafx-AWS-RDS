@@ -1,11 +1,7 @@
 package com.quy.controllers.user;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
-
-import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
@@ -16,9 +12,12 @@ import com.quy.controllers.SignInController;
 import com.quy.database.DBHandler;
 
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.text.Text;
 
 public class FirmwareUpdateController extends Controller implements Initializable {
@@ -37,8 +36,7 @@ public class FirmwareUpdateController extends Controller implements Initializabl
 	private DBHandler dbHandler;
 	private String currentUser = SignInController.getInstance().username();
 	private ObservableList<SMCController> barcode = FXCollections.observableArrayList();
-	private int count;
-	private ArrayList<String> listAdded;
+
 
 	@FXML
 	void keyPressValidate() {
@@ -72,73 +70,52 @@ public class FirmwareUpdateController extends Controller implements Initializabl
 		if (isValidInput().isEmpty()) {
 			String serialNumber = getStringJFXTextField(txtControllerBarcode);
 			String currentLastestStation = dbHandler.getStatusDone(COL_CURRENT_STATION_CONTROLER, serialNumber);
-			int reworkCount = Integer.parseInt(dbHandler.getStatusDone(COL_REWORK_COUNT_CONTROLER, serialNumber));
 			String timestamp = getCurrentTimeStamp();
-			String iD = dbHandler.getStatusDone(COL_ID_CONTROLER, serialNumber);
-
-			// Normal sequence
+			String model = dbHandler.getStatusDone(COL_MODEL_CONTROLER, serialNumber);
 			if (currentLastestStation.equalsIgnoreCase(ASSEMBLY_STATION)) {
-				String result = dbHandler.firmwareUpdate(iD, timestamp, reworkCount, false);
-				if (result.equalsIgnoreCase(iD)) {
-
-					count++;
-					if (!listAdded.contains(serialNumber)) {
-						addBarcodeToTable(barcode, serialNumber);
-					}
-
+				String result = dbHandler.firmwareUpdate(serialNumber, timestamp);
+				if (result.equalsIgnoreCase(serialNumber)) {
+					addBarcodeToTable(barcode, serialNumber, model);
 					String history = dbHandler.addToHistoryRecord(currentUser, FIRMWARE_UPDATE_STATION, timestamp,
-							serialNumber, ASSEMBLY_STATION + " to " + FIRMWARE_UPDATE_STATION);
+							serialNumber, "Firmware updated SN: " + serialNumber, false);
 					if (!history.equalsIgnoreCase(serialNumber)) {
 						warningAlert(history);
 					} else {
-						notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null, "Added Successfully", 2);
+						notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null,
+								"Firmware Update Successfully", 2);
 						notification.showInformation();
 					}
 				} else {
 					warningAlert(result);
 				}
 
-			} else {
-				// REWORK PROCESS
+			}
 
-				// Duplicate Row and Clear all result
-				if (dbHandler.duplicateRow(serialNumber, iD)) {
-					dbHandler.updateCurrentStation(iD, "Re_Work");
-					String newId = dbHandler.getStatusDone(COL_ID_CONTROLER, serialNumber);
-					String result = dbHandler.firmwareUpdate(newId, timestamp, ++reworkCount, true);
-					if (result.equalsIgnoreCase(newId)) {
-						count++;
-						if (!listAdded.contains(serialNumber)) {
-							addBarcodeToTable(barcode, serialNumber);
-						}
-
-						String history = dbHandler.addToHistoryRecord(currentUser, FIRMWARE_UPDATE_STATION, timestamp,
-								serialNumber,
-								"Rework: From" + currentLastestStation + " to " + FIRMWARE_UPDATE_STATION);
-						if (!history.equalsIgnoreCase(serialNumber)) {
-							warningAlert(history);
-						} else {
-							notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null,
-									"Re_Work Added Successfully", 2);
-							notification.showInformation();
-						}
-					} else {
-						warningAlert(result);
-					}
+			else {
+				// Check if it is updated
+				boolean isFirmwareUpdated = dbHandler.getStatusDone(COL_IS_FIRMWARE_UPDATED_CONTROLER, serialNumber)
+						.equalsIgnoreCase("1");
+				if (isFirmwareUpdated) {
+					warningAlert("Controller (SN: " + serialNumber
+							+ ") was updated firmware. Please use re-work to re_update!");
+				} else if (!currentLastestStation.equalsIgnoreCase(ASSEMBLY_STATION)) {
+					warningAlert(ASSEMBLY_STATION + " is required!");
 				} else {
-					warningAlert("Cannot duplicate record!");
+					warningAlert("WRONG STATION");
 				}
 
 			}
 
-		} else {
+		} else
+
+		{
 			warningAlert(isValidInput());
 		}
 
 		txtControllerBarcode.clear();
 		txtControllerBarcode.requestFocus();
 		btnSubmit.setDisable(true);
-		txtCounter.setText(count + "");
+		txtCounter.textProperty().bind(Bindings.format("%d", barcode.size()));
 
 	}
 
@@ -146,19 +123,15 @@ public class FirmwareUpdateController extends Controller implements Initializabl
 	public void initialize(URL location, ResourceBundle resources) {
 		dbHandler = new DBHandler();
 		btnSubmit.setDisable(true);
-		count = 0;
+
 		textFieldFormat(txtControllerBarcode, "Controller barcode is required", true);
 		Platform.runLater(() -> txtControllerBarcode.requestFocus());
-		txtControllerBarcode.setOnAction(e -> {
+		txtControllerBarcode.setOnAction(e -> submit()
 
-			submit();
-
-		});
-		listAdded = new ArrayList<>();
-		listAdded.addAll(dbHandler.getAllFirmwareUpdated());
-		treeviewTableBuilder(treeView, barcode, FIRMWARE_UPDATE_STATION);
-		count = dbHandler.getAllAssemblyDone().size();
-		txtCounter.setText(count + "");
+		);
+		barcode.addAll(dbHandler.getAllFirmwareUpdated());
+		treeviewTableBuilder(treeView, barcode);
+		txtCounter.textProperty().bind(Bindings.format("%d", barcode.size()));
 	}
 
 }

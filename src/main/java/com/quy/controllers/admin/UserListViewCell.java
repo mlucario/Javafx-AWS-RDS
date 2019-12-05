@@ -113,7 +113,8 @@ public class UserListViewCell extends ListCell<User> {
 
 			});
 
-			lbSTT.setText(user.getStudentID());
+			//TODO : remove toString if needed
+			lbSTT.setText(user.getStudentID().toString());
 			lbUsername.setText(username.toUpperCase());
 			String statusAcc = formatStatus(user.getActive().getValue().toString());
 			if (statusAcc.equalsIgnoreCase("Active")) {

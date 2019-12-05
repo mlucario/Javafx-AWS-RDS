@@ -1,24 +1,22 @@
 package com.quy.controllers.user;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXTextField;
+import com.jfoenix.controls.JFXTreeTableView;
 import com.quy.bizcom.SMCController;
 import com.quy.controllers.Controller;
 import com.quy.controllers.SignInController;
 import com.quy.database.DBHandler;
 
-import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
-
-import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXTextField;
-import com.jfoenix.controls.JFXTreeTableView;
-
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.text.Text;
 
 public class ShippingStationController extends Controller implements Initializable {
@@ -28,7 +26,8 @@ public class ShippingStationController extends Controller implements Initializab
 
 	@FXML
 	private JFXButton btnSubmit;
-
+	@FXML
+	private JFXButton btnAdd;
 	@FXML
 	private JFXTreeTableView<SMCController> treeView;
 
@@ -37,7 +36,36 @@ public class ShippingStationController extends Controller implements Initializab
 	private DBHandler dbHandler;
 	private String currentUser = SignInController.getInstance().username();
 	private ObservableList<SMCController> barcode = FXCollections.observableArrayList();
+	private ArrayList<String> listSerialNumber = new ArrayList<>();
+	private ArrayList<String> listWork = new ArrayList<>();
 	private int count;
+    @FXML
+    private JFXButton btnCancel;
+	@FXML
+	void addToList() {
+		if (isValidInput().isEmpty()) {
+			String serialNumber = getStringJFXTextField(txtControllerBarcode);
+			String currentLastestStation = dbHandler.getStatusDone(COL_CURRENT_STATION_CONTROLER, serialNumber);
+
+			if (currentLastestStation.equalsIgnoreCase(PACKING_STATION)) {
+//				String result = dbHandler.shipping(serialNumber, timestamp);
+				addBarcodeToTable(barcode, serialNumber);
+				listWork.add(dbHandler.getWork(serialNumber));
+				listSerialNumber.add(serialNumber);
+
+			} else {
+				warningAlert("Shipping Fail. Please check with MANAGER");
+			}
+		} else {
+			warningAlert(isValidInput());
+		}
+
+		btnAdd.setDisable(true);
+		txtControllerBarcode.clear();
+		txtControllerBarcode.requestFocus();
+		btnSubmit.setDisable(false);
+		txtCounter.setText(count + "");
+	}
 
 	@FXML
 	void keyPressValidate() {
@@ -45,7 +73,7 @@ public class ShippingStationController extends Controller implements Initializab
 		if (txtControllerBarcode.validate()) {
 			result = true;
 		}
-		btnSubmit.setDisable(!result);
+		btnAdd.setDisable(!result);
 	}
 
 	// TODO : check the case later
@@ -83,56 +111,47 @@ public class ShippingStationController extends Controller implements Initializab
 
 	@FXML
 	void submit() {
-		if (isValidInput().isEmpty()) {
-			String serialNumber = getStringJFXTextField(txtControllerBarcode);
-			String currentLastestStation = dbHandler.getStatusDone(COL_CURRENT_STATION_CONTROLER, serialNumber);
-			String timestamp = getCurrentTimeStamp();
-			String iD = dbHandler.getStatusDone(COL_ID_CONTROLER, serialNumber);
+		String timestamp = getCurrentTimeStamp();
+		String today = getCurrentTimeStamp();
 
-			if (currentLastestStation.equalsIgnoreCase(PACKING_STATION)) {
-				String result = dbHandler.shipping(iD, timestamp);
-				if (result.equalsIgnoreCase(iD)) {
-					count++;
-					addBarcodeToTable(barcode, serialNumber);
-					String history = dbHandler.addToHistoryRecord(currentUser, SHIPPING_STATION, timestamp,
-							serialNumber, "");
-					if (!history.equalsIgnoreCase(serialNumber)) {
-						warningAlert(history);
-					} else {
-						notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null, "Ship Successfully", 2);
-						notification.showInformation();
-					}
-				} else {
-					warningAlert(result);
+		if (!listSerialNumber.isEmpty()) {
+			int quality = listSerialNumber.size();
+
+			String listStringSN = "";
+			for (String s : listSerialNumber) {
+				listStringSN += s + ";";
+				String result = dbHandler.shipping(s, timestamp);
+				if (!result.equalsIgnoreCase(s)) {
+					warningAlert("Fail to update Shippng to database");
+					break;
 				}
-
-			} else {
-				warningAlert("Shipping Fail. Please check with MANAGER");
 			}
-		} else {
-			warningAlert(isValidInput());
-		}
+			String info = "";
+			for (String ss : listWork) {
+				info += ss;
+			}
 
-		txtControllerBarcode.clear();
-		txtControllerBarcode.requestFocus();
-		btnSubmit.setDisable(true);
-		txtCounter.setText(count + "");
+			String result = "";
+		} else {
+			warningAlert("No any controller to shipping list");
+		}
 	}
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		dbHandler = new DBHandler();
 		btnSubmit.setDisable(true);
+		btnAdd.setDisable(true);
 		count = 0;
 		textFieldFormat(txtControllerBarcode, "Controller barcode is required", true);
 		Platform.runLater(() -> txtControllerBarcode.requestFocus());
 		txtControllerBarcode.setOnAction(e -> {
 
-			submit();
+			addToList();
 
 		});
 
-		treeviewTableBuilder(treeView, barcode, "");
+		treeviewTableBuilder(treeView, barcode);
 		txtCounter.setText(count + "");
 	}
 

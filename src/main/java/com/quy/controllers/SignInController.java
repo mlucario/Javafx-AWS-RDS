@@ -16,13 +16,11 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class SignInController extends Controller implements Initializable {
@@ -56,8 +54,8 @@ public class SignInController extends Controller implements Initializable {
 	private HBox hboxPassword;
 
 	private DBHandler dbHandler;
-	private double x;
-	private double y;
+//	private double x;
+//	private double y;
 	private int count;
 	private static SignInController instance;
 	private String role;
@@ -87,8 +85,8 @@ public class SignInController extends Controller implements Initializable {
 
 	@FXML
 	void pressed(MouseEvent event) {
-		x = event.getSceneX();
-		y = event.getSceneY();
+//		x = event.getSceneX();
+//		y = event.getSceneY();
 	}
 
 	/**
@@ -103,7 +101,7 @@ public class SignInController extends Controller implements Initializable {
 			String username = txtUsername.getText();
 			String password = txtPassword.getText();
 			List<String> result = dbHandler.login(username);
-			if (result.size() == 3) {
+			if (result.size() == 4) {
 				// Verify input
 				if (verifyPassword(password, result.get(1), result.get(0))) {
 					// Go to dashboard
@@ -112,7 +110,11 @@ public class SignInController extends Controller implements Initializable {
 					if (type.equalsIgnoreCase("admin")) {
 						goToScene(ADMIN_DASHBOARD_SCENE, btnSignIn, true);
 					} else {
-						goToScene(USER_DASHBOARD_SCENE, btnSignIn, true);
+						if (result.get(3).equalsIgnoreCase("1")) {
+							goToScene(USER_DASHBOARD_SCENE, btnSignIn, true);
+						} else {
+							warningAlert("Your account was LOCKED. Ask manager to unlock it.");
+						}
 					}
 
 				} else {
@@ -189,6 +191,7 @@ public class SignInController extends Controller implements Initializable {
 		// TODO Remove after test done
 		txtUsername.setText("a1956");
 		txtPassword.setText("1234567Aa@");
+
 		pt.play();
 		Platform.runLater(() -> txtUsername.requestFocus());
 		txtUsername.setOnAction(e -> txtPassword.requestFocus());

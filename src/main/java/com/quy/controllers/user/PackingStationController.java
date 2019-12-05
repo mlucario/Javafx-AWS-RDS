@@ -3,22 +3,20 @@ package com.quy.controllers.user;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXTextField;
+import com.jfoenix.controls.JFXTreeTableView;
 import com.quy.bizcom.SMCController;
 import com.quy.controllers.Controller;
 import com.quy.controllers.SignInController;
 import com.quy.database.DBHandler;
 
-import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
-
-import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXTextField;
-import com.jfoenix.controls.JFXTreeTableView;
-
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 
 public class PackingStationController extends Controller implements Initializable {
 	@FXML
@@ -84,17 +82,16 @@ public class PackingStationController extends Controller implements Initializabl
 		if (isValidInput().isEmpty()) {
 			// Check if ready to pack or not
 			String serialNumber = getStringJFXTextField(txtControllerBarcode);
-			String currentLastestStation = dbHandler.getStatusDone(COL_CURRENT_STATION_CONTROLER, serialNumber);
+			boolean isBurnInDone = dbHandler.getStatusDone(COL_IS_BURIN_IN_DONE_CONTROLER, serialNumber)
+					.equalsIgnoreCase("1");
 			String timestamp = getCurrentTimeStamp();
-			String iD = dbHandler.getStatusDone(COL_ID_CONTROLER, serialNumber);
-			boolean isPass = dbHandler.getStatusDone(COL_IS_PASSED_CONTROLER, serialNumber).equalsIgnoreCase("1");
-			// Case1: Unrepairable
-			if (currentLastestStation.equalsIgnoreCase("UNREPAIRABLE")) {
-				String result = dbHandler.packed(iD, timestamp);
-				if (result.equalsIgnoreCase(iD)) {
+
+			if (isBurnInDone) {
+				String result = dbHandler.packed(serialNumber, timestamp);
+				if (result.equalsIgnoreCase(serialNumber)) {
 					addBarcodeToTable(barcode, serialNumber);
 					String history = dbHandler.addToHistoryRecord(currentUser, PACKING_STATION, timestamp, serialNumber,
-							"Package is ready!");
+							"Package is ready!", false);
 					if (!history.equalsIgnoreCase(serialNumber)) {
 						warningAlert(history);
 					} else {
@@ -103,24 +100,8 @@ public class PackingStationController extends Controller implements Initializabl
 				} else {
 					warningAlert(result);
 				}
-			} else if (currentLastestStation.equalsIgnoreCase(RESULT_STATION)) {
-				if (isPass) {
-					String result = dbHandler.packed(iD, timestamp);
-					if (result.equalsIgnoreCase(iD)) {
-						addBarcodeToTable(barcode, serialNumber);
-						String history = dbHandler.addToHistoryRecord(currentUser, PACKING_STATION, timestamp,
-								serialNumber, "Package is ready!");
-						if (!history.equalsIgnoreCase(serialNumber)) {
-							warningAlert(history);
-						} else {
-							notificationx();
-						}
-					} else {
-						warningAlert(result);
-					}
-				} else {
-					warningAlert("Controller is fail. Please verify with REAPAIR STATION first.");
-				}
+			} else {
+				warningAlert("This controller is not ready to pack.");
 			}
 		} else {
 			warningAlert(isValidInput());
@@ -147,7 +128,7 @@ public class PackingStationController extends Controller implements Initializabl
 
 		});
 
-		treeviewTableBuilder(treeView, barcode, PACKING_STATION);
+		treeviewTableBuilder(treeView, barcode);
 
 	}
 

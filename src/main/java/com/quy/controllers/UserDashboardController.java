@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.time.LocalTime;
 import java.util.ResourceBundle;
+
 import com.jfoenix.controls.JFXButton;
+
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -48,7 +50,7 @@ public class UserDashboardController extends Controller implements Initializable
 	private JFXButton btnShipping;
 
 	@FXML
-	private JFXButton btnLogout;
+	private JFXButton btnRework;
 
 	@FXML
 	private Text txtTitleStation;
@@ -86,8 +88,8 @@ public class UserDashboardController extends Controller implements Initializable
 	}
 
 	@FXML
-	void logout(ActionEvent event) {
-
+	void reWorkOnClick(ActionEvent event) {
+		switchScence(RE_WORK_STATION_SCENE, RE_WORK_STATION);
 	}
 
 	@FXML
@@ -161,6 +163,8 @@ public class UserDashboardController extends Controller implements Initializable
 		clock.setCycleCount(Animation.INDEFINITE);
 		clock.play();
 		// =========================
+//		System.err.println("ss" + MainApp.window.heightProperty().multiply(0.8).getValue().doubleValue());
+//		vboxLoad.prefHeightProperty().bind(MainApp.window.heightProperty().multiply(0.8));
 
 	}
 

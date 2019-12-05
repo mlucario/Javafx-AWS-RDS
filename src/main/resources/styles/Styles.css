@@ -7,7 +7,7 @@
  ******************************************************************************/
 .menu{
 	-fx-padding: 20.0,10.0;
-	-fx-font-size: 15.0;
+	-fx-font-size: 1.3em;
 	-fx-font-weight: NORMAL;
 	-fx-text-fill: #444;
 }
@@ -60,7 +60,7 @@
 
 
 .warningPanelDialog{
-    -fx-background-color: #BDBDBD;
+    -fx-background-color: #ecf0f1;
 }
 .warningPanelDialog > *.button-bar > *.container{
  /*   -fx-background-color: #a59c31; */

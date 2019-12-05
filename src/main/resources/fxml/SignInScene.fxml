@@ -7,6 +7,8 @@
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
@@ -25,17 +27,34 @@
 			<children>
 				<HBox StackPane.alignment="CENTER">
 					<children>
-						<VBox alignment="TOP_CENTER" prefHeight="617.0" prefWidth="430.0" style="-fx-background-color: #a4b0be;" HBox.hgrow="ALWAYS">
-                     <padding>
-                        <Insets bottom="50.0" left="50.0" right="50.0" />
-                     </padding>
-                     <effect>
-                        <DropShadow />
-                     </effect></VBox>
+						<VBox alignment="CENTER" style="-fx-background-color: #293540;">
+							<effect>
+								<DropShadow />
+							</effect>
+							<children>
+								<StackPane VBox.vgrow="ALWAYS">
+									<children>
+										<ImageView fitHeight="538.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+									</children>
+								</StackPane>
+							</children>
+						</VBox>
 						<VBox alignment="TOP_RIGHT" style="-fx-background-color: white;" HBox.hgrow="ALWAYS">
 							<children>
 
 								<fx:include source="TitleBar.fxml" />
+								<StackPane alignment="BOTTOM_RIGHT" prefHeight="509.0" prefWidth="497.0">
+									<children>
+										<ImageView fitHeight="56.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+											<image>
+												<Image url="@../images/bizcomwebheader.png" />
+											</image>
+											<StackPane.margin>
+												<Insets />
+											</StackPane.margin>
+										</ImageView>
+									</children>
+								</StackPane>
 							</children>
 
 						</VBox>
@@ -51,7 +70,7 @@
 								<DropShadow />
 							</effect>
 							<children>
-								<Text fill="#3742fa" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 2.5em; -fx-font-family: Arial; -fx-font-weight: Bold;" text="Sign In">
+								<Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 2.5em; -fx-font-family: Arial; -fx-font-weight: Bold;" text="Sign In">
 									<stroke>
 										<LinearGradient endX="1.0" endY="1.0">
 											<stops>
@@ -66,7 +85,7 @@
 								</Text>
 								<StackPane prefHeight="150.0" prefWidth="200.0">
 									<children>
-										<Text fx:id="txtSuccess" fill="#0f00f7" strokeType="OUTSIDE" strokeWidth="0.0" text="Connected To Database" visible="false">
+										<Text fx:id="txtSuccess" strokeType="OUTSIDE" strokeWidth="0.0" text="Connected To Database" visible="false">
 											<font>
 												<Font name="System Bold" size="20.0" />
 											</font>
@@ -94,7 +113,7 @@
 												<Font name="System Bold" size="18.0" />
 											</font>
 										</JFXTextField>
-										<FontAwesomeIconView fill="DODGERBLUE" glyphName="USER" size="25">
+										<FontAwesomeIconView glyphName="USER" size="25">
 											<HBox.margin>
 												<Insets left="15.0" />
 											</HBox.margin>
@@ -111,7 +130,7 @@
 												<Font name="System Bold" size="18.0" />
 											</font>
 										</JFXPasswordField>
-										<FontAwesomeIconView fill="DODGERBLUE" glyphName="KEY" size="25">
+										<FontAwesomeIconView glyphName="KEY" size="25">
 											<HBox.margin>
 												<Insets left="15.0" />
 											</HBox.margin>

@@ -2,7 +2,6 @@
 package com.quy.controllers.user;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 import com.jfoenix.controls.JFXButton;
@@ -14,6 +13,7 @@ import com.quy.controllers.SignInController;
 import com.quy.database.DBHandler;
 
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -45,7 +45,6 @@ public class ReceivingController extends Controller implements Initializable {
 	private DBHandler dbHandler;
 	protected String currentUser = SignInController.getInstance().username();
 	private ObservableList<SMCController> barcode = FXCollections.observableArrayList();
-	private int count;
 
 	@FXML
 	void submit(ActionEvent event) {
@@ -62,7 +61,7 @@ public class ReceivingController extends Controller implements Initializable {
 			txtControllerBarcode.clear();
 			txtControllerBarcode.requestFocus();
 		} else if (!txtBoxBarcode.getText().equalsIgnoreCase(txtControllerBarcode.getText())) {
-			warningAlert("Box and controller barcode DO NOT MATCH. Please verify them again.");
+			warningAlert("Box and controller serial numbers DO NOT MATCH");
 			txtControllerBarcode.requestFocus();
 		}
 
@@ -70,65 +69,30 @@ public class ReceivingController extends Controller implements Initializable {
 			String serialNumber = getStringJFXTextField(txtControllerBarcode);
 			String model = getStringJFXTextField(txtModel);
 			String lotId = generatorLotId();
-			int reworkTimes = 0;
 			if (!dbHandler.isBarcodeExist(serialNumber)) {
-				String result = dbHandler.addNewController(model, serialNumber, getCurrentTimeStamp(), lotId,
-						reworkTimes);
+				String result = dbHandler.addNewController(model, serialNumber, getCurrentTimeStamp(), lotId, 0);
 				if (result.equalsIgnoreCase(serialNumber)) {
-					count++;
-					addBarcodeToTable(barcode, serialNumber);
-					notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null,
-							"Add New Controller Successfully", 2);
-					notification.showInformation();
-					dbHandler.addToHistoryRecord(currentUser, RECEIVING_STATION, getCurrentTimeStamp(), serialNumber,
-							"");
+					addBarcodeToTable(barcode, serialNumber,model);				
+					result = dbHandler.addToHistoryRecord(currentUser, RECEIVING_STATION, getCurrentTimeStamp(), serialNumber,
+							"Received Controller Serial Number : " + serialNumber, false);
+					if(result.equalsIgnoreCase(serialNumber)) {
+						notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null,
+								"Add New Controller Successfully", 2);
+						notification.showInformation();
+					}else {
+						warningAlert(result);
+					}
 				} else {
 					warningAlert(result);
 				}
 			} else {
-				//
-				ArrayList<String> info = new ArrayList<>();
-				info.addAll(dbHandler.getLastestInfo(serialNumber));
 
-				if (!info.isEmpty()) {
-					reworkTimes = Integer.parseInt(info.get(0));
-
-					boolean isShippingDone = info.get(4).equals("1");
-					boolean isPackingDone = info.get(3).equals("1");
-//					if (!currentStation.equalsIgnoreCase(RECEIVING_STATION)
-//							&& dbHandler.getStatusDone(COL_IS_RECEIVIING_CONTROLER, serialNumber).equals("1"))
-					if (isPackingDone || isShippingDone) {
-						boolean action = warningComfirmAlert("Re-Work Confirmation",
-								"Are you sure want to do rework this controller " + serialNumber, true);
-
-						if (action) {
-							String result = dbHandler.addNewController(model, serialNumber, getCurrentTimeStamp(),
-									lotId, ++reworkTimes);
-							if (result.equalsIgnoreCase(serialNumber)) {
-								count++;
-								addBarcodeToTable(barcode, serialNumber);
-								notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null,
-										"Add Rework Controller Successfully", 3);
-								notification.showInformation();
-								dbHandler.addToHistoryRecord(currentUser, RECEIVING_STATION, getCurrentTimeStamp(),
-										serialNumber, "Rework Controller Recevied");
-							} else {
-								warningAlert(result);
-							}
-						}
-					} else {
-						warningAlert("This controller is received. Don't need to add again.");
-					}
-				}
-
-				else {
-					warningAlert(serialNumber + " is added into database today. Please check with manager.");
-				}
+				warningAlert("Controller serial number is exist. Please go to RE-WORK!");
 
 			}
 		}
 
-		txtCounter.setText(count + "");
+		txtCounter.textProperty().bind(Bindings.format("%d", barcode.size()));
 		txtBoxBarcode.clear();
 		txtControllerBarcode.clear();
 		txtBoxBarcode.requestFocus();
@@ -184,13 +148,11 @@ public class ReceivingController extends Controller implements Initializable {
 		});
 		Platform.runLater(() -> txtModel.requestFocus());
 		// setup tree view
-		treeviewTableBuilder(treeView, barcode, RECEIVING_STATION);
+		barcode.addAll(dbHandler.getAllReceived());
+		treeviewTableBuilder(treeView, barcode);
 
-		// TODO find the other way to improve this one
-		// don't have to fetch database 2 times
 
-		count = dbHandler.getAllReceived().size();
-		txtCounter.setText(count + "");
+		txtCounter.textProperty().bind(Bindings.format("%d", barcode.size()));
 
 	}
 
