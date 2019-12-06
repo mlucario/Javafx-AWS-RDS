@@ -207,11 +207,11 @@
 										<Insets left="10.0" />
 									</HBox.margin>
 								</VBox>
-								<AnchorPane maxHeight="1.7976931348623157E308" HBox.hgrow="ALWAYS">
-									<children>
-										<StackPane fx:id="paneIntro" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="0.0">
+                        <VBox HBox.hgrow="ALWAYS">
+                           <children>
+										<StackPane fx:id="paneIntro" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" VBox.vgrow="ALWAYS">
 											<children>
-												<VBox fx:id="vboxLoad" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308">
+												<VBox fx:id="vboxLoad" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" StackPane.alignment="TOP_LEFT">
 													<children>
 														<Text id="sampleLabel" fx:id="txtTitleStation" fill="#0033ff" strokeType="OUTSIDE" strokeWidth="0.0" text="Title Station" textAlignment="CENTER">
 															<font>
@@ -230,8 +230,8 @@
 												</ImageView>
 											</children>
 										</StackPane>
-									</children>
-								</AnchorPane>
+                           </children>
+                        </VBox>
 							</children>
 							<VBox.margin>
 								<Insets top="20.0" />
