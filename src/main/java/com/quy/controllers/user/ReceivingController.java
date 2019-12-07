@@ -23,8 +23,7 @@ import javafx.geometry.Pos;
 import javafx.scene.text.Text;
 
 public class ReceivingController extends Controller implements Initializable {
-	@FXML
-	private Text txtCompleted;
+
 	@FXML
 	private Text txtCounter;
 
@@ -72,14 +71,14 @@ public class ReceivingController extends Controller implements Initializable {
 			if (!dbHandler.isBarcodeExist(serialNumber)) {
 				String result = dbHandler.addNewController(model, serialNumber, getCurrentTimeStamp(), lotId, 0);
 				if (result.equalsIgnoreCase(serialNumber)) {
-					addBarcodeToTable(barcode, serialNumber,model);				
-					result = dbHandler.addToHistoryRecord(currentUser, RECEIVING_STATION, getCurrentTimeStamp(), serialNumber,
-							"Received Controller Serial Number : " + serialNumber, false);
-					if(result.equalsIgnoreCase(serialNumber)) {
+					addBarcodeToTable(barcode, serialNumber, model);
+					result = dbHandler.addToHistoryRecord(currentUser, RECEIVING_STATION, getCurrentTimeStamp(),
+							serialNumber, "Received Controller Serial Number : " + serialNumber, false);
+					if (result.equalsIgnoreCase(serialNumber)) {
 						notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null,
 								"Add New Controller Successfully", 2);
 						notification.showInformation();
-					}else {
+					} else {
 						warningAlert(result);
 					}
 				} else {
@@ -150,7 +149,6 @@ public class ReceivingController extends Controller implements Initializable {
 		// setup tree view
 		barcode.addAll(dbHandler.getAllReceived());
 		treeviewTableBuilder(treeView, barcode);
-
 
 		txtCounter.textProperty().bind(Bindings.format("%d", barcode.size()));
 

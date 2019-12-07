@@ -14,11 +14,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
@@ -56,10 +53,14 @@ public class UserDashboardController extends Controller implements Initializable
 	private Text txtTitleStation;
 
 	@FXML
-	private StackPane paneIntro;
+	private AnchorPane userPanel;
 
-	@FXML
-	private ImageView imgIntro;
+//
+//	@FXML
+//	private StackPane paneIntro;
+//
+//	@FXML
+//	private ImageView imgIntro;
 	@FXML
 	private Text txtDate;
 
@@ -71,7 +72,7 @@ public class UserDashboardController extends Controller implements Initializable
 
 	private String currentStation;
 //	private double x, y;
-	private AnchorPane tempPane;
+//	private AnchorPane tempPane;
 //	private Executor exec;
 //	private DBHandler dbHandler;
 
@@ -148,8 +149,8 @@ public class UserDashboardController extends Controller implements Initializable
 		setUsername(SignInController.getInstance().username());
 
 		// Load Image Diagram
-		imgIntro.setImage(new Image(getClass().getResource(IMAGE_PATH + "diagram.png").toString()));
-		tempPane = new AnchorPane();
+//		imgIntro.setImage(new Image(getClass().getResource(IMAGE_PATH + "diagram.png").toString()));
+//		tempPane = new AnchorPane();
 
 		// Setup Date and Time
 		// =========================
@@ -172,25 +173,26 @@ public class UserDashboardController extends Controller implements Initializable
 		txtUsername.setText("Current user: " + username.toUpperCase());
 
 	}
-
-	public void hideIntroView() {
-		imgIntro.setVisible(false);
-	}
+//
+//	public void hideIntroView() {
+//		imgIntro.setVisible(false);
+//	}
 
 	// Switch to scene when user click on button
 	public void switchScence(String scene, String station) {
 		if (!currentStation.equalsIgnoreCase(station)) {
 //			System.out.println("Show " + station);
-			txtTitleStation.setText(station);
+//			txtTitleStation.setText(station);
 			// Hide diagram and view
-			hideIntroView();
-			tempPane.getChildren().clear();
+//			hideIntroView();
+//			tempPane.getChildren().clear();
 			// Load fxml into loadPane
 			try {
-				tempPane = FXMLLoader.load(getClass().getResource(scene));
-				vboxLoad.getChildren().clear();
-				vboxLoad.getChildren().add(txtTitleStation);
-				vboxLoad.getChildren().add(tempPane);
+				userPanel = FXMLLoader.load(getClass().getResource(scene));
+
+//				userPanel.getChildren().clear();
+//				vboxLoad.getChildren().add(txtTitleStation);
+//				userPanel.getChildren().add(loader);
 
 				currentStation = station;
 			} catch (IOException e) {
