@@ -5,88 +5,77 @@
 <?import com.jfoenix.controls.JFXTreeTableView?>
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-
-<AnchorPane xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.quy.controllers.user.ReceivingController">
+<HBox maxHeight="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.quy.controllers.user.ReceivingController">
    <children>
-      <StackPane alignment="TOP_LEFT" maxHeight="1.7976931348623157E308" minHeight="570.0" minWidth="950.0">
+      <VBox alignment="TOP_CENTER" HBox.hgrow="NEVER">
          <children>
-            <HBox maxHeight="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" prefWidth="959.0" StackPane.alignment="TOP_LEFT">
+            <HBox alignment="CENTER_LEFT">
                <children>
-                  <VBox alignment="TOP_CENTER">
-                     <children>
-                        <HBox alignment="CENTER_LEFT">
-                           <children>
-                              <JFXTextField fx:id="txtModel" focusColor="#105c82" labelFloat="true" onKeyReleased="#keyPressedAction" prefHeight="60.0" prefWidth="421.0" promptText="Enter Controller Model" style="-fx-font-size: 2em; -fx-font-family: Roboto; -fx-font-weight: Bold;" unFocusColor="#50514f" />
-                           </children>
-                           <VBox.margin>
-                              <Insets top="20.0" />
-                           </VBox.margin>
-                        </HBox>
-                        <HBox alignment="CENTER_LEFT">
-                           <VBox.margin>
-                              <Insets top="70.0" />
-                           </VBox.margin>
-                           <children>
-                              <JFXTextField fx:id="txtBoxBarcode" focusColor="#105c82" labelFloat="true" onKeyReleased="#keyPressedAction" prefHeight="60.0" prefWidth="373.0" promptText="Enter Box Barcode" style="-fx-font-size: 2em; -fx-font-family: Roboto; -fx-font-weight: Bold;" unFocusColor="#50514f">
-                                 <HBox.margin>
-                                    <Insets />
-                                 </HBox.margin>
-                              </JFXTextField>
-                              <FontAwesomeIconView fill="#105c82" glyphName="BARCODE" size="55" />
-                           </children>
-                        </HBox>
-                        <HBox alignment="CENTER_LEFT">
-                           <children>
-                              <JFXTextField fx:id="txtControllerBarcode" focusColor="#105c82" labelFloat="true" onAction="#submit" onKeyReleased="#keyPressedAction" prefHeight="60.0" prefWidth="374.0" promptText="Enter Controller Barcode" style="-fx-font-size: 2em; -fx-font-family: Roboto; -fx-font-weight: Bold;" unFocusColor="#50514f">
-                                 <HBox.margin>
-                                    <Insets />
-                                 </HBox.margin>
-                              </JFXTextField>
-                              <FontAwesomeIconView fill="#105c82" glyphName="BARCODE" size="55" />
-                           </children>
-                           <VBox.margin>
-                              <Insets top="70.0" />
-                           </VBox.margin>
-                        </HBox>
-                        <JFXButton fx:id="btnSubmit" onAction="#submit" prefHeight="60.0" prefWidth="300.0" ripplerFill="#105c82" style="-fx-font-size: 2em; -fx-font-family: Roboto; -fx-font-weight: Bold; -fx-background-color: #2B98C6; -fx-background-radius: 100px;" text="Submit" textFill="WHITE">
-                           <VBox.margin>
-                              <Insets top="40.0" />
-                           </VBox.margin>
-                        </JFXButton>
-                     </children>
-                  </VBox>
-                  <VBox alignment="TOP_CENTER" prefWidth="477.0" HBox.hgrow="ALWAYS">
-                     <children>
-                        <JFXTreeTableView fx:id="treeView" currentItemsCount="1" maxHeight="1.7976931348623157E308" style="-fx-font-size: 1.2em; -fx-font-family: Roboto; -fx-border-color: Black; -fx-alignment: Center; -fx-border-width: 1;" VBox.vgrow="ALWAYS" />
-                        <Text fx:id="txtCounter" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
-                           <VBox.margin>
-                              <Insets top="25.0" />
-                           </VBox.margin>
-                           <font>
-                              <Font name="Roboto Medium" size="60.0" />
-                           </font>
-                        </Text>
-                     </children>
-                     <HBox.margin>
-                        <Insets bottom="15.0" left="55.0" right="15.0" top="15.0" />
-                     </HBox.margin>
-                  </VBox>
+                  <JFXTextField fx:id="txtModel" focusColor="#105c82" labelFloat="true" onKeyReleased="#keyPressedAction" prefHeight="60.0" prefWidth="421.0" promptText="Enter Controller Model" style="-fx-font-size: 2em; -fx-font-family: Roboto; -fx-font-weight: Bold;" unFocusColor="#50514f" />
                </children>
-               <StackPane.margin>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-               </StackPane.margin>
-               <padding>
-                  <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
-               </padding>
+               <VBox.margin>
+                  <Insets top="20.0" />
+               </VBox.margin>
             </HBox>
+            <HBox alignment="CENTER_LEFT">
+               <VBox.margin>
+                  <Insets top="70.0" />
+               </VBox.margin>
+               <children>
+                  <JFXTextField fx:id="txtBoxBarcode" focusColor="#105c82" labelFloat="true" onKeyReleased="#keyPressedAction" prefHeight="60.0" prefWidth="373.0" promptText="Enter Box Barcode" style="-fx-font-size: 2em; -fx-font-family: Roboto; -fx-font-weight: Bold;" unFocusColor="#50514f">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </JFXTextField>
+                  <FontAwesomeIconView fill="#105c82" glyphName="BARCODE" size="55" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT">
+               <children>
+                  <JFXTextField fx:id="txtControllerBarcode" focusColor="#105c82" labelFloat="true" onAction="#submit" onKeyReleased="#keyPressedAction" prefHeight="60.0" prefWidth="374.0" promptText="Enter Controller Barcode" style="-fx-font-size: 2em; -fx-font-family: Roboto; -fx-font-weight: Bold;" unFocusColor="#50514f">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </JFXTextField>
+                  <FontAwesomeIconView fill="#105c82" glyphName="BARCODE" size="55" />
+               </children>
+               <VBox.margin>
+                  <Insets top="70.0" />
+               </VBox.margin>
+            </HBox>
+            <JFXButton fx:id="btnSubmit" onAction="#submit" prefHeight="60.0" prefWidth="300.0" ripplerFill="#105c82" style="-fx-font-size: 2em; -fx-font-family: Roboto; -fx-font-weight: Bold; -fx-background-color: #2B98C6; -fx-background-radius: 100px;" text="Submit" textFill="WHITE">
+               <VBox.margin>
+                  <Insets top="40.0" />
+               </VBox.margin>
+            </JFXButton>
          </children>
-      </StackPane>
+         <HBox.margin>
+            <Insets bottom="50.0" top="50.0" />
+         </HBox.margin>
+      </VBox>
+      <VBox alignment="TOP_CENTER" prefWidth="477.0" HBox.hgrow="ALWAYS">
+         <children>
+            <JFXTreeTableView fx:id="treeView" currentItemsCount="1" maxHeight="1.7976931348623157E308" style="-fx-font-size: 1.2em; -fx-font-family: Roboto; -fx-border-color: Black; -fx-alignment: Center; -fx-border-width: 1;" VBox.vgrow="ALWAYS" />
+            <Text fx:id="txtCounter" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
+               <VBox.margin>
+                  <Insets top="25.0" />
+               </VBox.margin>
+               <font>
+                  <Font name="Roboto Medium" size="60.0" />
+               </font>
+            </Text>
+         </children>
+         <HBox.margin>
+            <Insets bottom="15.0" left="55.0" right="15.0" top="15.0" />
+         </HBox.margin>
+      </VBox>
    </children>
-</AnchorPane>
+   <padding>
+      <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+   </padding>
+</HBox>

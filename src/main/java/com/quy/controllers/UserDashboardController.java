@@ -15,8 +15,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
@@ -53,8 +53,7 @@ public class UserDashboardController extends Controller implements Initializable
 	private Text txtTitleStation;
 
 	@FXML
-	private AnchorPane userPanel;
-
+	private StackPane panelShow;
 //
 //	@FXML
 //	private StackPane paneIntro;
@@ -67,12 +66,10 @@ public class UserDashboardController extends Controller implements Initializable
 	@FXML
 	private Text txtTime;
 
-	@FXML
-	private VBox vboxLoad;
-
 	private String currentStation;
 //	private double x, y;
-//	private AnchorPane tempPane;
+	private HBox tempPane;
+
 //	private Executor exec;
 //	private DBHandler dbHandler;
 
@@ -150,7 +147,7 @@ public class UserDashboardController extends Controller implements Initializable
 
 		// Load Image Diagram
 //		imgIntro.setImage(new Image(getClass().getResource(IMAGE_PATH + "diagram.png").toString()));
-//		tempPane = new AnchorPane();
+		tempPane = new HBox();
 
 		// Setup Date and Time
 		// =========================
@@ -164,8 +161,6 @@ public class UserDashboardController extends Controller implements Initializable
 		clock.setCycleCount(Animation.INDEFINITE);
 		clock.play();
 		// =========================
-//		System.err.println("ss" + MainApp.window.heightProperty().multiply(0.8).getValue().doubleValue());
-//		vboxLoad.prefHeightProperty().bind(MainApp.window.heightProperty().multiply(0.8));
 
 	}
 
@@ -185,14 +180,15 @@ public class UserDashboardController extends Controller implements Initializable
 //			txtTitleStation.setText(station);
 			// Hide diagram and view
 //			hideIntroView();
-//			tempPane.getChildren().clear();
+			tempPane.getChildren().clear();
+
 			// Load fxml into loadPane
 			try {
-				userPanel = FXMLLoader.load(getClass().getResource(scene));
+				tempPane = FXMLLoader.load(getClass().getResource(scene));
 
-//				userPanel.getChildren().clear();
-//				vboxLoad.getChildren().add(txtTitleStation);
-//				userPanel.getChildren().add(loader);
+				panelShow.getChildren().clear();
+//				vboxShow.getChildren().add(txtTitleStation);
+				panelShow.getChildren().add(tempPane);
 
 				currentStation = station;
 			} catch (IOException e) {

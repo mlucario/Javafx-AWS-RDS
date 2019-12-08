@@ -5,7 +5,6 @@
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
-<?import javafx.scene.effect.InnerShadow?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -16,7 +15,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="1.7976931348623157E308" onMouseDragged="#dragged" onMousePressed="#pressed" style="-fx-background-color: transparent;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.quy.controllers.UserDashboardController">
+<AnchorPane maxHeight="1.7976931348623157E308" minHeight="550.0" minWidth="950.0" onMouseDragged="#dragged" onMousePressed="#pressed" style="-fx-background-color: transparent;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.quy.controllers.UserDashboardController">
 	<children>
 		<StackPane alignment="TOP_CENTER" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
 			<children>
@@ -208,17 +207,18 @@
 										<Insets left="10.0" />
 									</HBox.margin>
 								</VBox>
-                        <VBox alignment="TOP_CENTER" HBox.hgrow="ALWAYS">
-                           <effect>
-                              <InnerShadow />
-                           </effect>
+                        <HBox HBox.hgrow="ALWAYS">
                            <children>
-                              <AnchorPane fx:id="userPanel" VBox.vgrow="ALWAYS" />
+                              <AnchorPane HBox.hgrow="ALWAYS">
+                                 <HBox.margin>
+                                    <Insets left="5.0" right="5.0" />
+                                 </HBox.margin>
+                                 <children>
+                                    <StackPane fx:id="panelShow" style="-fx-background-color: grey;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                 </children>
+                              </AnchorPane>
                            </children>
-                           <HBox.margin>
-                              <Insets left="15.0" />
-                           </HBox.margin>
-                        </VBox>
+                        </HBox>
 							</children>
 							<VBox.margin>
 								<Insets top="20.0" />
