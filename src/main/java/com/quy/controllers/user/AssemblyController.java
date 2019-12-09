@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXTextArea;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.controls.JFXTreeTableView;
 import com.quy.bizcom.SMCController;
@@ -30,6 +31,10 @@ public class AssemblyController extends Controller implements Initializable {
 	private JFXTreeTableView<SMCController> treeView;
 	@FXML
 	private JFXButton btnSubmit;
+	@FXML
+	private JFXTextArea txtNote;
+	@FXML
+	private JFXTextField txtSN;
 	private DBHandler dbHandler;
 	private String currentUser = SignInController.getInstance().username();
 	private ObservableList<SMCController> barcode = FXCollections.observableArrayList();
@@ -89,7 +94,8 @@ public class AssemblyController extends Controller implements Initializable {
 
 					addBarcodeToTable(barcode, serialNumber, model);
 					String history = dbHandler.addToHistoryRecord(currentUser, ASSEMBLY_STATION, timestamp,
-							serialNumber, "Assembler Controller Serial Number : " + serialNumber, false);
+							serialNumber,
+							"Assembler Controller Serial Number : " + serialNumber + ". " + txtNote.getText(), false);
 					if (!history.equalsIgnoreCase(serialNumber)) {
 						warningAlert(history);
 					} else {
@@ -139,6 +145,14 @@ public class AssemblyController extends Controller implements Initializable {
 		treeviewTableBuilder(treeView, barcode);
 
 		txtCounter.textProperty().bind(Bindings.format("%d", barcode.size()));
+		txtSN.textProperty().addListener((o, oldVal, newVal) -> {
+			if (!oldVal.equalsIgnoreCase(newVal)) {
+				treeView.setPredicate(controller -> {
+					final SMCController aController = controller.getValue();
+					return aController.getSerialNumber().getValue().contains(newVal);
+				});
+			}
+		});
 //		treeView.setOnMousePressed(new EventHandler<MouseEvent>() {
 //
 //			@Override

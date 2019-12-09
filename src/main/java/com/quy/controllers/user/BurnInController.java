@@ -1,10 +1,12 @@
 package com.quy.controllers.user;
 
 import java.net.URL;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXTextArea;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.controls.JFXTreeTableView;
 import com.quy.bizcom.SMCController;
@@ -35,7 +37,12 @@ public class BurnInController extends Controller implements Initializable {
 
 	@FXML
 	private JFXButton btnStart;
-
+	@FXML
+	private JFXTextArea txtNote;
+	@FXML
+	private Text txtID;
+	@FXML
+	private JFXTextField txtSN;
 	@FXML
 	private Text txtNumber;
 	private DBHandler dbHandler;
@@ -52,15 +59,15 @@ public class BurnInController extends Controller implements Initializable {
 			if (result.equals(serialNumber)) {
 				addBarcodeToTable(barcode, serialNumber, model);
 				btnStart.setDisable(false);
-				String history = dbHandler.addToHistoryRecord(currentUser, "Added to waiting list burn in",
-						getCurrentTimeStamp(), serialNumber, "Added to burn in system. SN: " + serialNumber, false);
-				if (!history.equalsIgnoreCase(serialNumber)) {
-					warningAlert(history);
-				} else {
-					notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null,
-							"Add to burn-in list Successfully", 2);
-					notification.showInformation();
-				}
+//				String history = dbHandler.addToHistoryRecord(currentUser, "Added to waiting list burn in",
+//						getCurrentTimeStamp(), serialNumber, "Added to burn in system. SN: " + serialNumber, false);
+//				if (!history.equalsIgnoreCase(serialNumber)) {
+//					warningAlert(history);
+//				} else {
+				notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null, "Add to burn-in list Successfully",
+						2);
+				notification.showInformation();
+//				}
 
 			} else {
 				warningAlert(result);
@@ -96,7 +103,14 @@ public class BurnInController extends Controller implements Initializable {
 
 		treeviewTableBuilder(treeview, barcode);
 		txtControllerBarcode.setOnAction(e -> addToBurnInList(e));
-
+		txtSN.textProperty().addListener((o, oldVal, newVal) -> {
+			if (!oldVal.equalsIgnoreCase(newVal)) {
+				treeview.setPredicate(controller -> {
+					final SMCController aController = controller.getValue();
+					return aController.getSerialNumber().getValue().contains(newVal);
+				});
+			}
+		});
 	}
 
 	@FXML
@@ -190,6 +204,11 @@ public class BurnInController extends Controller implements Initializable {
 			}
 
 		}
+	}
+
+	public String generateBurnInID() {
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		return timestamp.getTime() + "";
 	}
 
 }

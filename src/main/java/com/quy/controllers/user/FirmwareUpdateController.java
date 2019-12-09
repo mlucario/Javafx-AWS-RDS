@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXTextArea;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.controls.JFXTreeTableView;
 import com.quy.bizcom.SMCController;
@@ -33,10 +34,13 @@ public class FirmwareUpdateController extends Controller implements Initializabl
 	@FXML
 	private Text txtCounter;
 
+	@FXML
+	private JFXTextArea txtNote;
+	@FXML
+	private JFXTextField txtSN;
 	private DBHandler dbHandler;
 	private String currentUser = SignInController.getInstance().username();
 	private ObservableList<SMCController> barcode = FXCollections.observableArrayList();
-
 
 	@FXML
 	void keyPressValidate() {
@@ -77,7 +81,7 @@ public class FirmwareUpdateController extends Controller implements Initializabl
 				if (result.equalsIgnoreCase(serialNumber)) {
 					addBarcodeToTable(barcode, serialNumber, model);
 					String history = dbHandler.addToHistoryRecord(currentUser, FIRMWARE_UPDATE_STATION, timestamp,
-							serialNumber, "Firmware updated SN: " + serialNumber, false);
+							serialNumber, "Firmware updated SN: " + serialNumber + ". " + txtNote.getText(), false);
 					if (!history.equalsIgnoreCase(serialNumber)) {
 						warningAlert(history);
 					} else {
@@ -132,6 +136,14 @@ public class FirmwareUpdateController extends Controller implements Initializabl
 		barcode.addAll(dbHandler.getAllFirmwareUpdated());
 		treeviewTableBuilder(treeView, barcode);
 		txtCounter.textProperty().bind(Bindings.format("%d", barcode.size()));
+		txtSN.textProperty().addListener((o, oldVal, newVal) -> {
+			if (!oldVal.equalsIgnoreCase(newVal)) {
+				treeView.setPredicate(controller -> {
+					final SMCController aController = controller.getValue();
+					return aController.getSerialNumber().getValue().contains(newVal);
+				});
+			}
+		});
 	}
 
 }

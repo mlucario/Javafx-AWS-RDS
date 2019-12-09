@@ -41,6 +41,8 @@ public class ReceivingController extends Controller implements Initializable {
 	@FXML
 	private JFXTreeTableView<SMCController> treeView;
 
+	@FXML
+	private JFXTextField txtSN;
 	private DBHandler dbHandler;
 	protected String currentUser = SignInController.getInstance().username();
 	private ObservableList<SMCController> barcode = FXCollections.observableArrayList();
@@ -151,7 +153,14 @@ public class ReceivingController extends Controller implements Initializable {
 		treeviewTableBuilder(treeView, barcode);
 
 		txtCounter.textProperty().bind(Bindings.format("%d", barcode.size()));
-
+		txtSN.textProperty().addListener((o, oldVal, newVal) -> {
+			if (!oldVal.equalsIgnoreCase(newVal)) {
+				treeView.setPredicate(controller -> {
+					final SMCController aController = controller.getValue();
+					return aController.getSerialNumber().getValue().contains(newVal);
+				});
+			}
+		});
 	}
 
 	public boolean keyPressedAction() {
