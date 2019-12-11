@@ -65,8 +65,11 @@
                   </JFXTextArea>
                </children>
                <VBox.margin>
-                  <Insets top="40.0" />
+                  <Insets />
                </VBox.margin>
+               <padding>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+               </padding>
             </HBox>
             <JFXButton fx:id="btnSubmit" alignment="CENTER" onAction="#submit" prefHeight="60.0" prefWidth="300.0" ripplerFill="#105c82" style="-fx-font-size: 2em; -fx-font-family: Roboto; -fx-font-weight: Bold; -fx-background-color: #2B98C6; -fx-background-radius: 100px;" text="Submit" textFill="WHITE" VBox.vgrow="NEVER">
                <VBox.margin>
