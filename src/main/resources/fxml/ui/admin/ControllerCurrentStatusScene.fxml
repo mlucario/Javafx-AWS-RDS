@@ -11,100 +11,99 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.quy.controllers.admin.ManagementControllers">
-	<children>
-		<StackPane alignment="TOP_CENTER" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
-			<children>
-				<JFXTabPane>
-					<tabs>
-						<Tab text="Inventory">
-							<content>
-								<AnchorPane>
-									<children>
-										<StackPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+<HBox xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.quy.controllers.admin.ManagementControllers">
+   <children>
+      <JFXTabPane HBox.hgrow="ALWAYS">
+         <tabs>
+            <Tab text="Inventory">
+               <content>
+                  <AnchorPane>
+                     <children>
+                        <StackPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <VBox StackPane.alignment="TOP_LEFT">
                                  <children>
-                                    <VBox StackPane.alignment="TOP_LEFT">
+                                    <JFXTreeTableView fx:id="tableViewInventory" VBox.vgrow="ALWAYS" />
+                                    <HBox alignment="CENTER">
                                        <children>
-                                          <JFXTreeTableView fx:id="tableViewInventory" VBox.vgrow="ALWAYS" />
-                                          <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                                          <VBox alignment="TOP_CENTER">
                                              <children>
-                                                <VBox alignment="TOP_CENTER">
-                                                   <children>
-                                                      <Label text="Total Inventory">
-                                                         <font>
-                                                            <Font name="Roboto Medium" size="22.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label fx:id="txtTotalInven" text="0" textFill="#2600ff">
-                                                         <font>
-                                                            <Font name="Roboto Medium" size="30.0" />
-                                                         </font>
-                                                      </Label>
-                                                   </children>
-                                                   <HBox.margin>
-                                                      <Insets bottom="5.0" left="15.0" right="15.0" top="5.0" />
-                                                   </HBox.margin>
-                                                </VBox>
-                                                <VBox alignment="TOP_CENTER" layoutX="233.0" layoutY="10.0">
-                                                   <children>
-                                                      <Label text="Total Passed">
-                                                         <font>
-                                                            <Font name="Roboto Medium" size="22.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label fx:id="txtPassed" text="0" textFill="#2600ff">
-                                                         <font>
-                                                            <Font name="Roboto Medium" size="30.0" />
-                                                         </font>
-                                                      </Label>
-                                                   </children>
-                                                   <HBox.margin>
-                                                      <Insets bottom="5.0" left="15.0" right="15.0" top="5.0" />
-                                                   </HBox.margin>
-                                                </VBox>
-                                                <VBox alignment="TOP_CENTER" layoutX="300.0" layoutY="10.0">
-                                                   <children>
-                                                      <Label text="Total Fail">
-                                                         <font>
-                                                            <Font name="Roboto Medium" size="22.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label fx:id="txtfail" text="0" textFill="#2600ff">
-                                                         <font>
-                                                            <Font name="Roboto Medium" size="30.0" />
-                                                         </font>
-                                                      </Label>
-                                                   </children>
-                                                   <HBox.margin>
-                                                      <Insets bottom="5.0" left="15.0" right="15.0" top="5.0" />
-                                                   </HBox.margin>
-                                                </VBox>
+                                                <Label text="Current Inventory">
+                                                   <font>
+                                                      <Font name="Roboto Medium" size="22.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label fx:id="txtTotalInven" text="0" textFill="#2600ff">
+                                                   <font>
+                                                      <Font name="Roboto Medium" size="30.0" />
+                                                   </font>
+                                                </Label>
                                              </children>
-                                          </HBox>
+                                             <HBox.margin>
+                                                <Insets bottom="5.0" left="15.0" right="15.0" top="5.0" />
+                                             </HBox.margin>
+                                          </VBox>
+                                          <VBox alignment="TOP_CENTER" layoutX="233.0" layoutY="10.0">
+                                             <children>
+                                                <Label text="Current Passed" textFill="#1b7d2b">
+                                                   <font>
+                                                      <Font name="Roboto Medium" size="22.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label fx:id="txtPassed" text="0" textFill="#1b7d2b">
+                                                   <font>
+                                                      <Font name="Roboto Medium" size="30.0" />
+                                                   </font>
+                                                </Label>
+                                             </children>
+                                             <HBox.margin>
+                                                <Insets bottom="5.0" left="15.0" right="15.0" top="5.0" />
+                                             </HBox.margin>
+                                          </VBox>
+                                          <VBox alignment="TOP_CENTER" layoutX="300.0" layoutY="10.0">
+                                             <children>
+                                                <Label text="Current Fail" textFill="RED">
+                                                   <font>
+                                                      <Font name="Roboto Medium" size="22.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label fx:id="txtfail" text="0" textFill="RED">
+                                                   <font>
+                                                      <Font name="Roboto Medium" size="30.0" />
+                                                   </font>
+                                                </Label>
+                                             </children>
+                                             <HBox.margin>
+                                                <Insets bottom="5.0" left="15.0" right="15.0" top="5.0" />
+                                             </HBox.margin>
+                                          </VBox>
                                        </children>
-                                    </VBox>
+                                    </HBox>
                                  </children>
-										</StackPane>
-									</children>
-								</AnchorPane>
-							</content>
-						</Tab>
-						<Tab text="Shipped">
-							<content>
-								<AnchorPane>
-									<children>
-										<StackPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-											<children>
-												<Label text="Tab 2" />
-											</children>
-										</StackPane>
-									</children>
-								</AnchorPane>
-							</content>
-						</Tab>
-					</tabs>
-				</JFXTabPane>
-			</children>
-		</StackPane>
-	</children>
-</AnchorPane>
+                              </VBox>
+                           </children>
+                        </StackPane>
+                     </children>
+                  </AnchorPane>
+               </content>
+            </Tab>
+            <Tab text="Shipped">
+               <content>
+                  <AnchorPane>
+                     <children>
+                        <StackPane layoutX="-6.0" layoutY="14.0" AnchorPane.bottomAnchor="-14.0" AnchorPane.leftAnchor="-6.0" AnchorPane.rightAnchor="6.0" AnchorPane.topAnchor="14.0">
+                           <children>
+                              <Label text="Tab 2" />
+                           </children>
+                        </StackPane>
+                     </children>
+                  </AnchorPane>
+               </content>
+            </Tab>
+         </tabs>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </JFXTabPane>
+   </children>
+</HBox>

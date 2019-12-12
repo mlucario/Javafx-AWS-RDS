@@ -108,6 +108,7 @@ public class SignInController extends Controller implements Initializable {
 					String type = result.get(2);
 					this.role = type;
 					if (type.equalsIgnoreCase("admin")) {
+//					if (type.equalsIgnoreCase("user")) {
 						goToScene(ADMIN_DASHBOARD_SCENE, btnSignIn, true);
 					} else {
 						if (result.get(3).equalsIgnoreCase("1")) {
@@ -191,6 +192,9 @@ public class SignInController extends Controller implements Initializable {
 		// TODO Remove after test done
 		txtUsername.setText("a1956");
 		txtPassword.setText("1234567Aa@");
+
+//		txtUsername.setText("smc_bizcom");
+//		txtPassword.setText("Bizcom1171");
 
 		pt.play();
 		Platform.runLater(() -> txtUsername.requestFocus());

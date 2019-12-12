@@ -54,12 +54,7 @@ public class UserDashboardController extends Controller implements Initializable
 
 	@FXML
 	private StackPane panelShow;
-//
-//	@FXML
-//	private StackPane paneIntro;
-//
-//	@FXML
-//	private ImageView imgIntro;
+
 	@FXML
 	private Text txtDate;
 

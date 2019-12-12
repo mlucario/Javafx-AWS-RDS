@@ -894,9 +894,6 @@ public class DBHandler {
 		return result;
 	}
 
-	
-	
-	
 	// BURN IN STATION
 	public String burnIn(String serialNumber, String timestamp, String burnInID) {
 		String result = "";
@@ -1352,6 +1349,7 @@ public class DBHandler {
 
 		return result;
 	}
+
 	// Fetch all Controller At Receiving Station
 	public List<SMCController> getAllFailResult() {
 		ArrayList<SMCController> result = new ArrayList<>();
@@ -1363,21 +1361,21 @@ public class DBHandler {
 			pst.setString(1, RESULT_STATION);
 			pst.setBoolean(2, true);
 			pst.setString(3, "FAIL");
-			
+
 			rs = pst.executeQuery();
-			
+
 			while (rs.next()) {
 				String model = rs.getString("Model");
 				String serialNumber = rs.getString("Serial_Number");
 				result.add(new SMCController(serialNumber, model));
 			}
-			
+
 			LOGGER.info("All Receving Station is fetched");
-			
+
 		} catch (SQLException e) {
 			LOGGER.error(CONNECTION_FAIL, e.getMessage());
 		} finally {
-			
+
 			try {
 				pst.close();
 				rs.close();
@@ -1385,9 +1383,9 @@ public class DBHandler {
 			} catch (SQLException e) {
 				LOGGER.error(CLOSE_CONNECTION_FAIL, e.getMessage());
 			}
-			
+
 		}
-		
+
 		return result;
 	}
 
