@@ -79,7 +79,7 @@ public class Controller {
 	protected static final String RECEIVING_STATION_SCENE = "/fxml/ui/users/ReceivingStationScene.fxml";
 	protected static final String ASSEMBLY_STATION_SCENE = "/fxml/ui/users/AssemblyStationScene.fxml";
 	protected static final String BURN_IN_STATION_SCENE = "/fxml/ui/users/BurnInStationScene.fxml";
-	protected static final String RESULT_STATION_SCENE = "/fxml/ui/users/ResultStationScene3.fxml";
+	protected static final String RESULT_STATION_SCENE = "/fxml/ui/users/ResultStationScene.fxml";
 	protected static final String FIRMWARE_UPDATE_STATION_SCENE = "/fxml/ui/users/FirmwareUpdateStation.fxml";
 	protected static final String REPAIR_STATION_SCENE = "/fxml/ui/users/RepairStationScene.fxml";
 	protected static final String PACKING_STATION_SCENE = "/fxml/ui/users/PackingStation.fxml";
@@ -430,10 +430,12 @@ public class Controller {
 		return sqlTime.toString();
 	}
 
+	// TODO Implement check list Pattern Barcode / serial numbers
 	public boolean isBarcodeValid(String serialNumber) {
 		return serialNumber.matches(PATTERN_BARCODE);
 	}
 
+	// TODO Implement check list Pattern model
 	public boolean isModelValid(String model) {
 		return model.matches(PATTERN_MODEL);
 	}

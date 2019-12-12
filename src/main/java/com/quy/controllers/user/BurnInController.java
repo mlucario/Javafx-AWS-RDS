@@ -48,6 +48,8 @@ public class BurnInController extends Controller implements Initializable {
 	private DBHandler dbHandler;
 	protected String currentUser = SignInController.getInstance().username();
 	private ObservableList<SMCController> barcode = FXCollections.observableArrayList();
+	private String listBurnInSN;
+	private String idBurnIn;
 
 	@FXML
 	void addToBurnInList(ActionEvent event) {
@@ -58,6 +60,7 @@ public class BurnInController extends Controller implements Initializable {
 			String result = dbHandler.addToBurnInWaitingList(serialNumber);
 			if (result.equals(serialNumber)) {
 				addBarcodeToTable(barcode, serialNumber, model);
+				listBurnInSN += serialNumber + ";";
 				btnStart.setDisable(false);
 //				String history = dbHandler.addToHistoryRecord(currentUser, "Added to waiting list burn in",
 //						getCurrentTimeStamp(), serialNumber, "Added to burn in system. SN: " + serialNumber, false);
@@ -85,6 +88,7 @@ public class BurnInController extends Controller implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		dbHandler = new DBHandler();
+		listBurnInSN = "";
 
 		btnAdd.setDisable(true);
 		btnStart.setDisable(true);
@@ -166,8 +170,13 @@ public class BurnInController extends Controller implements Initializable {
 
 	@FXML
 	void startBurnIn(ActionEvent event) {
+		idBurnIn = generateBurnInID();
+		txtID.setText(idBurnIn);
 		String timeStamp = getCurrentTimeStamp();
 		int count = 0;
+		if (listBurnInSN.endsWith(";")) {
+			listBurnInSN = listBurnInSN.substring(0, listBurnInSN.length() - 1);
+		}
 
 		if (!barcode.isEmpty()) {
 			boolean flag = false;
@@ -176,7 +185,7 @@ public class BurnInController extends Controller implements Initializable {
 			for (SMCController c : myList) {
 
 				String serialNumber = c.getSerialNumber().getValue();
-				String result = dbHandler.burnIn(serialNumber, timeStamp);
+				String result = dbHandler.burnIn(serialNumber, timeStamp, idBurnIn);
 				if (result.equalsIgnoreCase(serialNumber)) {
 					count++;
 					String history = dbHandler.addToHistoryRecord(currentUser, "Burn In Station", getCurrentTimeStamp(),
@@ -197,7 +206,9 @@ public class BurnInController extends Controller implements Initializable {
 				notification = notificatioBuilder(Pos.CENTER, graphic, null, count + " Added to Burn in Successfully",
 						3);
 				notification.showInformation();
+				// update to burn in db table
 
+				dbHandler.updateBurnInTable(txtID.getText(), listBurnInSN, count, getCurrentTimeStamp(), false);
 				barcode.clear();
 				SMCController.stt = 1;
 				txtNumber.textProperty().bind(Bindings.format("%d", barcode.size()));

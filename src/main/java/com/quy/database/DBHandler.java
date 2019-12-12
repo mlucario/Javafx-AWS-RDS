@@ -530,6 +530,38 @@ public class DBHandler {
 		return result;
 	}
 
+	public Boolean updateBurnInTable(String ID, String listSN, int quality, String timeStart, boolean isDone) {
+		boolean result = false;
+		String query = "INSERT INTO burnin(ID,Quality,List_Serial_Number,Time_Start,Is_Done) VALUES (?,?,?,?,?)";
+		try {
+			dbconnection = getConnection();
+			pst = dbconnection.prepareStatement(query);
+			pst.setString(1, ID);
+			pst.setInt(2, quality);
+			pst.setString(3, listSN);
+			pst.setString(4, timeStart);
+			pst.setBoolean(5, false);
+
+			if (pst.executeUpdate() != 0) {
+				result = true;
+			}
+
+		} catch (SQLException e) {
+			LOGGER.error(CONNECTION_FAIL, e.getMessage());
+		} finally {
+
+			try {
+				pst.close();
+				shutdown();
+			} catch (SQLException e) {
+				LOGGER.error(CLOSE_CONNECTION_FAIL, e.getMessage());
+			}
+
+		}
+
+		return result;
+	}
+
 	public boolean isBarcodeExist(String serialNumber) {
 		boolean result = false;
 
@@ -862,11 +894,14 @@ public class DBHandler {
 		return result;
 	}
 
+	
+	
+	
 	// BURN IN STATION
-	public String burnIn(String serialNumber, String timestamp) {
+	public String burnIn(String serialNumber, String timestamp, String burnInID) {
 		String result = "";
 
-		String query = "UPDATE controllers SET Current_Station=?,Burn_In_Start=?,Is_Burn_In_Processing=?,Burn_In_Result=? WHERE Serial_Number=?";
+		String query = "UPDATE controllers SET Current_Station=?,Burn_In_Start=?,Is_Burn_In_Processing=?,Burn_In_Result=?,Burn_In_ID=? WHERE Serial_Number=?";
 		try {
 			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
@@ -874,7 +909,8 @@ public class DBHandler {
 			pst.setString(2, timestamp);
 			pst.setBoolean(3, true);
 			pst.setString(4, "Burn In Processing");
-			pst.setString(5, serialNumber);
+			pst.setString(5, burnInID);
+			pst.setString(6, serialNumber);
 			if (pst.executeUpdate() != 0) {
 				result = serialNumber;
 
@@ -1314,6 +1350,44 @@ public class DBHandler {
 
 		}
 
+		return result;
+	}
+	// Fetch all Controller At Receiving Station
+	public List<SMCController> getAllFailResult() {
+		ArrayList<SMCController> result = new ArrayList<>();
+		String query = "SELECT Model,Serial_Number FROM controllers WHERE Current_Station=? AND Is_Burn_In_Done=? AND Burn_In_Result=?";
+		SMCController.stt = 1;
+		try {
+			dbconnection = getConnection();
+			pst = dbconnection.prepareStatement(query);
+			pst.setString(1, RESULT_STATION);
+			pst.setBoolean(2, true);
+			pst.setString(3, "FAIL");
+			
+			rs = pst.executeQuery();
+			
+			while (rs.next()) {
+				String model = rs.getString("Model");
+				String serialNumber = rs.getString("Serial_Number");
+				result.add(new SMCController(serialNumber, model));
+			}
+			
+			LOGGER.info("All Receving Station is fetched");
+			
+		} catch (SQLException e) {
+			LOGGER.error(CONNECTION_FAIL, e.getMessage());
+		} finally {
+			
+			try {
+				pst.close();
+				rs.close();
+				shutdown();
+			} catch (SQLException e) {
+				LOGGER.error(CLOSE_CONNECTION_FAIL, e.getMessage());
+			}
+			
+		}
+		
 		return result;
 	}
 

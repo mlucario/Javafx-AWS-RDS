@@ -53,12 +53,18 @@ public class AssemblyController extends Controller implements Initializable {
 					result = "\r\n Controller has been shipped. Please ask manager intermediately.";
 				} else {
 					switch (currentStatus) {
+					case RE_WORK_STATION:
+					case RECEIVING_STATION:
+						result="";
+						break;
 					case ASSEMBLY_STATION:
 					case FIRMWARE_UPDATE_STATION:
 					case PACKING_STATION:
 					case BURN_IN_STATION:
 					case WAIT_TO_BURN_IN:
-						result = "\r\n Controller has Assemsbly DONE!";
+					case RESULT_STATION:
+					case REPAIR_STATION:
+						result = "\r\n Assemsbly was DONE! Go Re_Work or check with manager.";
 						break;
 					default:
 						LOGGER.info("There is nothing here.");
@@ -111,7 +117,7 @@ public class AssemblyController extends Controller implements Initializable {
 				boolean isAssembler = dbHandler.getStatusDone(COL_IS_ASSEMBLY_DONE_CONTROLER, serialNumber)
 						.equalsIgnoreCase("1");
 				if (isAssembler) {
-					warningAlert("Controller (SN: " + serialNumber + ") did assembly. Please use re-work to redo it!");
+					warningAlert("Controller (SN: " + serialNumber + ") did assembly. Please use RE_WORK to redo it!");
 				} else {
 					warningAlert("WRONG STATION");
 				}

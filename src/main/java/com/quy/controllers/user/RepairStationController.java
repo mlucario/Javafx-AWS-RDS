@@ -6,14 +6,21 @@ import java.util.ResourceBundle;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextArea;
 import com.jfoenix.controls.JFXTextField;
+import com.jfoenix.controls.JFXTreeTableView;
+import com.quy.bizcom.SMCController;
 import com.quy.controllers.Controller;
 import com.quy.controllers.SignInController;
 import com.quy.database.DBHandler;
 
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import javafx.scene.text.Text;
 
 public class RepairStationController extends Controller implements Initializable {
 	@FXML
@@ -24,15 +31,23 @@ public class RepairStationController extends Controller implements Initializable
 
 	@FXML
 	private JFXButton btnRepair;
-
+	@FXML
+	private JFXTreeTableView<SMCController> treeView;
+	@FXML
+	private JFXTextField txtSN;
+	@FXML
+	private Text txtCounter;
 	@FXML
 	private JFXButton btnUnrepairable;
-
+	@FXML
+	private Label txtFailRemain;
 	@FXML
 	private JFXTextArea txtSymptoms;
 
 	private DBHandler dbHandler;
 	private String currentUser = SignInController.getInstance().username();
+
+	private ObservableList<SMCController> barcode = FXCollections.observableArrayList();
 
 	@FXML
 	void canNotRepair() {
@@ -47,6 +62,7 @@ public class RepairStationController extends Controller implements Initializable
 				notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null,
 						"Update Unrepairable Staion Successfully", 2);
 				notification.showInformation();
+				txtCounter.textProperty().bind(Bindings.format("%d", barcode.size()));
 			} else {
 				warningAlert(result);
 			}
@@ -89,6 +105,8 @@ public class RepairStationController extends Controller implements Initializable
 					notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null,
 							"Repaired Successfully. Ready for Burn In.", 2);
 					notification.showInformation();
+
+					txtCounter.textProperty().bind(Bindings.format("%d", barcode.size()));
 				}
 			} else {
 				warningAlert(result);
@@ -104,6 +122,7 @@ public class RepairStationController extends Controller implements Initializable
 	public void initialize(URL location, ResourceBundle resources) {
 		dbHandler = new DBHandler();
 		btnRepair.setDisable(true);
+
 		btnUnrepairable.setDisable(true);
 		textFieldFormat(txtControllerBarcode, "Controller barcode is required", true);
 		Platform.runLater(() -> txtControllerBarcode.requestFocus());
@@ -121,7 +140,19 @@ public class RepairStationController extends Controller implements Initializable
 			}
 
 		});
+		barcode.addAll(dbHandler.getAllFailResult());
 
+		treeviewTableBuilder(treeView, barcode);
+
+		txtSN.textProperty().addListener((o, oldVal, newVal) -> {
+			if (!oldVal.equalsIgnoreCase(newVal)) {
+				treeView.setPredicate(controller -> {
+					final SMCController aController = controller.getValue();
+					return aController.getSerialNumber().getValue().contains(newVal);
+				});
+			}
+		});
+		txtCounter.textProperty().bind(Bindings.format("%d", barcode.size()));
 	}
 
 	public String isValidInput() {

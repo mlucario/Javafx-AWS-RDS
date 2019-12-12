@@ -66,6 +66,7 @@ public class ReceivingController extends Controller implements Initializable {
 			txtControllerBarcode.requestFocus();
 		}
 
+		// If serial number does not exist , we add to system
 		else {
 			String serialNumber = getStringJFXTextField(txtControllerBarcode);
 			String model = getStringJFXTextField(txtModel);
@@ -87,7 +88,7 @@ public class ReceivingController extends Controller implements Initializable {
 					warningAlert(result);
 				}
 			} else {
-
+				// Serial Number exist
 				warningAlert("Controller serial number is exist. Please go to RE-WORK!");
 
 			}
