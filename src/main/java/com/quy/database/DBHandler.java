@@ -809,7 +809,7 @@ public class DBHandler {
 
 		} catch (SQLException e) {
 			LOGGER.error(CONNECTION_FAIL, e.getMessage());
-			result = CONNECTION_FAIL;
+			result = CONNECTION_FAIL + " " + e.getMessage();
 		} finally {
 
 			try {
@@ -844,6 +844,7 @@ public class DBHandler {
 
 		} catch (SQLException e) {
 			LOGGER.error("RE_" + ASSEMBLY_STATION + " " + CONNECTION_FAIL, e.getMessage());
+			result = CONNECTION_FAIL + " " + e.getMessage();
 		} finally {
 
 			try {

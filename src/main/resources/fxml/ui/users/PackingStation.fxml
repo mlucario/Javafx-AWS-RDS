@@ -12,7 +12,7 @@
 
 <HBox alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.quy.controllers.user.PackingStationController">
    <children>
-      <VBox alignment="CENTER">
+      <VBox alignment="TOP_CENTER">
          <children>
             <HBox alignment="CENTER">
                <children>
@@ -39,6 +39,9 @@
                </padding>
             </JFXButton>
          </children>
+         <padding>
+            <Insets bottom="5.0" right="5.0" top="20.0" />
+         </padding>
       </VBox>
       <VBox alignment="TOP_CENTER" HBox.hgrow="ALWAYS">
          <children>
