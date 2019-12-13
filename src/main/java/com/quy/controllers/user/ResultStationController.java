@@ -118,6 +118,7 @@ public class ResultStationController extends Controller implements Initializable
 						vboxFail.setVisible(true);
 						vboxPassed.setVisible(false);
 						treeviewTableBuilder(treeviewFail, barcodeFail);
+					
 					} else {
 						vboxSymptoms.setVisible(false);
 						vboxFail.setVisible(false);
