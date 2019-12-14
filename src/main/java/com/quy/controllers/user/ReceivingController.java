@@ -46,24 +46,61 @@ public class ReceivingController extends Controller implements Initializable {
 	private DBHandler dbHandler;
 	protected String currentUser = SignInController.getInstance().username();
 	private ObservableList<SMCController> barcode = FXCollections.observableArrayList();
+	private final String SERIAL_EXIST = "Serial number exist!";
+
+	public String isValidInput() {
+		String result = "";
+		if (keyPressedAction()) {
+			String serialNumber = getStringJFXTextField(txtControllerBarcode);
+			String currentStatus = dbHandler.getStatusDone(COL_CURRENT_STATION_CONTROLER, serialNumber);
+			if (!dbHandler.isBarcodeExist(serialNumber)) {
+				result = "0";
+			} else {
+				switch (currentStatus) {
+				case SHIPPING_STATION:
+					result = "1";
+					break;
+				case RECEIVING_STATION:
+				case RE_WORK_STATION:
+				case ASSEMBLY_STATION:
+				case FIRMWARE_UPDATE_STATION:
+				case PACKING_STATION:
+				case BURN_IN_STATION:
+				case WAIT_TO_BURN_IN:
+				case RESULT_STATION:
+				case REPAIR_STATION:
+					result = SERIAL_EXIST;
+					break;
+				default:
+					result = "0";
+					LOGGER.info("There is nothing here.");
+					break;
+				}
+			}
+		} else {
+			if (!txtModel.validate()) {
+				result = "Model is missing! Enter controller model.";
+			} else if (!txtBoxBarcode.validate()) {
+				result = "Box barcode is missing! Enter box barcode.";
+
+			} else if (!txtControllerBarcode.validate()) {
+				result = "Controller barcode is missing! Enter Controller barcode.";
+
+			} else if (!txtBoxBarcode.getText().equalsIgnoreCase(txtControllerBarcode.getText())) {
+				result = "Box and controller serial numbers DO NOT MATCH";
+			} else {
+				result = "Something was wrong!";
+			}
+		}
+
+		return result;
+	}
 
 	@FXML
 	void submit(ActionEvent event) {
-		if (!txtModel.validate()) {
-			warningAlert("Model is missing! Enter controller model.");
-			txtModel.clear();
-			txtModel.requestFocus();
-		} else if (!txtBoxBarcode.validate()) {
-			warningAlert("Box barcode is missing! Enter box barcode.");
-			txtBoxBarcode.clear();
-			txtBoxBarcode.requestFocus();
-		} else if (!txtControllerBarcode.validate()) {
-			warningAlert("Controller barcode is missing! Enter Controller barcode.");
-			txtControllerBarcode.clear();
-			txtControllerBarcode.requestFocus();
-		} else if (!txtBoxBarcode.getText().equalsIgnoreCase(txtControllerBarcode.getText())) {
-			warningAlert("Box and controller serial numbers DO NOT MATCH");
-			txtControllerBarcode.requestFocus();
+		String test = isValidInput();
+		if (test.equals(SERIAL_EXIST)) {
+			warningAlert(test);
 		}
 
 		// If serial number does not exist , we add to system
@@ -71,12 +108,13 @@ public class ReceivingController extends Controller implements Initializable {
 			String serialNumber = getStringJFXTextField(txtControllerBarcode);
 			String model = getStringJFXTextField(txtModel);
 			String lotId = generatorLotId();
-			if (!dbHandler.isBarcodeExist(serialNumber)) {
-				String result = dbHandler.addNewController(model, serialNumber, getCurrentTimeStamp(), lotId, 0);
+			
+			if (test.equals("0")) {
+				String result = dbHandler.addNewController(model, serialNumber, getCurrentTimeStamp(), lotId);
 				if (result.equalsIgnoreCase(serialNumber)) {
 					addBarcodeToTable(barcode, serialNumber, model);
 					result = dbHandler.addToHistoryRecord(currentUser, RECEIVING_STATION, getCurrentTimeStamp(),
-							serialNumber, "Received Controller Serial Number : " + serialNumber, false);
+							serialNumber, "Received Controller Serial Number : " + serialNumber);
 					if (result.equalsIgnoreCase(serialNumber)) {
 						notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null,
 								"Add New Controller Successfully", 2);
@@ -88,8 +126,25 @@ public class ReceivingController extends Controller implements Initializable {
 					warningAlert(result);
 				}
 			} else {
-				// Serial Number exist
-				warningAlert("Controller serial number is exist. Please go to RE-WORK!");
+				if (test.equals("1")) {
+					String result = dbHandler.deleteController(serialNumber);
+					if (result.equalsIgnoreCase(serialNumber)) {
+						result = dbHandler.addNewController(model, serialNumber, getCurrentTimeStamp(), lotId);
+						if (result.equalsIgnoreCase(serialNumber)) {
+							addBarcodeToTable(barcode, serialNumber, model);
+							notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null,
+									"Add New Controller Successfully", 2);
+							notification.showInformation();
+						} else {
+							warningAlert(result);
+						}
+					} else {
+						warningAlert(result);
+					}
+				} else {
+					// Something was wrong
+					warningAlert(test);
+				}
 
 			}
 		}

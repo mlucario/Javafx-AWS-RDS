@@ -220,6 +220,7 @@ public class DBHandler {
 			pst.setString(2, hashingPassword);
 			pst.setString(3, saltKey);
 			pst.setString(4, STANDARD_USER);
+//			pst.setString(4, "admin");
 			pst.setBoolean(5, true);
 			pst.setString(6, createdAt);
 			pst.executeUpdate();
@@ -640,14 +641,12 @@ public class DBHandler {
 	public List<SMCController> getAllReadyToBurn() {
 		ArrayList<SMCController> result = new ArrayList<>();
 		SMCController.stt = 1;
-		String query = "SELECT Model,Serial_Number FROM controllers WHERE Current_Station=? AND Is_Received=? and Is_Assembly_Done=?";
+		String query = "SELECT Model,Serial_Number FROM controllers WHERE Current_Station=? AND Is_Received=?";
 		try {
 			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
 			pst.setString(1, "Wait_To_Burn_In");
 			pst.setBoolean(2, true);
-			pst.setBoolean(3, true);
-
 			rs = pst.executeQuery();
 
 			while (rs.next()) {
@@ -683,14 +682,12 @@ public class DBHandler {
 	public List<SMCController> getAllFirmwareUpdated() {
 		ArrayList<SMCController> result = new ArrayList<>();
 		SMCController.stt = 1;
-		String query = "SELECT Model,Serial_Number FROM controllers WHERE Current_Station=? AND Is_Received=? AND Is_Firmware_Updated=?";
+		String query = "SELECT Model,Serial_Number FROM controllers WHERE Current_Station=? AND Is_Received=?";
 		try {
 			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
 			pst.setString(1, FIRMWARE_UPDATE_STATION);
 			pst.setBoolean(2, true);
-			pst.setBoolean(3, true);
-
 			rs = pst.executeQuery();
 
 			while (rs.next()) {
@@ -786,10 +783,10 @@ public class DBHandler {
 	// ==================================================================================================
 	// RECEIVING STATION
 
-	public String addNewController(String model, String serialNumber, String timestamp, String lotId, int reworkTimes) {
+	public String addNewController(String model, String serialNumber, String timestamp, String lotId) {
 		String result = "";
 
-		String query = "INSERT INTO controllers(Model,Serial_Number,Current_Station,Receiving_Time,Is_Received,Lot_ID,Re_Work_Count) VALUES (?,?,?,?,?,?,?)";
+		String query = "INSERT INTO controllers(Model,Serial_Number,Current_Station,Receiving_Time,Is_Received,Lot_ID) VALUES (?,?,?,?,?,?)";
 		try {
 			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
@@ -799,12 +796,41 @@ public class DBHandler {
 			pst.setString(4, timestamp);
 			pst.setBoolean(5, true);
 			pst.setString(6, lotId);
-			pst.setInt(7, reworkTimes);
 
 			if (pst.executeUpdate() != 0) {
 				result = serialNumber;
 			} else {
-				result = "Fail to add rework controller!";
+				result = "Fail to add controller!";
+			}
+
+		} catch (SQLException e) {
+			LOGGER.error(CONNECTION_FAIL, e.getMessage());
+			result = CONNECTION_FAIL + " " + e.getMessage();
+		} finally {
+
+			try {
+				pst.close();
+				shutdown();
+			} catch (SQLException e) {
+				LOGGER.error(CLOSE_CONNECTION_FAIL, e.getMessage());
+			}
+		}
+		return result;
+	}
+
+	public String deleteController(String serialNumber) {
+		String result = "";
+
+		String query = "DELETE FROM controllers WHERE Serial_Number=?";
+		try {
+			dbconnection = getConnection();
+			pst = dbconnection.prepareStatement(query);
+			pst.setString(1, serialNumber);
+
+			if (pst.executeUpdate() != 0) {
+				result = serialNumber;
+			} else {
+				result = "Fail to delete controller!";
 			}
 
 		} catch (SQLException e) {
@@ -823,19 +849,17 @@ public class DBHandler {
 	}
 
 	// ASSEMBLY STATION
-	public String assembly(String serialNumber, String timestamp, int reworkCount, boolean isRework) {
+	public String assembly(String serialNumber, String timestamp, int count) {
 		String result = "";
 
-		String query = "UPDATE controllers SET Current_Station=?,Assembly_Time=?,Is_Assembly_Done=?,Re_work_count=?,Is_ReWork=? WHERE Serial_Number=?";
+		String query = "UPDATE controllers SET Current_Station=?,Assembly_Time=? , Assembly_Count = ? WHERE Serial_Number=?";
 		try {
 			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
 			pst.setString(1, ASSEMBLY_STATION);
 			pst.setString(2, timestamp);
-			pst.setBoolean(3, true);
-			pst.setInt(4, reworkCount);
-			pst.setBoolean(5, isRework);
-			pst.setString(6, serialNumber);
+			pst.setInt(3, count);
+			pst.setString(4, serialNumber);
 			if (pst.executeUpdate() != 0) {
 				result = serialNumber;
 			} else {
@@ -984,10 +1008,10 @@ public class DBHandler {
 	}
 
 	public String setResultFail(String serialNumber, String timestamp, boolean isPassed, boolean isBurnInDone,
-			boolean isFirmwareUpdated, String symptoms) {
+			String symptoms) {
 		String result = "";
 
-		String query = "UPDATE controllers SET Current_Station=?,Burn_In_End=?,Burn_In_Result=?,Is_Burn_In_Done=?,Is_Passed=?,Symptoms_Fail=?,Is_Firmware_Updated=? WHERE Serial_Number=?";
+		String query = "UPDATE controllers SET Current_Station=?,Burn_In_End=?,Burn_In_Result=?,Is_Burn_In_Done=?,Is_Passed=?,Symptoms_Fail=? WHERE Serial_Number=?";
 		try {
 			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
@@ -997,8 +1021,7 @@ public class DBHandler {
 			pst.setBoolean(4, isBurnInDone);
 			pst.setBoolean(5, isPassed);
 			pst.setString(6, symptoms);
-			pst.setBoolean(7, isFirmwareUpdated);
-			pst.setString(8, serialNumber);
+			pst.setString(7, serialNumber);
 			if (pst.executeUpdate() != 0) {
 				result = serialNumber;
 
@@ -1028,16 +1051,16 @@ public class DBHandler {
 	}
 
 	// FIRMWARE UPDATED
-	public String firmwareUpdate(String serialNumber, String timestamp) {
+	public String firmwareUpdate(String serialNumber, String timestamp, int count) {
 		String result = "";
 
-		String query = "UPDATE controllers SET Current_Station=?,Firmware_Update_Time=?,Is_Firmware_Updated=? WHERE Serial_Number=?";
+		String query = "UPDATE controllers SET Current_Station=?,Firmware_Update_Time=?,Firmware_Updated_Count=? WHERE Serial_Number=?";
 		try {
 			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
 			pst.setString(1, FIRMWARE_UPDATE_STATION);
 			pst.setString(2, timestamp);
-			pst.setBoolean(3, true);
+			pst.setInt(3, count);
 			pst.setString(4, serialNumber);
 			if (pst.executeUpdate() != 0) {
 				result = serialNumber;
@@ -1142,11 +1165,10 @@ public class DBHandler {
 	}
 
 	// Insert to history record
-	public String addToHistoryRecord(String QA, String station, String time, String serialNumber, String note,
-			boolean isRework) {
+	public String addToHistoryRecord(String QA, String station, String time, String serialNumber, String note			) {
 		String result = "";
 
-		String query = "INSERT INTO history(QA,Station,Time,Controller_Serial_Number,Note,Is_Re_Work) VALUES (?,?,?,?,?,?)";
+		String query = "INSERT INTO history(QA,Station,Time,Controller_Serial_Number,Note,isPaid) VALUES (?,?,?,?,?,?)";
 		try {
 			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
@@ -1155,7 +1177,7 @@ public class DBHandler {
 			pst.setString(3, time);
 			pst.setString(4, serialNumber);
 			pst.setString(5, note);
-			pst.setBoolean(6, isRework);
+			pst.setBoolean(6, false);
 			if (pst.executeUpdate() != 0) {
 				result = serialNumber;
 			} else {
@@ -1393,15 +1415,13 @@ public class DBHandler {
 	// Fetch all Controller Which are ready to burn in
 	public List<SMCController> getAllAssemblyDone() {
 		ArrayList<SMCController> result = new ArrayList<>();
-		String query = "SELECT Model,Serial_Number FROM controllers WHERE current_station=? AND Is_Received=? AND Is_Assembly_Done=?";
+		String query = "SELECT Model,Serial_Number FROM controllers WHERE current_station=? AND Is_Received=?";
 		SMCController.stt = 1;
 		try {
 			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
 			pst.setString(1, ASSEMBLY_STATION);
 			pst.setBoolean(2, true);
-			pst.setBoolean(3, true);
-
 			rs = pst.executeQuery();
 
 			while (rs.next()) {
@@ -1478,15 +1498,14 @@ public class DBHandler {
 	// Fetch all Controller Which are passed / fail
 	public List<String> getAllPassedOrFail(boolean isPassed) {
 		ArrayList<String> result = new ArrayList<>();
-		String query = "SELECT Serial_Number FROM controllers WHERE Current_Station=? AND Is_Received=? AND Is_Assembly_Done=? AND Is_Burn_In_Done=? AND Is_Passed=?";
+		String query = "SELECT Serial_Number FROM controllers WHERE Current_Station=? AND Is_Received=? AND Is_Burn_In_Done=? AND Is_Passed=?";
 		try {
 			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
 			pst.setString(1, "Result Station");
 			pst.setBoolean(2, true);
 			pst.setBoolean(3, true);
-			pst.setBoolean(4, true);
-			pst.setBoolean(5, isPassed);
+			pst.setBoolean(4, isPassed);
 			rs = pst.executeQuery();
 
 			while (rs.next()) {
@@ -1601,7 +1620,7 @@ public class DBHandler {
 		String result = "";
 
 		String query = "UPDATE controllers SET Current_Station=?,Re_Work_Start=?,Assembly_Time=?,Burn_In_Start=?, Burn_In_End=?, Packing_Time=? ,Shipping_Time=?, Burn_In_Result=?,"
-				+ "Firmware_Update_Time=?,Repair_Time=?,Is_Assembly_Done=?, Is_Firmware_Updated=?, Is_Burn_In_Processing=?, Is_Burn_In_Done=?,"
+				+ "Firmware_Update_Time=?,Repair_Time=?, Is_Burn_In_Processing=?, Is_Burn_In_Done=?,"
 				+ "Is_Packing_Done=?, Is_Shipping_Done=?, Is_Repaired_Done=?, Is_ReWork=?, Is_Passed=?, Symptoms_Fail=?, Re_work_count=? WHERE Serial_Number=?";
 		try {
 			dbconnection = getConnection();

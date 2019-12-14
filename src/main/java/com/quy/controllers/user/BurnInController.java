@@ -189,7 +189,7 @@ public class BurnInController extends Controller implements Initializable {
 				if (result.equalsIgnoreCase(serialNumber)) {
 					count++;
 					String history = dbHandler.addToHistoryRecord(currentUser, "Burn In Station", getCurrentTimeStamp(),
-							serialNumber, "Started Burn In Process SN " + serialNumber, false);
+							serialNumber, "Started Burn In Process SN " + serialNumber);
 
 					if (!history.equalsIgnoreCase(serialNumber)) {
 						warningAlert(history);

@@ -1,0 +1,39 @@
+Columns:
+ID int(11) AI PK 
+QA varchar(45) 
+Time text 
+Station varchar(45) 
+Controller_Serial_Number char(20) 
+Note longtext 
+isPaid tinyint(4)
+
+
+Columns:
+ID int(11) AI PK 
+Model varchar(45) 
+Lot_ID int(6) 
+Serial_Number char(20) 
+Current_Station varchar(45) 
+Receiving_Time timestamp 
+Assembly_Time timestamp 
+Burn_In_Start timestamp 
+Burn_In_End timestamp 
+Packing_Time timestamp 
+Shipping_Time timestamp 
+Burn_In_Result varchar(45) 
+Burn_In_ID varchar(45) 
+Firmware_Update_Time timestamp 
+Repair_Time timestamp 
+Is_Received tinyint(4) 
+Assembly_Count tinyint(4) 
+Firmware_Updated_Count tinyint(4) 
+Is_Burn_In_Processing tinyint(4) 
+Is_Burn_In_Done tinyint(4) 
+Is_Packing_Done tinyint(4) 
+Is_Shipping_Done tinyint(4) 
+Is_Repaired_Done tinyint(4) 
+Is_ReWork tinyint(4) 
+Is_Passed tinyint(4) 
+Symptoms_Fail varchar(255) 
+Re_Work_Count int(2) 
+Re_Work_Start timestamp

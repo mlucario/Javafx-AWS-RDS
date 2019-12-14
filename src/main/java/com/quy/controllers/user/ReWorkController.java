@@ -44,7 +44,7 @@ public class ReWorkController extends Controller implements Initializable {
 			String result = dbHandler.rework(serialNumber, timestamp, ++reworkCount);
 			if (result.equalsIgnoreCase(serialNumber)) {
 				String history = dbHandler.addToHistoryRecord(currentUser, RE_WORK_STATION, timestamp, serialNumber,
-						reason,true);
+						reason);
 				if (!history.equalsIgnoreCase(serialNumber)) {
 					warningAlert(history);
 				} else {
@@ -83,15 +83,15 @@ public class ReWorkController extends Controller implements Initializable {
 				String currentStatus = dbHandler.getStatusDone(COL_CURRENT_STATION_CONTROLER, serialNumber);
 				switch (currentStatus) {
 
-				case RECEIVING_STATION:
+				case SHIPPING_STATION:
 					result = "No Rework";
 					break;
+				case RECEIVING_STATION:
 				case FIRMWARE_UPDATE_STATION:
 				case REPAIR_STATION:
 				case WAIT_TO_BURN_IN:
 				case BURN_IN_STATION:
 				case PACKING_STATION:
-				case SHIPPING_STATION:
 				case ASSEMBLY_STATION:
 					result = "";
 					break;

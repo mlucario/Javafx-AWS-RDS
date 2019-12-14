@@ -118,7 +118,7 @@ public class ResultStationController extends Controller implements Initializable
 						vboxFail.setVisible(true);
 						vboxPassed.setVisible(false);
 						treeviewTableBuilder(treeviewFail, barcodeFail);
-					
+
 					} else {
 						vboxSymptoms.setVisible(false);
 						vboxFail.setVisible(false);
@@ -172,13 +172,15 @@ public class ResultStationController extends Controller implements Initializable
 					case ASSEMBLY_STATION:
 					case FIRMWARE_UPDATE_STATION:
 					case BURN_IN_STATION:
-					case RECEIVING_STATION:
 					case RESULT_STATION:
 						resultInput = "";
 						break;
 //					case RESULT_STATION:
 //						resultInput = "Controller was set result.";
 //						break;
+					case RECEIVING_STATION:
+						resultInput = "Controller doesn't burn in. Please burn-in before set result.";
+						break;
 					case WAIT_TO_BURN_IN:
 					case PACKING_STATION:
 					case REPAIR_STATION:
@@ -213,7 +215,7 @@ public class ResultStationController extends Controller implements Initializable
 					currentRemainBurnIn--;
 					txtPass.textProperty().bind(Bindings.format("PASSED : %d", barcodePassed.size()));
 					String history = dbHandler.addToHistoryRecord(currentUser, RESULT_STATION, timeStamp, serialNumber,
-							"Marked Passed!", isRework);
+							"Marked Passed!");
 					if (!history.equalsIgnoreCase(serialNumber)) {
 						warningAlert(history);
 					} else {
@@ -237,16 +239,14 @@ public class ResultStationController extends Controller implements Initializable
 					String currentStation = dbHandler.getStatusDone(COL_CURRENT_STATION_CONTROLER, serialNumber);
 					switch (currentStation) {
 					case ASSEMBLY_STATION:
-						resultQuery = dbHandler.setResultFail(serialNumber, null, false, false, false, tempText);
+						resultQuery = dbHandler.setResultFail(serialNumber, null, false, false, tempText);
 						break;
 					case FIRMWARE_UPDATE_STATION:
-						resultQuery = dbHandler.setResultFail(serialNumber, null, false, false, true, tempText);
+						resultQuery = dbHandler.setResultFail(serialNumber, null, false, false, tempText);
 						break;
 					case BURN_IN_STATION:
-						boolean isFirmwareUpdated = dbHandler
-								.getStatusDone(COL_IS_FIRMWARE_UPDATED_CONTROLER, serialNumber).equalsIgnoreCase("1");
-						resultQuery = dbHandler.setResultFail(serialNumber, timeStamp, false, true, isFirmwareUpdated,
-								tempText);
+
+						resultQuery = dbHandler.setResultFail(serialNumber, timeStamp, false, true, tempText);
 						break;
 					default:
 						resultQuery = "FAIL TO UPDATE RESULT!";
@@ -258,7 +258,7 @@ public class ResultStationController extends Controller implements Initializable
 						currentRemainBurnIn--;
 						txtFail.textProperty().bind(Bindings.format("FAIL : %d", barcodeFail.size()));
 						String history = dbHandler.addToHistoryRecord(currentUser, RESULT_STATION, timeStamp,
-								serialNumber, "Marked Fail: " + tempText, isRework);
+								serialNumber, "Marked Fail: " + tempText);
 						if (!history.equalsIgnoreCase(serialNumber)) {
 							warningAlert(history);
 						} else {

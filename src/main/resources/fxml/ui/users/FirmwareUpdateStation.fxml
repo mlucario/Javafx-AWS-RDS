@@ -13,7 +13,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<HBox alignment="TOP_CENTER" prefHeight="634.0" prefWidth="1082.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.quy.controllers.user.FirmwareUpdateController">
+<HBox alignment="TOP_CENTER" prefHeight="634.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.quy.controllers.user.FirmwareUpdateController">
    <children>
       <VBox alignment="TOP_CENTER" HBox.hgrow="NEVER">
          <children>
@@ -51,7 +51,7 @@
                   </JFXTextArea>
                </children>
             </HBox>
-            <JFXButton fx:id="btnSubmit" alignment="CENTER" onAction="#submit" prefHeight="60.0" prefWidth="300.0" ripplerFill="#105c82" style="-fx-font-size: 2em; -fx-font-family: Roboto; -fx-font-weight: Bold; -fx-background-color: #2B98C6; -fx-background-radius: 100px;" text="Submit" textFill="WHITE">
+            <JFXButton fx:id="btnSubmit" alignment="CENTER" onAction="#submit" prefHeight="60.0" prefWidth="300.0" ripplerFill="#105c82" style="-fx-font-size: 2em; -fx-font-family: Roboto; -fx-font-weight: Bold; -fx-background-color: #2B98C6; -fx-background-radius: 100px;" text="ADD" textFill="WHITE">
                <padding>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </padding>
@@ -63,6 +63,9 @@
          <padding>
             <Insets bottom="5.0" right="5.0" top="20.0" />
          </padding>
+         <HBox.margin>
+            <Insets bottom="55.0" top="55.0" />
+         </HBox.margin>
       </VBox>
       <VBox alignment="TOP_CENTER" HBox.hgrow="ALWAYS">
          <children>
@@ -102,4 +105,7 @@
          </padding>
       </VBox>
    </children>
+   <padding>
+      <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+   </padding>
 </HBox>

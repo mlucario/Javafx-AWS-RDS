@@ -57,7 +57,7 @@
                   <Insets top="40.0" />
                </VBox.margin>
             </HBox>
-            <VBox fx:id="vboxSymptoms" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
+            <VBox fx:id="vboxSymptoms" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" visible="false">
                <children>
                   <Label text="Symptoms" textFill="#0d00ff">
                      <font>

@@ -98,7 +98,7 @@ public class RepairStationController extends Controller implements Initializable
 			if (result.equalsIgnoreCase(serialNumber)) {
 
 				String history = dbHandler.addToHistoryRecord(currentUser, REPAIR_STATION, timestamp, serialNumber,
-						"REPAIR: " + txtRepairStep.getText(), false);
+						"REPAIR: " + txtRepairStep.getText());
 				if (!history.equalsIgnoreCase(serialNumber)) {
 					warningAlert(history);
 				} else {

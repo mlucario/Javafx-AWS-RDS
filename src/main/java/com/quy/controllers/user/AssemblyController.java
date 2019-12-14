@@ -55,11 +55,11 @@ public class AssemblyController extends Controller implements Initializable {
 					switch (currentStatus) {
 					case RE_WORK_STATION:
 					case RECEIVING_STATION:
-						result="";
+					case PACKING_STATION:
+						result = "";
 						break;
 					case ASSEMBLY_STATION:
 					case FIRMWARE_UPDATE_STATION:
-					case PACKING_STATION:
 					case BURN_IN_STATION:
 					case WAIT_TO_BURN_IN:
 					case RESULT_STATION:
@@ -67,6 +67,7 @@ public class AssemblyController extends Controller implements Initializable {
 						result = "\r\n Assemsbly was DONE! Go Re_Work or check with manager.";
 						break;
 					default:
+						result = "Special Case";
 						LOGGER.info("There is nothing here.");
 					}
 				}
@@ -89,39 +90,24 @@ public class AssemblyController extends Controller implements Initializable {
 
 		if (isValidInput().isEmpty()) {
 			String serialNumber = getStringJFXTextField(txtControllerBarcode);
-			String currentLastestStation = dbHandler.getStatusDone(COL_CURRENT_STATION_CONTROLER, serialNumber);
-			int reworkCount = Integer.parseInt(dbHandler.getStatusDone(COL_REWORK_COUNT_CONTROLER, serialNumber));
+
 			String timestamp = getCurrentTimeStamp();
 			String model = dbHandler.getStatusDone(COL_MODEL_CONTROLER, serialNumber);
+			int count = Integer.parseInt(dbHandler.getStatusDone(COL_ASSEMBLY_COUNT_CONTROLER, serialNumber));
+			String result = dbHandler.assembly(serialNumber, timestamp, ++count);
+			if (result.equalsIgnoreCase(serialNumber)) {
 
-			if (currentLastestStation.equalsIgnoreCase(RECEIVING_STATION)) {
-				String result = dbHandler.assembly(serialNumber, timestamp, reworkCount, false);
-				if (result.equalsIgnoreCase(serialNumber)) {
-
-					addBarcodeToTable(barcode, serialNumber, model);
-					String history = dbHandler.addToHistoryRecord(currentUser, ASSEMBLY_STATION, timestamp,
-							serialNumber,
-							"Assembler Controller Serial Number : " + serialNumber + ". " + txtNote.getText(), false);
-					if (!history.equalsIgnoreCase(serialNumber)) {
-						warningAlert(history);
-					} else {
-						notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null, "Assembler Successfully", 2);
-						notification.showInformation();
-					}
+				addBarcodeToTable(barcode, serialNumber, model);
+				String history = dbHandler.addToHistoryRecord(currentUser, ASSEMBLY_STATION, timestamp, serialNumber,
+						"Assembler Controller Serial Number : " + serialNumber + ". " + txtNote.getText());
+				if (!history.equalsIgnoreCase(serialNumber)) {
+					warningAlert(history);
 				} else {
-					warningAlert(result);
+					notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null, "Assembler Successfully", 2);
+					notification.showInformation();
 				}
-
 			} else {
-				// Check if it is updated
-				boolean isAssembler = dbHandler.getStatusDone(COL_IS_ASSEMBLY_DONE_CONTROLER, serialNumber)
-						.equalsIgnoreCase("1");
-				if (isAssembler) {
-					warningAlert("Controller (SN: " + serialNumber + ") did assembly. Please use RE_WORK to redo it!");
-				} else {
-					warningAlert("WRONG STATION");
-				}
-
+				warningAlert(result);
 			}
 
 		} else {
