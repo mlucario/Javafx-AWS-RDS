@@ -187,7 +187,7 @@ public class DBHandler {
 			pst.setString(3, username);
 
 			if (pst.executeUpdate() != 0) {
-				System.out.println("Change pass woed done");
+//				System.out.println("Change pass woed done");
 				result = true;
 			}
 
@@ -346,8 +346,8 @@ public class DBHandler {
 		return result;
 	}
 
-	public String getWork(String serialNumber) {
-		String result = "";
+	public ArrayList<String> getWork(String serialNumber) {
+		ArrayList<String> result = new ArrayList<>();
 		String query = "SELECT Station FROM history WHERE Controller_Serial_Number=? AND isPaid=?";
 
 		try {
@@ -356,13 +356,13 @@ public class DBHandler {
 			pst.setString(1, serialNumber);
 			pst.setBoolean(2, false);
 			rs = pst.executeQuery();
-			result = serialNumber + " : ";
+
 			while (rs.next()) {
-				result += rs.getString("Station") + ";";
+				result.add(rs.getString("Station"));
 			}
 
 		} catch (SQLException e) {
-			LOGGER.error(" getAllUsers " + CONNECTION_FAIL, e.getMessage());
+			LOGGER.error(" getWork " + CONNECTION_FAIL, e.getMessage());
 		} finally {
 
 			try {
@@ -375,7 +375,7 @@ public class DBHandler {
 				}
 				shutdown();
 			} catch (SQLException e) {
-				LOGGER.error(" getAllUsers " + CLOSE_CONNECTION_FAIL, e.getMessage());
+				LOGGER.error(" getWork " + CLOSE_CONNECTION_FAIL, e.getMessage());
 			}
 
 		}
@@ -719,34 +719,40 @@ public class DBHandler {
 		return result;
 	}
 
-//	public boolean finishShipping(String timestamp, int quality, String qa, String listSerialNumber, String info, String listWork) {
-//		boolean result = false;
-//		String query = "INSERT INTO shipping(Shipping_Date,Quality,Shipper,List_Serial_Number,Info,Work_Count) VALUE=(?,?,?,?,?) ";
-//
-//		try {
-//			dbconnection = getConnection();
-//			pst = dbconnection.prepareStatement(query);
-//			pst.setString(1, timestamp);
-//			pst.setInt(2, quality);
-//			pst.setString(1, timestamp);
-//			if (pst.executeUpdate() != 0) {
-//				result = true;
-//			}
-//
-//		} catch (SQLException e) {
-//			LOGGER.error("duplicateRow " + CONNECTION_FAIL, e.getMessage());
-//
-//		} finally {
-//
-//			try {
-//				pst.close();
-//				shutdown();
-//			} catch (SQLException e) {
-//				LOGGER.error("duplicateRow " + CLOSE_CONNECTION_FAIL, e.getMessage());
-//			}
-//		}
-//		return result;
-//	}
+	public boolean finishShipping(String shippingID, String timestamp, int quality, String qa, String listSerialNumber,
+			String listWork, String info) {
+		boolean result = false;
+		String query = "INSERT INTO shipping (Shipping_Date,Quality,Shipper,List_Serial_Number,Info,Work,Shipping_ID) VALUES(?,?,?,?,?,?,?)";
+
+		try {
+			dbconnection = getConnection();
+			pst = dbconnection.prepareStatement(query);
+			pst.setString(1, timestamp);
+			pst.setInt(2, quality);
+			pst.setString(3, qa);
+			pst.setString(4, listSerialNumber);
+			pst.setString(5, info);
+			pst.setString(6, listWork);
+			pst.setString(7, shippingID);
+
+			if (pst.executeUpdate() != 0) {
+				result = true;
+			}
+
+		} catch (SQLException e) {
+			LOGGER.error("finishShipping " + CONNECTION_FAIL, e.getMessage());
+
+		} finally {
+
+			try {
+				pst.close();
+				shutdown();
+			} catch (SQLException e) {
+				LOGGER.error("finishShipping " + CLOSE_CONNECTION_FAIL, e.getMessage());
+			}
+		}
+		return result;
+	}
 
 	public boolean duplicateRow(String serialNumber, String Id) {
 		boolean result = false;
@@ -1131,21 +1137,20 @@ public class DBHandler {
 	public String repairController(String serialNumber, String timestamp) {
 		String result = "";
 
-		String query = "UPDATE controllers SET Current_Station=?,Repair_Time=?,Is_Repaired_Done=?,Burn_In_Start=?,Burn_In_End=?,Burn_In_Result=?,Is_Burn_In_Done=?, Is_Passed=?  WHERE Serial_Number=?";
+		String query = "UPDATE controllers SET Current_Station=?,Repair_Time=?,Burn_In_Start=?,Burn_In_End=?,Burn_In_Result=?,Is_Burn_In_Done=?, Is_Passed=?  WHERE Serial_Number=?";
 		try {
 			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
 			pst.setString(1, REPAIR_STATION);
 			pst.setString(2, timestamp);
-			pst.setBoolean(3, true);
+			pst.setTimestamp(3, null);
 			pst.setTimestamp(4, null);
-			pst.setTimestamp(5, null);
-			pst.setString(6, null);
+			pst.setString(5, null);
+			pst.setBoolean(6, false);
 			pst.setBoolean(7, false);
-			pst.setBoolean(8, false);
-			pst.setString(9, serialNumber);
+			pst.setString(8, serialNumber);
 			if (pst.executeUpdate() != 0) {
-				System.out.println("Repair sucessfully .." + serialNumber);
+//				System.out.println("Repair sucessfully .." + serialNumber);
 				result = serialNumber;
 			} else {
 				result = "Update Database Repair FAIL. Please check with manager.";
@@ -1172,16 +1177,15 @@ public class DBHandler {
 	public String unRepairable(String serialNumber, String timestamp) {
 		String result = "";
 
-		String query = "UPDATE controllers SET Current_Station=?,Repair_Time=?,Is_Repaired_Done=?,Is_Passed=?,Burn_In_Result=? WHERE Serial_Number=?";
+		String query = "UPDATE controllers SET Current_Station=?,Repair_Time=?,Is_Passed=?,Burn_In_Result=? WHERE Serial_Number=?";
 		try {
 			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
 			pst.setString(1, REPAIR_STATION);
 			pst.setString(2, timestamp);
-			pst.setBoolean(3, true);
-			pst.setBoolean(4, false);
-			pst.setString(5, "Unrepairable");
-			pst.setString(6, serialNumber);
+			pst.setBoolean(3, false);
+			pst.setString(4, "Unrepairable");
+			pst.setString(5, serialNumber);
 			if (pst.executeUpdate() != 0) {
 				result = serialNumber;
 			} else {
@@ -1244,7 +1248,7 @@ public class DBHandler {
 	// PACKAGE
 	public String packed(String serialNumber, String timestamp) {
 		String result = "";
-
+		SMCController.stt = 1;
 		String query = "UPDATE controllers SET Current_Station=?,Packing_Time=?,Is_Packing_Done=? WHERE Serial_Number=?";
 		try {
 			dbconnection = getConnection();
@@ -1357,7 +1361,7 @@ public class DBHandler {
 				result.add(rs.getString("controller_barcode").trim().replaceAll(" +", " ").toUpperCase());
 			}
 
-			System.out.println("All barcode is fetched");
+//			System.out.println("All barcode is fetched");
 
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -1576,20 +1580,22 @@ public class DBHandler {
 	}
 
 	// Fetch all packed
-	public List<String> getAllPacked() {
-		ArrayList<String> result = new ArrayList<>();
-		String query = "SELECT Serial_Number FROM controllers WHERE Current_Station=? AND Is_Received=? AND Is_Packing_Done=?";
+	public List<SMCController> getAllPacked() {
+		ArrayList<SMCController> result = new ArrayList<>();
+		SMCController.stt = 1;
+		String query = "SELECT Serial_Number,Model FROM controllers WHERE Current_Station=? AND Is_Received=?";
 		try {
 			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
 			pst.setString(1, PACKING_STATION);
 			pst.setBoolean(2, true);
-			pst.setBoolean(3, true);
 
 			rs = pst.executeQuery();
 
 			while (rs.next()) {
-				result.add(rs.getString("Serial_Number").trim().replaceAll(" +", " ").toUpperCase());
+				String model = rs.getString("Model");
+				String serialNumber = rs.getString("Serial_Number");
+				result.add(new SMCController(serialNumber, model));
 			}
 
 		} catch (SQLException e) {
@@ -1633,7 +1639,7 @@ public class DBHandler {
 			}
 
 		} catch (SQLException e) {
-			LOGGER.error("getAllPacked " + CONNECTION_FAIL, e.getMessage());
+			LOGGER.error("getCurrentStartedBuring " + CONNECTION_FAIL, e.getMessage());
 		} finally {
 
 			try {
@@ -1647,7 +1653,7 @@ public class DBHandler {
 				}
 				shutdown();
 			} catch (SQLException e) {
-				LOGGER.error("getAllPacked " + CLOSE_CONNECTION_FAIL, e.getMessage());
+				LOGGER.error("getCurrentStartedBuring " + CLOSE_CONNECTION_FAIL, e.getMessage());
 			}
 
 		}
@@ -1661,7 +1667,7 @@ public class DBHandler {
 
 		String query = "UPDATE controllers SET Current_Station=?,Re_Work_Start=?,Assembly_Time=?,Burn_In_Start=?, Burn_In_End=?, Packing_Time=? ,Shipping_Time=?, Burn_In_Result=?,"
 				+ "Firmware_Update_Time=?,Repair_Time=?, Is_Burn_In_Done=?,"
-				+ "Is_Packing_Done=?, Is_Shipping_Done=?, Is_Repaired_Done=?, Is_ReWork=?, Is_Passed=?, Symptoms_Fail=?, Re_work_count=? WHERE Serial_Number=?";
+				+ "Is_Packing_Done=?, Is_Shipping_Done=?, Is_ReWork=?, Is_Passed=?, Symptoms_Fail=?, Re_work_count=? WHERE Serial_Number=?";
 		try {
 			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);

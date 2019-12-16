@@ -148,7 +148,6 @@ public class Controller {
 	protected static final String COL_IS_SHIPPING_DONE_CONTROLER = "Is_Shipping_Done";
 	protected static final String COL_IS_REPAIR_DONE_CONTROLER = "Is_Repaired_Done";
 	protected static final String COL_IS_PASSED_CONTROLER = "Is_Passed";
-	protected static final String COL_IS_REWORK_CONTROLER = "Is_ReWork";
 
 	protected static final String COL_SYMPTOM_FAIL_CONTROLER = "Symptoms_Fail";
 	protected static final String COL_REWORK_COUNT_CONTROLER = "Re_Work_Count";
@@ -430,6 +429,15 @@ public class Controller {
 
 	public void addBarcodeToTable(ObservableList<SMCController> barcode, String serialNumber, String model) {
 		barcode.add(new SMCController(serialNumber, model));
+	}
+	
+	public void removeBarcode(ObservableList<SMCController> barcode, String serialNumber) {
+		for(SMCController sss : barcode) {
+			if(sss.getSerialNumber().getValue().equalsIgnoreCase(serialNumber)) {
+				barcode.remove(sss);
+				break;
+			}
+		}
 	}
 
 	public void addBarcodeToTable(ObservableList<SMCController> barcode, String serialNumber, String model, int stt) {

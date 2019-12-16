@@ -34,7 +34,7 @@
             </HBox>
             <HBox VBox.vgrow="NEVER">
                <children>
-                  <Label prefHeight="100.0" prefWidth="199.0" text="Symptoms Of Fail" textAlignment="CENTER" textFill="#1500ff">
+                  <Label prefHeight="100.0" prefWidth="199.0" text="Symptoms Of Fail" textAlignment="CENTER" textFill="RED">
                      <font>
                         <Font name="Roboto Medium" size="20.0" />
                      </font>
@@ -47,10 +47,13 @@
                         <Font name="Roboto Bold" size="15.0" />
                      </font>
                      <padding>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </padding>
                   </JFXTextArea>
                </children>
+               <VBox.margin>
+                  <Insets top="25.0" />
+               </VBox.margin>
             </HBox>
             <JFXTextArea fx:id="txtRepairStep" prefHeight="222.0" prefWidth="423.0" promptText="Enter Repair Steps If Have">
                <VBox.margin>

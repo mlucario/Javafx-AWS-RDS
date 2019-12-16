@@ -87,7 +87,6 @@ public class ResultStationController extends Controller implements Initializable
 	private String stationFail;
 	private int currentPass;
 	private int currentFail;
-	private int currentRemainBurnIn;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -147,7 +146,7 @@ public class ResultStationController extends Controller implements Initializable
 		});
 
 		burnInDoneList.addAll(dbHandler.getAllBurning());
-		currentRemainBurnIn = burnInDoneList.size();
+
 		txtRemain.setVisible(false);
 
 		Platform.runLater(() -> txtControllerBarcode.requestFocus());
@@ -169,7 +168,7 @@ public class ResultStationController extends Controller implements Initializable
 					resultInput = "\r\n Controller has been shipped. Please ask manager intermediately.";
 				} else {
 					switch (currentStatus) {
-					case ASSEMBLY_STATION:
+
 					case FIRMWARE_UPDATE_STATION:
 					case BURN_IN_STATION:
 					case RESULT_STATION:
@@ -180,6 +179,7 @@ public class ResultStationController extends Controller implements Initializable
 //						resultInput = "Controller was set result.";
 //						break;
 					case RECEIVING_STATION:
+					case ASSEMBLY_STATION:
 						resultInput = "Controller doesn't burn in. Please burn-in before set result.";
 						break;
 					case WAIT_TO_BURN_IN:
@@ -218,7 +218,7 @@ public class ResultStationController extends Controller implements Initializable
 					String resultAc = dbHandler.setResultPass(serialNumber, timeStamp, true, "No Trouble Found.");
 					if (resultAc.equals(serialNumber)) {
 						addBarcodeToTable(barcodePassed, serialNumber, model, currentPass);
-						currentRemainBurnIn--;
+
 						txtPass.textProperty().bind(Bindings.format("PASSED : %d", barcodePassed.size()));
 						String history = dbHandler.addToHistoryRecord(currentUser, RESULT_STATION, timeStamp,
 								serialNumber, "Marked Passed!");
@@ -285,7 +285,7 @@ public class ResultStationController extends Controller implements Initializable
 						if (resultQuery.equals(serialNumber)) {
 
 							addBarcodeToTable(barcodeFail, serialNumber, model, currentFail);
-							currentRemainBurnIn--;
+
 							txtFail.textProperty().bind(Bindings.format("FAIL : %d", barcodeFail.size()));
 							String history = dbHandler.addToHistoryRecord(currentUser, RESULT_STATION, timeStamp,
 									serialNumber, "Marked Fail: " + tempText);

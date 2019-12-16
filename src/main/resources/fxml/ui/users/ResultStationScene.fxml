@@ -109,7 +109,7 @@
                   <Insets top="55.0" />
                </VBox.margin>
             </VBox>
-            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" visible="false">
                <children>
                   <Label text="Remain" textFill="#000dff">
                      <font>

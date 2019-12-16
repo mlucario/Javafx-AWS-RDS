@@ -59,10 +59,13 @@
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </VBox.margin>
             </HBox>
-            <JFXButton fx:id="btnAdd" onAction="#addToBurnInList" prefHeight="60.0" prefWidth="300.0" ripplerFill="#105c82" style="-fx-font-size: 2em; -fx-font-family: Roboto; -fx-font-weight: Bold; -fx-background-color: #2B98C6; -fx-background-radius: 100px;" text="Add" textFill="WHITE" VBox.vgrow="NEVER">
+            <JFXButton fx:id="btnAdd" onAction="#addToBurnInList" prefHeight="60.0" prefWidth="300.0" ripplerFill="#105c82" style="-fx-font-size: 2em; -fx-font-family: Roboto; -fx-font-weight: Bold; -fx-background-color: #2B98C6; -fx-background-radius: 100px;" text="ADD" textFill="WHITE" VBox.vgrow="NEVER">
                <VBox.margin>
                   <Insets top="20.0" />
                </VBox.margin>
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
             </JFXButton>
             <HBox alignment="CENTER" layoutX="10.0" layoutY="183.0">
                <children>
