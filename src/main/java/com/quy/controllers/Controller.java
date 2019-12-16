@@ -115,7 +115,6 @@ public class Controller {
 	protected static final String ADMIN_PANEL_USERS_MANAGEMENT = "User Management";
 	protected static final String ADMIN_CONTROLLER_MANAGEMENT = "Controller Management";
 
-
 	// History Table
 	protected static final String TABLE_HISTORY = "history";
 	protected static final String COL_QA_HISTORY = "QA";
@@ -144,7 +143,7 @@ public class Controller {
 	protected static final String COL_ASSEMBLY_COUNT_CONTROLER = "Assembly_Count";
 	protected static final String COL_IS_RE_ASSEMBLY_DONE_CONTROLER = "Is_Re_Assembly_Done";
 	protected static final String COL_IS_BURIN_IN_DONE_CONTROLER = "Is_Burn_In_Done";
-	protected static final String COL_IS_BURIN_IN_PROCESSING_CONTROLER = "Is_Burn_In_Processing";
+	protected static final String COL_BURIN_IN_COUNT_CONTROLER = "Burn_In_Count";
 	protected static final String COL_IS_PACKING_DONE_CONTROLER = "Is_Packing_Done";
 	protected static final String COL_IS_SHIPPING_DONE_CONTROLER = "Is_Shipping_Done";
 	protected static final String COL_IS_REPAIR_DONE_CONTROLER = "Is_Repaired_Done";
@@ -265,8 +264,7 @@ public class Controller {
 
 		if (runnable != null)
 			runnable.run();
-		
-		
+
 		alert.getButtonTypes().clear();
 		alert.getButtonTypes().add(ButtonType.CLOSE);
 		Button closeButton = (Button) alert.getDialogPane().lookupButton(ButtonType.CLOSE);
@@ -279,7 +277,6 @@ public class Controller {
 			});
 		}
 
-		
 		dialogStage.setScene(scene);
 		dialogStage.initModality(Modality.APPLICATION_MODAL);
 		dialogStage.setAlwaysOnTop(true);

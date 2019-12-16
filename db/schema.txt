@@ -37,3 +37,14 @@ Is_Passed tinyint(4)
 Symptoms_Fail varchar(255) 
 Re_Work_Count int(2) 
 Re_Work_Start timestamp
+
+
+
+Columns:
+id int(11) 
+username text 
+hashing_password text 
+salt_key text 
+user_type text 
+active int(11) 
+created_at text

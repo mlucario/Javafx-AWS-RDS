@@ -148,7 +148,7 @@ public class ResultStationController extends Controller implements Initializable
 
 		burnInDoneList.addAll(dbHandler.getAllBurning());
 		currentRemainBurnIn = burnInDoneList.size();
-		txtRemain.textProperty().bind(Bindings.format("%d", currentRemainBurnIn));
+		txtRemain.setVisible(false);
 
 		Platform.runLater(() -> txtControllerBarcode.requestFocus());
 	}
@@ -173,6 +173,7 @@ public class ResultStationController extends Controller implements Initializable
 					case FIRMWARE_UPDATE_STATION:
 					case BURN_IN_STATION:
 					case RESULT_STATION:
+					case RE_WORK_STATION:
 						resultInput = "";
 						break;
 //					case RESULT_STATION:
@@ -205,76 +206,106 @@ public class ResultStationController extends Controller implements Initializable
 			resultChoosen = result.getSelectedToggle().getUserData().toString().equalsIgnoreCase("PASSED");
 			String serialNumber = getStringJFXTextField(txtControllerBarcode);
 			String model = dbHandler.getStatusDone(COL_MODEL_CONTROLER, serialNumber);
-			boolean isRework = dbHandler.getStatusDone(COL_IS_REWORK_CONTROLER, serialNumber).equalsIgnoreCase("1");
+			String getResult = dbHandler.getStatusDone(COL_BURN_IN_RESULT_CONTROLER, serialNumber);
 			// RESULT PASSED
 			if (resultChoosen) {
-				currentPass++;
-				String resultAc = dbHandler.setResultPass(serialNumber, timeStamp, true, "No Trouble Found.");
-				if (resultAc.equals(serialNumber)) {
-					addBarcodeToTable(barcodePassed, serialNumber, model, currentPass);
-					currentRemainBurnIn--;
-					txtPass.textProperty().bind(Bindings.format("PASSED : %d", barcodePassed.size()));
-					String history = dbHandler.addToHistoryRecord(currentUser, RESULT_STATION, timeStamp, serialNumber,
-							"Marked Passed!");
-					if (!history.equalsIgnoreCase(serialNumber)) {
-						warningAlert(history);
-					} else {
-						notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null,
-								"Set Result PASSED Successfully", 2);
-						notification.showInformation();
+				if (getResult.equalsIgnoreCase("PASS") && dbHandler
+						.getStatusDone(COL_CURRENT_STATION_CONTROLER, serialNumber).equalsIgnoreCase(RESULT_STATION)) {
+					warningAlert("Result was set PASS!");
 
-					}
 				} else {
-					warningAlert(resultAc);
-				}
-			}
-			// RESULT FAIL
-			else {
-//				String currentStatus = dbHandler.getStatusDone(COL_CURRENT_STATION_CONTROLER, serialNumber);
-
-				if (!txtSymptoms.getText().isEmpty()) {
-					String tempText = "Fail at " + stationFail + " (" + txtSymptoms.getText() + ")";
-					currentFail++;
-					String resultQuery = "";
-					String currentStation = dbHandler.getStatusDone(COL_CURRENT_STATION_CONTROLER, serialNumber);
-					switch (currentStation) {
-					case ASSEMBLY_STATION:
-						resultQuery = dbHandler.setResultFail(serialNumber, null, false, false, tempText);
-						break;
-					case FIRMWARE_UPDATE_STATION:
-						resultQuery = dbHandler.setResultFail(serialNumber, null, false, false, tempText);
-						break;
-					case BURN_IN_STATION:
-
-						resultQuery = dbHandler.setResultFail(serialNumber, timeStamp, false, true, tempText);
-						break;
-					default:
-						resultQuery = "FAIL TO UPDATE RESULT!";
-					}
-
-					if (resultQuery.equals(serialNumber)) {
-
-						addBarcodeToTable(barcodeFail, serialNumber, model, currentFail);
+					currentPass++;
+					String resultAc = dbHandler.setResultPass(serialNumber, timeStamp, true, "No Trouble Found.");
+					if (resultAc.equals(serialNumber)) {
+						addBarcodeToTable(barcodePassed, serialNumber, model, currentPass);
 						currentRemainBurnIn--;
-						txtFail.textProperty().bind(Bindings.format("FAIL : %d", barcodeFail.size()));
+						txtPass.textProperty().bind(Bindings.format("PASSED : %d", barcodePassed.size()));
 						String history = dbHandler.addToHistoryRecord(currentUser, RESULT_STATION, timeStamp,
-								serialNumber, "Marked Fail: " + tempText);
+								serialNumber, "Marked Passed!");
 						if (!history.equalsIgnoreCase(serialNumber)) {
 							warningAlert(history);
 						} else {
 							notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null,
-
-									"Set Result FAIL Successfully", 2);
+									"Set Result PASSED Successfully", 2);
 							notification.showInformation();
 
 						}
 					} else {
-						warningAlert(resultQuery);
+						warningAlert(resultAc);
 					}
+
+					if (!barcodeFail.isEmpty()) {
+						for (SMCController sss : barcodeFail) {
+							if (sss.getControllerBarcode().getValue().equalsIgnoreCase(serialNumber)) {
+								barcodeFail.remove(sss);
+								break;
+							}
+						}
+					}
+				}
+			}
+			// RESULT FAIL
+			else {
+
+				if (getResult.equalsIgnoreCase("FAIL") && dbHandler
+						.getStatusDone(COL_CURRENT_STATION_CONTROLER, serialNumber).equalsIgnoreCase(RESULT_STATION)) {
+					warningAlert("Result was set FAIL!");
 				} else {
-					warningAlert("PLEASE ENTER SYMPTOMS");
-					txtSymptoms.clear();
-					txtSymptoms.requestFocus();
+
+					if (!txtSymptoms.getText().isEmpty()) {
+						String tempText = "Fail at " + stationFail + " (" + txtSymptoms.getText() + ")";
+						currentFail++;
+						String resultQuery = "";
+						String currentStation = dbHandler.getStatusDone(COL_CURRENT_STATION_CONTROLER, serialNumber);
+						switch (currentStation) {
+						case ASSEMBLY_STATION:
+						case FIRMWARE_UPDATE_STATION:
+							resultQuery = dbHandler.setResultFail(serialNumber, null, false, false, tempText);
+							break;
+						case BURN_IN_STATION:
+							resultQuery = dbHandler.setResultFail(serialNumber, timeStamp, false, true, tempText);
+							break;
+						case RESULT_STATION:
+							resultQuery = dbHandler.setResult(serialNumber, timeStamp, false, tempText);
+
+							if (!barcodePassed.isEmpty()) {
+
+								for (SMCController sss : barcodePassed) {
+									if (sss.getControllerBarcode().getValue().equalsIgnoreCase(serialNumber)) {
+										barcodePassed.remove(sss);
+										break;
+									}
+								}
+							}
+							break;
+						default:
+							resultQuery = "FAIL TO UPDATE RESULT!";
+						}
+
+						if (resultQuery.equals(serialNumber)) {
+
+							addBarcodeToTable(barcodeFail, serialNumber, model, currentFail);
+							currentRemainBurnIn--;
+							txtFail.textProperty().bind(Bindings.format("FAIL : %d", barcodeFail.size()));
+							String history = dbHandler.addToHistoryRecord(currentUser, RESULT_STATION, timeStamp,
+									serialNumber, "Marked Fail: " + tempText);
+							if (!history.equalsIgnoreCase(serialNumber)) {
+								warningAlert(history);
+							} else {
+								notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null,
+
+										"Set Result FAIL Successfully", 2);
+								notification.showInformation();
+
+							}
+						} else {
+							warningAlert(resultQuery);
+						}
+					} else {
+						warningAlert("PLEASE ENTER SYMPTOMS");
+						txtSymptoms.clear();
+						txtSymptoms.requestFocus();
+					}
 				}
 			}
 
@@ -282,7 +313,7 @@ public class ResultStationController extends Controller implements Initializable
 			warningAlert(isValidInput());
 		}
 
-		txtRemain.textProperty().bind(Bindings.format("%d", currentRemainBurnIn));
+//		txtRemain.textProperty().bind(Bindings.format("%d", currentRemainBurnIn));
 		txtControllerBarcode.clear();
 		txtControllerBarcode.requestFocus();
 	}

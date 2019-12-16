@@ -62,15 +62,9 @@ public class BurnInController extends Controller implements Initializable {
 				addBarcodeToTable(barcode, serialNumber, model);
 				listBurnInSN += serialNumber + ";";
 				btnStart.setDisable(false);
-//				String history = dbHandler.addToHistoryRecord(currentUser, "Added to waiting list burn in",
-//						getCurrentTimeStamp(), serialNumber, "Added to burn in system. SN: " + serialNumber, false);
-//				if (!history.equalsIgnoreCase(serialNumber)) {
-//					warningAlert(history);
-//				} else {
 				notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null, "Add to burn-in list Successfully",
 						2);
 				notification.showInformation();
-//				}
 
 			} else {
 				warningAlert(result);
@@ -82,7 +76,7 @@ public class BurnInController extends Controller implements Initializable {
 		txtControllerBarcode.clear();
 		txtControllerBarcode.requestFocus();
 		btnAdd.setDisable(true);
-
+		txtID.setVisible(false);
 	}
 
 	@Override
@@ -115,6 +109,9 @@ public class BurnInController extends Controller implements Initializable {
 				});
 			}
 		});
+
+		txtID.setVisible(false);
+
 	}
 
 	@FXML
@@ -134,6 +131,7 @@ public class BurnInController extends Controller implements Initializable {
 					case ASSEMBLY_STATION:
 					case FIRMWARE_UPDATE_STATION:
 					case REPAIR_STATION:
+					case RE_WORK_STATION:
 						result = "";
 						break;
 					case WAIT_TO_BURN_IN:
@@ -171,6 +169,7 @@ public class BurnInController extends Controller implements Initializable {
 	@FXML
 	void startBurnIn(ActionEvent event) {
 		idBurnIn = generateBurnInID();
+		txtID.setVisible(true);
 		txtID.setText(idBurnIn);
 		String timeStamp = getCurrentTimeStamp();
 		int count = 0;
@@ -185,11 +184,12 @@ public class BurnInController extends Controller implements Initializable {
 			for (SMCController c : myList) {
 
 				String serialNumber = c.getSerialNumber().getValue();
-				String result = dbHandler.burnIn(serialNumber, timeStamp, idBurnIn);
+				int burnInCount = Integer.parseInt(dbHandler.getStatusDone(COL_BURIN_IN_COUNT_CONTROLER, serialNumber));
+				String result = dbHandler.burnIn(serialNumber, timeStamp, idBurnIn, ++burnInCount);
 				if (result.equalsIgnoreCase(serialNumber)) {
 					count++;
 					String history = dbHandler.addToHistoryRecord(currentUser, "Burn In Station", getCurrentTimeStamp(),
-							serialNumber, "Started Burn In Process SN " + serialNumber);
+							serialNumber, "Started Burn In Controller  " + serialNumber + " (" + burnInCount + ")");
 
 					if (!history.equalsIgnoreCase(serialNumber)) {
 						warningAlert(history);
@@ -198,7 +198,9 @@ public class BurnInController extends Controller implements Initializable {
 					}
 
 				} else {
+
 					warningAlert(result);
+					break;
 				}
 			}
 
