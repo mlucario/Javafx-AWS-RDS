@@ -99,7 +99,7 @@ public class AssemblyController extends Controller implements Initializable {
 
 				addBarcodeToTable(barcode, serialNumber, model);
 				String history = dbHandler.addToHistoryRecord(currentUser, ASSEMBLY_STATION, timestamp, serialNumber,
-						"Assembler Controller Serial Number : " + serialNumber + ". " + txtNote.getText());
+						"Assembler Controller Serial Number : " + serialNumber + ". " + txtNote.getText(), false);
 				if (!history.equalsIgnoreCase(serialNumber)) {
 					warningAlert(history);
 				} else {

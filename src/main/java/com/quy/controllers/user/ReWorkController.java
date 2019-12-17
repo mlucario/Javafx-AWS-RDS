@@ -9,6 +9,7 @@ import com.quy.controllers.Controller;
 import com.quy.controllers.SignInController;
 import com.quy.database.DBHandler;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -21,8 +22,12 @@ public class ReWorkController extends Controller implements Initializable {
 	private JFXButton btnRework;
 	@FXML
 	private JFXTextField txtReason;
+
+	@FXML
+	private JFXTextField txtMins;
 	private DBHandler dbHandler;
 	protected String currentUser = SignInController.getInstance().username();
+	private double time;
 
 	@FXML
 	void keyPressValidate() {
@@ -44,7 +49,7 @@ public class ReWorkController extends Controller implements Initializable {
 			String result = dbHandler.rework(serialNumber, timestamp, ++reworkCount);
 			if (result.equalsIgnoreCase(serialNumber)) {
 				String history = dbHandler.addToHistoryRecord(currentUser, RE_WORK_STATION, timestamp, serialNumber,
-						reason);
+						reason, false);
 				if (!history.equalsIgnoreCase(serialNumber)) {
 					warningAlert(history);
 				} else {
@@ -67,10 +72,23 @@ public class ReWorkController extends Controller implements Initializable {
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		dbHandler = new DBHandler();
+		time = 0;
 		btnRework.setDisable(true);
+		textFieldFormat(txtControllerBarcode, "Serial Number is required", true);
+		textFieldFormat(txtMins, "Time is required", true);
 
-		btnRework.setOnAction(e -> {
-			reWorkAction();
+		btnRework.setOnAction(e -> reWorkAction());
+		Platform.runLater(() -> txtControllerBarcode.requestFocus());
+		txtMins.textProperty().addListener((value, oldval, newVal) -> {
+			if (!oldval.equalsIgnoreCase(newVal) && newVal != null) {
+
+				try {
+					double time = Double.parseDouble(newVal);
+				} catch (NumberFormatException e) {
+					warningAlert("Your input is not a number!");
+				}
+
+			}
 		});
 	}
 
@@ -84,18 +102,23 @@ public class ReWorkController extends Controller implements Initializable {
 				switch (currentStatus) {
 
 				case SHIPPING_STATION:
-					result = "No Rework";
+					result = "Go to Receiving Station!";
 					break;
 				case RECEIVING_STATION:
+					result = "Controller was received. Go to other staions.";
+					break;
 				case FIRMWARE_UPDATE_STATION:
 				case REPAIR_STATION:
 				case WAIT_TO_BURN_IN:
 				case BURN_IN_STATION:
 				case PACKING_STATION:
+				case RESULT_STATION:
+				case "Unrepairable":
 				case ASSEMBLY_STATION:
 					result = "";
 					break;
 				default:
+					result = "Special Case. Ask manager for help!";
 					LOGGER.info("NF");
 				}
 
@@ -104,6 +127,13 @@ public class ReWorkController extends Controller implements Initializable {
 			}
 		}
 
+		if (txtReason.getText().isEmpty()) {
+			result = "Reason and Instruction are required!";
+		}
+
+		if (txtMins.getText().isEmpty()) {
+
+		}
 		return result;
 
 	}

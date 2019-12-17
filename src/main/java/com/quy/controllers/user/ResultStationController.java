@@ -221,7 +221,7 @@ public class ResultStationController extends Controller implements Initializable
 
 						txtPass.textProperty().bind(Bindings.format("PASSED : %d", barcodePassed.size()));
 						String history = dbHandler.addToHistoryRecord(currentUser, RESULT_STATION, timeStamp,
-								serialNumber, "Marked Passed!");
+								serialNumber, "Marked Passed!",false);
 						if (!history.equalsIgnoreCase(serialNumber)) {
 							warningAlert(history);
 						} else {
@@ -288,7 +288,7 @@ public class ResultStationController extends Controller implements Initializable
 
 							txtFail.textProperty().bind(Bindings.format("FAIL : %d", barcodeFail.size()));
 							String history = dbHandler.addToHistoryRecord(currentUser, RESULT_STATION, timeStamp,
-									serialNumber, "Marked Fail: " + tempText);
+									serialNumber, "Marked Fail: " + tempText,false);
 							if (!history.equalsIgnoreCase(serialNumber)) {
 								warningAlert(history);
 							} else {

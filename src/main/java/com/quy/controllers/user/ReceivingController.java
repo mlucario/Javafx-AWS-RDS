@@ -114,7 +114,7 @@ public class ReceivingController extends Controller implements Initializable {
 				if (result.equalsIgnoreCase(serialNumber)) {
 					addBarcodeToTable(barcode, serialNumber, model);
 					result = dbHandler.addToHistoryRecord(currentUser, RECEIVING_STATION, getCurrentTimeStamp(),
-							serialNumber, "Received Controller Serial Number : " + serialNumber);
+							serialNumber, "Received Controller Serial Number : " + serialNumber,false);
 					if (result.equalsIgnoreCase(serialNumber)) {
 						notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null,
 								"Add New Controller Successfully", 2);

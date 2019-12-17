@@ -54,7 +54,7 @@ public class ShippingStationController extends Controller implements Initializab
 	private ObservableList<SMCController> barcode = FXCollections.observableArrayList();
 	private HashMap<String, ArrayList<String>> shippingList = new HashMap<>();
 	private String listSerialNumber = "";
-	private String listWork ="";
+	private String listWork = "";
 	private int count;
 
 	@FXML
@@ -170,14 +170,14 @@ public class ShippingStationController extends Controller implements Initializab
 				listWork += ";";
 				if (result.equalsIgnoreCase(serialNumber)) {
 					dbHandler.addToHistoryRecord(currentUser, SHIPPING_STATION, getCurrentTimeStamp(), serialNumber,
-							"Shipped!");
+							"Shipped!", true);
 				}
 			});
 
 			listSerialNumber = listSerialNumber.substring(0, listSerialNumber.length() - 1);
-			System.out.println("listSerialNumber : "  + listSerialNumber);
+
 			listWork = listWork.substring(0, listWork.length() - 2);
-			System.out.println("listWork : "  + listWork);
+
 			boolean rs = dbHandler.finishShipping(generatorLotId(), getCurrentTimeStamp(), barcode.size(), currentUser,
 					listSerialNumber, listWork, txtInfo.getText());
 
@@ -190,7 +190,7 @@ public class ShippingStationController extends Controller implements Initializab
 		} else {
 			warningAlert("Error logic!");
 		}
-		
+
 		listSerialNumber = listWork = "";
 
 		btnAdd.setDisable(true);

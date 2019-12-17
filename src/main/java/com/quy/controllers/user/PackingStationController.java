@@ -97,7 +97,7 @@ public class PackingStationController extends Controller implements Initializabl
 				if (result.equalsIgnoreCase(serialNumber)) {
 					addBarcodeToTable(barcode, serialNumber, model);
 					String history = dbHandler.addToHistoryRecord(currentUser, PACKING_STATION, timestamp, serialNumber,
-							"Package is ready!");
+							"Package is ready!",false);
 					if (!history.equalsIgnoreCase(serialNumber)) {
 						warningAlert(history);
 					} else {

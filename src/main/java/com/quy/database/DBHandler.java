@@ -1210,7 +1210,7 @@ public class DBHandler {
 	}
 
 	// Insert to history record
-	public String addToHistoryRecord(String QA, String station, String time, String serialNumber, String note) {
+	public String addToHistoryRecord(String QA, String station, String time, String serialNumber, String note, boolean isPaid) {
 		String result = "";
 
 		String query = "INSERT INTO history(QA,Station,Time,Controller_Serial_Number,Note,isPaid) VALUES (?,?,?,?,?,?)";
@@ -1222,7 +1222,7 @@ public class DBHandler {
 			pst.setString(3, time);
 			pst.setString(4, serialNumber);
 			pst.setString(5, note);
-			pst.setBoolean(6, false);
+			pst.setBoolean(6, isPaid);
 			if (pst.executeUpdate() != 0) {
 				result = serialNumber;
 			} else {

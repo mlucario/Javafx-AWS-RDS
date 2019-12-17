@@ -99,7 +99,7 @@ public class FirmwareUpdateController extends Controller implements Initializabl
 			if (result.equalsIgnoreCase(serialNumber)) {
 				addBarcodeToTable(barcode, serialNumber, model);
 				String history = dbHandler.addToHistoryRecord(currentUser, FIRMWARE_UPDATE_STATION, timestamp,
-						serialNumber, "Firmware updated SN: " + serialNumber + ". " + txtNote.getText());
+						serialNumber, "Firmware updated SN: " + serialNumber + ". " + txtNote.getText(),false);
 				if (!history.equalsIgnoreCase(serialNumber)) {
 					warningAlert(history);
 				} else {

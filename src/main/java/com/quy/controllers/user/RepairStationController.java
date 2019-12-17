@@ -14,8 +14,6 @@ import com.quy.database.DBHandler;
 
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -62,7 +60,7 @@ public class RepairStationController extends Controller implements Initializable
 			String result = dbHandler.unRepairable(serialNumber, timestamp);
 			if (result.equalsIgnoreCase(serialNumber)) {
 				currentFailRemain--;
-				removeBarcode(barcode,serialNumber);
+				removeBarcode(barcode, serialNumber);
 				notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null,
 						"Update Unrepairable Staion Successfully", 2);
 				notification.showInformation();
@@ -102,9 +100,9 @@ public class RepairStationController extends Controller implements Initializable
 			String result = dbHandler.repairController(serialNumber, timestamp);
 			if (result.equalsIgnoreCase(serialNumber)) {
 				currentFailRemain--;
-				removeBarcode(barcode,serialNumber);
+				removeBarcode(barcode, serialNumber);
 				String history = dbHandler.addToHistoryRecord(currentUser, REPAIR_STATION, timestamp, serialNumber,
-						"REPAIR: " + txtRepairStep.getText());
+						"REPAIR: " + txtRepairStep.getText(), false);
 				if (!history.equalsIgnoreCase(serialNumber)) {
 					warningAlert(history);
 				} else {
