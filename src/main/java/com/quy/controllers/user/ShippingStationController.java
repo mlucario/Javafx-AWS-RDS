@@ -66,7 +66,7 @@ public class ShippingStationController extends Controller implements Initializab
 
 			if (currentLastestStation.equalsIgnoreCase(PACKING_STATION)) {
 //				String result = dbHandler.shipping(serialNumber, timestamp);
-				SMCController.stt = 1;
+				
 				addBarcodeToTable(barcode, serialNumber, model);
 				count++;
 				shippingList.put(serialNumber, dbHandler.getWork(serialNumber));
@@ -209,6 +209,7 @@ public class ShippingStationController extends Controller implements Initializab
 		btnSubmit.setDisable(true);
 		btnAdd.setDisable(true);
 		btnCancel.setDisable(true);
+		SMCController.stt = 1;
 		count = 0;
 		textFieldFormat(txtControllerBarcode, "Controller barcode is required", true);
 		Platform.runLater(() -> txtControllerBarcode.requestFocus());

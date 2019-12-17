@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXTextArea;
 import com.jfoenix.controls.JFXTextField;
 import com.quy.controllers.Controller;
 import com.quy.controllers.SignInController;
@@ -21,7 +22,7 @@ public class ReWorkController extends Controller implements Initializable {
 	@FXML
 	private JFXButton btnRework;
 	@FXML
-	private JFXTextField txtReason;
+	private JFXTextArea txtInfo;
 
 	@FXML
 	private JFXTextField txtMins;
@@ -45,8 +46,9 @@ public class ReWorkController extends Controller implements Initializable {
 //			String currentLastestStation = dbHandler.getStatusDone(COL_CURRENT_STATION_CONTROLER, serialNumber);
 			int reworkCount = Integer.parseInt(dbHandler.getStatusDone(COL_REWORK_COUNT_CONTROLER, serialNumber));
 			String timestamp = getCurrentTimeStamp();
-			String reason = txtReason.getText();
-			String result = dbHandler.rework(serialNumber, timestamp, ++reworkCount);
+			String reason = txtInfo.getText();
+			String result = dbHandler.rework(serialNumber, timestamp, ++reworkCount,
+					Integer.parseInt(txtMins.getText()), reason);
 			if (result.equalsIgnoreCase(serialNumber)) {
 				String history = dbHandler.addToHistoryRecord(currentUser, RE_WORK_STATION, timestamp, serialNumber,
 						reason, false);
@@ -115,6 +117,7 @@ public class ReWorkController extends Controller implements Initializable {
 				case RESULT_STATION:
 				case "Unrepairable":
 				case ASSEMBLY_STATION:
+				case RE_WORK_STATION:
 					result = "";
 					break;
 				default:
@@ -127,12 +130,12 @@ public class ReWorkController extends Controller implements Initializable {
 			}
 		}
 
-		if (txtReason.getText().isEmpty()) {
+		if (txtInfo.getText().isEmpty()) {
 			result = "Reason and Instruction are required!";
 		}
 
 		if (txtMins.getText().isEmpty()) {
-
+			result = "Time Work is required! Please enter a number!.";
 		}
 		return result;
 

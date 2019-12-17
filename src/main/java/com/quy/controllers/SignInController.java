@@ -190,20 +190,18 @@ public class SignInController extends Controller implements Initializable {
 		});
 
 		// TODO Remove after test done
-		txtUsername.setText("a1956");
-		txtPassword.setText("1234567Aa@");
-		
-//		txtUsername.setText("smc_bizcom");
-//		txtPassword.setText("Bizcom1171");
+//		txtUsername.setText("a1956");
+//		txtPassword.setText("1234567Aa@");
+
+		txtUsername.setText("bizcom_smc");
+		txtPassword.setText("Bizcom@1171");
 
 		pt.play();
 		Platform.runLater(() -> txtUsername.requestFocus());
 		txtUsername.setOnAction(e -> txtPassword.requestFocus());
 
 		txtPassword.setOnAction(e -> login(e));
-		
-		
-		
+
 	}
 
 	public boolean isValidInput() {

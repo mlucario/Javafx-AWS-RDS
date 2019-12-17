@@ -35,6 +35,8 @@ public class PackingStationController extends Controller implements Initializabl
 	private JFXTextField txtSN;
 	@FXML
 	private Text txtCounter;
+	
+	private int count;
 
 	@FXML
 	void keyPressValidate() {
@@ -96,6 +98,7 @@ public class PackingStationController extends Controller implements Initializabl
 				String result = dbHandler.packed(serialNumber, timestamp);
 				if (result.equalsIgnoreCase(serialNumber)) {
 					addBarcodeToTable(barcode, serialNumber, model);
+					count ++;
 					String history = dbHandler.addToHistoryRecord(currentUser, PACKING_STATION, timestamp, serialNumber,
 							"Package is ready!",false);
 					if (!history.equalsIgnoreCase(serialNumber)) {
@@ -113,6 +116,8 @@ public class PackingStationController extends Controller implements Initializabl
 			warningAlert(isValidInput());
 
 		}
+		
+		txtCounter.setText(count+"");
 		txtControllerBarcode.clear();
 		txtControllerBarcode.requestFocus();
 	}
@@ -134,7 +139,8 @@ public class PackingStationController extends Controller implements Initializabl
 
 		});
 		barcode.addAll(dbHandler.getAllPacked());
-		txtCounter.setText(barcode.size() + "");
+		count = barcode.size();
+		txtCounter.setText(count + "");
 		treeviewTableBuilder(treeView, barcode);
 
 		txtSN.textProperty().addListener((o, oldVal, newVal) -> {
@@ -145,7 +151,7 @@ public class PackingStationController extends Controller implements Initializabl
 				});
 			}
 		});
-
+		
 	}
 
 }

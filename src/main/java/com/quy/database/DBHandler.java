@@ -39,6 +39,7 @@ public class DBHandler {
 	private static final String REPAIR_STATION = "Repair Station";
 	private static final String PACKING_STATION = "Packing Station";
 	private static final String SHIPPING_STATION = "Shipping Station";
+	private static final String RE_WORK_STATION = "Re_Work Station";
 
 	public Connection getConnectionAWS() {
 
@@ -386,12 +387,13 @@ public class DBHandler {
 	public List<SMCController> getAllControllers() {
 
 		ArrayList<SMCController> result = new ArrayList<>();
-		String query = "SELECT Model,Lot_ID,Serial_Number,Current_Station,Burn_In_Result,Re_Work_Count FROM controllers WHERE Is_Shipping_Done=?  ORDER BY ID";
+		String query = "SELECT Model,Lot_ID,Serial_Number,Current_Station,Burn_In_Result,Re_Work_Count FROM controllers WHERE Is_Shipping_Done=? and Is_Received=? ORDER BY ID";
 
 		try {
 			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
 			pst.setBoolean(1, false);
+			pst.setBoolean(2, true);
 			rs = pst.executeQuery();
 			while (rs.next()) {
 				String model = rs.getString("Model");
@@ -399,8 +401,8 @@ public class DBHandler {
 				String sn = rs.getString("Serial_Number");
 				String currentStation = rs.getString("Current_Station");
 				String burnInResult = rs.getString("Burn_In_Result");
-				int reWorkCoung = rs.getInt("Re_Work_Count");
-				result.add(new SMCController(model, lotID, sn, currentStation, burnInResult, reWorkCoung));
+				int reWorkCount = rs.getInt("Re_Work_Count");
+				result.add(new SMCController(model, lotID, sn, currentStation, burnInResult, reWorkCount));
 			}
 
 		} catch (SQLException e) {
@@ -600,43 +602,6 @@ public class DBHandler {
 		return result;
 	}
 
-	public List<String> getLastestInfo(String serialNumber) {
-
-		ArrayList<String> result = new ArrayList<>();
-		String query = "SELECT Current_Station,Re_Work_Count,Lot_ID,Is_Packing_Done,Is_Shipping_Done FROM controllers WHERE Serial_Number=? ORDER BY Re_work_count DESC";
-		try {
-			dbconnection = getConnection();
-			pst = dbconnection.prepareStatement(query);
-			pst.setString(1, serialNumber);
-
-			rs = pst.executeQuery();
-
-			if (rs.next()) {
-				result.add(rs.getInt("Re_Work_Count") + "");
-				result.add(rs.getString("Lot_ID"));
-				result.add(rs.getString("Current_Station"));
-				result.add(rs.getString("Is_Packing_Done"));
-				result.add(rs.getString("Is_Shipping_Done"));
-			}
-
-		} catch (SQLException e) {
-			LOGGER.error(CONNECTION_FAIL, e.getMessage());
-		} finally {
-
-			try {
-
-				pst.close();
-				rs.close();
-				shutdown();
-			} catch (SQLException e) {
-				LOGGER.error(CLOSE_CONNECTION_FAIL, e.getMessage());
-			}
-
-		}
-
-		return result;
-	}
-
 	// Fetch all Controller Which are ready to burn in
 	public List<SMCController> getAllReadyToBurn() {
 		ArrayList<SMCController> result = new ArrayList<>();
@@ -754,35 +719,6 @@ public class DBHandler {
 		return result;
 	}
 
-	public boolean duplicateRow(String serialNumber, String Id) {
-		boolean result = false;
-		String query = "INSERT INTO controllers(Lot_ID,Model,Serial_Number,Receiving_Time,Is_Received,Re_Work_Count) "
-				+ "SELECT Lot_ID,Model,Serial_Number,Receiving_Time,Is_Received,Re_Work_Count FROM controllers WHERE Serial_Number=? AND ID=?";
-
-		try {
-			dbconnection = getConnection();
-			pst = dbconnection.prepareStatement(query);
-			pst.setString(1, serialNumber);
-			pst.setString(2, Id);
-
-			if (pst.executeUpdate() != 0) {
-				result = true;
-			}
-
-		} catch (SQLException e) {
-			LOGGER.error("duplicateRow " + CONNECTION_FAIL, e.getMessage());
-
-		} finally {
-
-			try {
-				pst.close();
-				shutdown();
-			} catch (SQLException e) {
-				LOGGER.error("duplicateRow " + CLOSE_CONNECTION_FAIL, e.getMessage());
-			}
-		}
-		return result;
-	}
 	// ==================================================================================================
 
 	// STATION HANDLER METHODS
@@ -1210,7 +1146,8 @@ public class DBHandler {
 	}
 
 	// Insert to history record
-	public String addToHistoryRecord(String QA, String station, String time, String serialNumber, String note, boolean isPaid) {
+	public String addToHistoryRecord(String QA, String station, String time, String serialNumber, String note,
+			boolean isPaid) {
 		String result = "";
 
 		String query = "INSERT INTO history(QA,Station,Time,Controller_Serial_Number,Note,isPaid) VALUES (?,?,?,?,?,?)";
@@ -1662,46 +1599,29 @@ public class DBHandler {
 
 	}
 
-	public String rework(String serialNumber, String timestamp, int reworkCount) {
+	public String rework(String serialNumber, String timestamp, int reworkCount, int timeWork, String info) {
 		String result = "";
 
-		String query = "UPDATE controllers SET Current_Station=?,Re_Work_Start=?,Assembly_Time=?,Burn_In_Start=?, Burn_In_End=?, Packing_Time=? ,Shipping_Time=?, Burn_In_Result=?,"
-				+ "Firmware_Update_Time=?,Repair_Time=?, Is_Burn_In_Done=?,"
-				+ "Is_Packing_Done=?, Is_Shipping_Done=?, Is_ReWork=?, Is_Passed=?, Symptoms_Fail=?, Re_work_count=? WHERE Serial_Number=?";
+		String query = "UPDATE controllers SET Current_Station=?,Is_ReWork=?,Is_Passed=?,Re_Work_Count=?,Re_Work_Start=? WHERE Serial_Number=?";
+		String query2 = "INSERT INTO rework(Serial_Number,Work,Time_Work,create_at,isPaid) VALUES(?,?,?,?,?)";
 		try {
 			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
-			pst.setString(1, RECEIVING_STATION);
-			pst.setString(2, timestamp);
-			pst.setString(3, null);
-			pst.setString(4, null);
-			pst.setString(5, null);
-			pst.setString(6, null);
-			pst.setString(7, null);
-			pst.setString(8, null);
-			pst.setString(9, null);
-			pst.setString(10, null);
-			pst.setBoolean(11, false);
-			pst.setBoolean(12, false);
-			pst.setBoolean(13, false);
-			pst.setBoolean(14, false);
-			pst.setBoolean(15, false);
-			pst.setBoolean(16, false);
-			pst.setBoolean(17, false);
-			pst.setBoolean(18, false);
-			pst.setBoolean(19, false);
-			pst.setString(20, null);
-			pst.setInt(21, reworkCount);
-			pst.setString(22, serialNumber);
-
+			pst.setString(1, RE_WORK_STATION);
+			pst.setBoolean(2, true);
+			pst.setBoolean(3, false);
+			pst.setInt(4, reworkCount);
+			pst.setString(5, timestamp);
+			pst.setString(6, serialNumber);
 			if (pst.executeUpdate() != 0) {
 				result = serialNumber;
 			} else {
-				result = "Update Re_Work. Please check with manager.";
+				result = "Fail Re_Work. Please check with manager.";
 			}
 
 		} catch (SQLException e) {
-			LOGGER.error(SHIPPING_STATION + " " + CONNECTION_FAIL, e.getMessage());
+			result = "Fail Re_Work. Please check with manager.";
+			LOGGER.error(RE_WORK_STATION + " " + CONNECTION_FAIL, e.getMessage());
 		} finally {
 			try {
 				if (pst != null) {
@@ -1709,9 +1629,40 @@ public class DBHandler {
 				}
 				shutdown();
 			} catch (SQLException e) {
-				LOGGER.error(SHIPPING_STATION + " " + CLOSE_CONNECTION_FAIL, e.getMessage());
+				LOGGER.error(RE_WORK_STATION + " " + CLOSE_CONNECTION_FAIL, e.getMessage());
 			}
 
+		}
+
+		if (result.equalsIgnoreCase(serialNumber)) {
+			try {
+				dbconnection = getConnection();
+				pst = dbconnection.prepareStatement(query2);
+				pst.setString(1, serialNumber);
+				pst.setString(2, info);
+				pst.setInt(3, timeWork);
+				pst.setString(4, timestamp);
+				pst.setBoolean(5, false);
+				if (pst.executeUpdate() != 0) {
+					result = serialNumber;
+				} else {
+					result = "Fail To Inset Into Rework table. Please check with manager.";
+				}
+
+			} catch (SQLException e) {
+				result = "Fail To Inset Into Rework table. Please check with manager.";
+				LOGGER.error(RE_WORK_STATION + " " + CONNECTION_FAIL, e.getMessage());
+			} finally {
+				try {
+					if (pst != null) {
+						pst.close();
+					}
+					shutdown();
+				} catch (SQLException e) {
+					LOGGER.error(RE_WORK_STATION + " " + CLOSE_CONNECTION_FAIL, e.getMessage());
+				}
+
+			}
 		}
 
 		return result;
