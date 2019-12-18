@@ -5,7 +5,6 @@ import java.util.ResourceBundle;
 
 import com.quy.controllers.Controller;
 import com.quy.database.DBHandler;
-import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.controls.JFXTreeTableColumn;
 import com.jfoenix.controls.JFXTreeTableView;
@@ -36,12 +35,6 @@ public class ManagementControllers extends Controller implements Initializable {
 	@FXML
 	private JFXTextField txtSN1;
 
-    @FXML
-    private JFXComboBox<String> cbModel;
-    @FXML
-    private Label txtCBCount;
-    
-	
 	private DBHandler dbHandler;
 
 	@SuppressWarnings("unchecked")
@@ -100,18 +93,18 @@ public class ManagementControllers extends Controller implements Initializable {
 		tableViewInventory.setShowRoot(false);
 		tableViewInventory.getColumns().setAll(sttCol, serialNumberCol, modelCol, burnInResultCol);
 
-		txtTotalInven.setText(listAllControllers.size()+"");
-		txtPassed.setText(dbHandler.getCurrentInventoryPassed(true)+"");
-		txtfail.setText(dbHandler.getCurrentInventoryPassed(false)+"");
+		txtTotalInven.setText(dbHandler.countControllers("WHERE Is_Shipping_Done=?", false) + "");
+		txtPassed.setText(dbHandler.countControllers("WHERE Is_Passed=?", true) + "");
+		txtfail.setText(dbHandler.countControllers("WHERE Is_Passed=?", false) + "");
 
-		txtSN1.textProperty().addListener((o, oldVal, newVal) -> {
-			if (!oldVal.equalsIgnoreCase(newVal)) {
-				tableViewInventory.setPredicate(controller -> {
-					final SMCController aController = controller.getValue();
-					return aController.getSerialNumber().getValue().contains(newVal);
-				});
-			}
-		});
+//		txtSN1.textProperty().addListener((o, oldVal, newVal) -> {
+//			if (!oldVal.equalsIgnoreCase(newVal)) {
+//				tableViewInventory.setPredicate(controller -> {
+//					final SMCController aController = controller.getValue();
+//					return aController.getSerialNumber().getValue().contains(newVal);
+//				});
+//			}
+//		});
 	}
 
 }

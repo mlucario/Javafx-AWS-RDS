@@ -313,21 +313,14 @@ public class DBHandler {
 		return result;
 	}
 
-	public int getCurrentInventoryPassed(boolean option) {
+	public int countControllers(String where, boolean value) {
 		int result = 0;
-		String query = "SELECT COUNT(Serial_Number) FROM controllers WHERE Is_Shipping_Done=? AND Is_Passed=? AND Burn_In_Result=?";	
+		String query = "SELECT COUNT(Serial_Number) FROM controllers " + where;
+
 		try {
 			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
-			pst.setBoolean(1,false);
-			if(option) {
-				pst.setBoolean(2,true);
-				pst.setString(3, "PASS");	
-			}else {
-				pst.setBoolean(2,false);
-				pst.setString(3, "FAIL");	
-			}
-			
+			pst.setBoolean(1, value);
 			rs = pst.executeQuery();
 			if (rs.next()) {
 				result = rs.getInt(1);

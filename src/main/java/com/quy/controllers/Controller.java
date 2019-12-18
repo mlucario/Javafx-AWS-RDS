@@ -267,7 +267,7 @@ public class Controller {
 		alert.getButtonTypes().clear();
 		alert.getButtonTypes().add(ButtonType.CLOSE);
 		Button closeButton = (Button) alert.getDialogPane().lookupButton(ButtonType.CLOSE);
-		closeButton.setDefaultButton(false);
+		closeButton.setDefaultButton(true);
 		for (ButtonType buttonType : root.getButtonTypes()) {
 			ButtonBase button = (ButtonBase) root.lookupButton(buttonType);
 			button.setOnAction(evt -> {
