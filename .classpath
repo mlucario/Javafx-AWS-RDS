@@ -30,8 +30,6 @@
 	<classpathentry kind="lib" path="libs/mysql-connector-java-8.0.18.jar"/>
 	<classpathentry kind="con" path="org.eclipse.fx.ide.jdt.core.JAVAFX_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
-	<classpathentry kind="lib" path="C:/Users/bizcom/Desktop/Javafx-AWS-RDS/libs/testfx-core-4.0.16-alpha.jar"/>
-	<classpathentry kind="lib" path="C:/Users/bizcom/Desktop/Javafx-AWS-RDS/libs/testfx-junit5-4.0.16-alpha.jar"/>
 	<classpathentry kind="con" path="org.testng.TESTNG_CONTAINER"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
