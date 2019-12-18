@@ -5,12 +5,6 @@
  * Side Menu CSS                                                               *
  *                                                                             *
  ******************************************************************************/
-.menu{
-	-fx-padding: 20.0,10.0;
-	-fx-font-size: 1.3em;
-	-fx-font-weight: NORMAL;
-	-fx-text-fill: #444;
-}
 
 
 .tree-table-cell {
