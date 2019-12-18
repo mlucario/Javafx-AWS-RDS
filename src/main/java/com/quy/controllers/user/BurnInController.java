@@ -1,10 +1,12 @@
 package com.quy.controllers.user;
 
 import java.net.URL;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXTextArea;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.controls.JFXTreeTableView;
 import com.quy.bizcom.SMCController;
@@ -35,12 +37,19 @@ public class BurnInController extends Controller implements Initializable {
 
 	@FXML
 	private JFXButton btnStart;
-
+	@FXML
+	private JFXTextArea txtNote;
+	@FXML
+	private Text txtID;
+	@FXML
+	private JFXTextField txtSN;
 	@FXML
 	private Text txtNumber;
 	private DBHandler dbHandler;
 	protected String currentUser = SignInController.getInstance().username();
 	private ObservableList<SMCController> barcode = FXCollections.observableArrayList();
+	private String listBurnInSN;
+	private String idBurnIn;
 
 	@FXML
 	void addToBurnInList(ActionEvent event) {
@@ -51,16 +60,11 @@ public class BurnInController extends Controller implements Initializable {
 			String result = dbHandler.addToBurnInWaitingList(serialNumber);
 			if (result.equals(serialNumber)) {
 				addBarcodeToTable(barcode, serialNumber, model);
+				listBurnInSN += serialNumber + ";";
 				btnStart.setDisable(false);
-				String history = dbHandler.addToHistoryRecord(currentUser, "Added to waiting list burn in",
-						getCurrentTimeStamp(), serialNumber, "Added to burn in system. SN: " + serialNumber, false);
-				if (!history.equalsIgnoreCase(serialNumber)) {
-					warningAlert(history);
-				} else {
-					notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null,
-							"Add to burn-in list Successfully", 2);
-					notification.showInformation();
-				}
+				notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null, "Add to burn-in list Successfully",
+						2);
+				notification.showInformation();
 
 			} else {
 				warningAlert(result);
@@ -72,12 +76,13 @@ public class BurnInController extends Controller implements Initializable {
 		txtControllerBarcode.clear();
 		txtControllerBarcode.requestFocus();
 		btnAdd.setDisable(true);
-
+		txtID.setVisible(false);
 	}
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		dbHandler = new DBHandler();
+		listBurnInSN = "";
 
 		btnAdd.setDisable(true);
 		btnStart.setDisable(true);
@@ -96,6 +101,16 @@ public class BurnInController extends Controller implements Initializable {
 
 		treeviewTableBuilder(treeview, barcode);
 		txtControllerBarcode.setOnAction(e -> addToBurnInList(e));
+		txtSN.textProperty().addListener((o, oldVal, newVal) -> {
+			if (!oldVal.equalsIgnoreCase(newVal)) {
+				treeview.setPredicate(controller -> {
+					final SMCController aController = controller.getValue();
+					return aController.getSerialNumber().getValue().contains(newVal);
+				});
+			}
+		});
+
+		txtID.setVisible(false);
 
 	}
 
@@ -116,6 +131,7 @@ public class BurnInController extends Controller implements Initializable {
 					case ASSEMBLY_STATION:
 					case FIRMWARE_UPDATE_STATION:
 					case REPAIR_STATION:
+					case RE_WORK_STATION:
 						result = "";
 						break;
 					case WAIT_TO_BURN_IN:
@@ -152,8 +168,14 @@ public class BurnInController extends Controller implements Initializable {
 
 	@FXML
 	void startBurnIn(ActionEvent event) {
+		idBurnIn = generateBurnInID();
+		txtID.setVisible(true);
+		txtID.setText(idBurnIn);
 		String timeStamp = getCurrentTimeStamp();
 		int count = 0;
+		if (listBurnInSN.endsWith(";")) {
+			listBurnInSN = listBurnInSN.substring(0, listBurnInSN.length() - 1);
+		}
 
 		if (!barcode.isEmpty()) {
 			boolean flag = false;
@@ -162,11 +184,12 @@ public class BurnInController extends Controller implements Initializable {
 			for (SMCController c : myList) {
 
 				String serialNumber = c.getSerialNumber().getValue();
-				String result = dbHandler.burnIn(serialNumber, timeStamp);
+				int burnInCount = Integer.parseInt(dbHandler.getStatusDone(COL_BURIN_IN_COUNT_CONTROLER, serialNumber));
+				String result = dbHandler.burnIn(serialNumber, timeStamp, idBurnIn, ++burnInCount);
 				if (result.equalsIgnoreCase(serialNumber)) {
 					count++;
 					String history = dbHandler.addToHistoryRecord(currentUser, "Burn In Station", getCurrentTimeStamp(),
-							serialNumber, "Started Burn In Process SN " + serialNumber, false);
+							serialNumber, "Started Burn In Controller  " + serialNumber + " (" + burnInCount + ")",false);
 
 					if (!history.equalsIgnoreCase(serialNumber)) {
 						warningAlert(history);
@@ -175,7 +198,9 @@ public class BurnInController extends Controller implements Initializable {
 					}
 
 				} else {
+
 					warningAlert(result);
+					break;
 				}
 			}
 
@@ -183,13 +208,20 @@ public class BurnInController extends Controller implements Initializable {
 				notification = notificatioBuilder(Pos.CENTER, graphic, null, count + " Added to Burn in Successfully",
 						3);
 				notification.showInformation();
+				// update to burn in db table
 
+				dbHandler.updateBurnInTable(txtID.getText(), listBurnInSN, count, getCurrentTimeStamp(), false);
 				barcode.clear();
 				SMCController.stt = 1;
 				txtNumber.textProperty().bind(Bindings.format("%d", barcode.size()));
 			}
 
 		}
+	}
+
+	public String generateBurnInID() {
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		return timestamp.getTime() + "";
 	}
 
 }

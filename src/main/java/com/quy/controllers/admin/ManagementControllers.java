@@ -5,13 +5,13 @@ import java.util.ResourceBundle;
 
 import com.quy.controllers.Controller;
 import com.quy.database.DBHandler;
+import com.jfoenix.controls.JFXComboBox;
+import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.controls.JFXTreeTableColumn;
 import com.jfoenix.controls.JFXTreeTableView;
 import com.jfoenix.controls.RecursiveTreeItem;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import com.quy.bizcom.SMCController;
-import com.quy.bizcom.User;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -32,15 +32,23 @@ public class ManagementControllers extends Controller implements Initializable {
 
 	@FXML
 	private Label txtfail;
+
+	@FXML
+	private JFXTextField txtSN1;
+
+    @FXML
+    private JFXComboBox<String> cbModel;
+    @FXML
+    private Label txtCBCount;
+    
+	
 	private DBHandler dbHandler;
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		dbHandler = new DBHandler();
-		txtTotalInven.setText(dbHandler.countControllers("WHERE Is_Shipping_Done=?", false) + "");
-		txtPassed.setText(dbHandler.countControllers("WHERE Is_Passed=?", true) + "");
-		txtfail.setText(dbHandler.countControllers("WHERE Is_Passed=?", false) + "");
+
 		JFXTreeTableColumn<SMCController, Number> sttCol = new JFXTreeTableColumn<>("STT");
 		sttCol.prefWidthProperty().bind(tableViewInventory.widthProperty().multiply(0.1));
 		sttCol.setResizable(false);
@@ -63,6 +71,17 @@ public class ManagementControllers extends Controller implements Initializable {
 				return serialNumberCol.getComputedValue(param);
 		});
 
+		JFXTreeTableColumn<SMCController, String> modelCol = new JFXTreeTableColumn<>("Model");
+		modelCol.prefWidthProperty().bind(tableViewInventory.widthProperty().multiply(0.2));
+		modelCol.setResizable(false);
+		modelCol.setSortable(false);
+		modelCol.setCellValueFactory((TreeTableColumn.CellDataFeatures<SMCController, String> param) -> {
+			if (modelCol.validateValue(param))
+				return param.getValue().getValue().getModel();
+			else
+				return modelCol.getComputedValue(param);
+		});
+
 		JFXTreeTableColumn<SMCController, String> burnInResultCol = new JFXTreeTableColumn<>("Burn In Result");
 		burnInResultCol.prefWidthProperty().bind(tableViewInventory.widthProperty().multiply(0.2));
 		burnInResultCol.setResizable(false);
@@ -73,12 +92,26 @@ public class ManagementControllers extends Controller implements Initializable {
 			else
 				return burnInResultCol.getComputedValue(param);
 		});
+
 		listAllControllers.addAll(dbHandler.getAllControllers());
 		final TreeItem<SMCController> root = new RecursiveTreeItem<>(listAllControllers,
 				RecursiveTreeObject::getChildren);
 		tableViewInventory.setRoot(root);
 		tableViewInventory.setShowRoot(false);
-		tableViewInventory.getColumns().setAll(sttCol, serialNumberCol, burnInResultCol);
+		tableViewInventory.getColumns().setAll(sttCol, serialNumberCol, modelCol, burnInResultCol);
+
+		txtTotalInven.setText(listAllControllers.size()+"");
+		txtPassed.setText(dbHandler.getCurrentInventoryPassed(true)+"");
+		txtfail.setText(dbHandler.getCurrentInventoryPassed(false)+"");
+
+		txtSN1.textProperty().addListener((o, oldVal, newVal) -> {
+			if (!oldVal.equalsIgnoreCase(newVal)) {
+				tableViewInventory.setPredicate(controller -> {
+					final SMCController aController = controller.getValue();
+					return aController.getSerialNumber().getValue().contains(newVal);
+				});
+			}
+		});
 	}
 
 }

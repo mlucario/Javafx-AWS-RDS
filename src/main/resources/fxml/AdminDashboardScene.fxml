@@ -46,7 +46,7 @@
 								</HBox>
 							</center>
 						</JFXToolbar>
-						<HBox>
+						<HBox VBox.vgrow="ALWAYS">
 							<children>
 								<VBox alignment="TOP_CENTER" prefHeight="600.0" prefWidth="255.0">
 									<children>
@@ -104,18 +104,18 @@
 										</JFXButton>
 									</children>
 								</VBox>
-								<AnchorPane HBox.hgrow="ALWAYS">
-									<HBox.margin>
-										<Insets />
-									</HBox.margin>
-									<children>
-										<StackPane fx:id="panelAdmin" alignment="TOP_CENTER" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="5.0">
-											<children>
-												<VBox fx:id="vBoxPanel" alignment="TOP_CENTER" StackPane.alignment="TOP_CENTER" />
-											</children>
-										</StackPane>
-									</children>
-								</AnchorPane>
+                        <HBox HBox.hgrow="ALWAYS">
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                           <children>
+      								<AnchorPane HBox.hgrow="ALWAYS">
+      									<children>
+      										<StackPane fx:id="panelAdmin" alignment="TOP_CENTER" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0" />
+      									</children>
+      								</AnchorPane>
+                           </children>
+                        </HBox>
 							</children>
 							<VBox.margin>
 								<Insets top="20.0" />

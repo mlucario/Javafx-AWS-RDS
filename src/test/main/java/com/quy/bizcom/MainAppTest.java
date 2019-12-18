@@ -1,10 +1,9 @@
 //package main.java.com.quy.bizcom;
 //
-//import static org.testfx.assertions.api.Assertions.assertThat;
-//
 //import org.junit.jupiter.api.BeforeEach;
 //import org.junit.jupiter.api.Test;
 //import org.testfx.api.FxRobot;
+//import org.testfx.assertions.api.Assertions;
 //import org.testfx.framework.junit5.ApplicationTest;
 //
 //import com.quy.bizcom.MainApp;
@@ -22,7 +21,7 @@
 //
 //	@Test
 //	void should_have_login_button() {
-//		assertThat(lookup(".button").queryButton()).hasText("SIGN IN");
+//		Assertions.assertThat(lookup(".button").queryButton()).hasText("SIGN IN");
 //	}
 //
 //}

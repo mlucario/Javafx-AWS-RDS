@@ -79,7 +79,7 @@ public class Controller {
 	protected static final String RECEIVING_STATION_SCENE = "/fxml/ui/users/ReceivingStationScene.fxml";
 	protected static final String ASSEMBLY_STATION_SCENE = "/fxml/ui/users/AssemblyStationScene.fxml";
 	protected static final String BURN_IN_STATION_SCENE = "/fxml/ui/users/BurnInStationScene.fxml";
-	protected static final String RESULT_STATION_SCENE = "/fxml/ui/users/ResultStationScene3.fxml";
+	protected static final String RESULT_STATION_SCENE = "/fxml/ui/users/ResultStationScene.fxml";
 	protected static final String FIRMWARE_UPDATE_STATION_SCENE = "/fxml/ui/users/FirmwareUpdateStation.fxml";
 	protected static final String REPAIR_STATION_SCENE = "/fxml/ui/users/RepairStationScene.fxml";
 	protected static final String PACKING_STATION_SCENE = "/fxml/ui/users/PackingStation.fxml";
@@ -115,27 +115,6 @@ public class Controller {
 	protected static final String ADMIN_PANEL_USERS_MANAGEMENT = "User Management";
 	protected static final String ADMIN_CONTROLLER_MANAGEMENT = "Controller Management";
 
-	// Controllers Column
-	protected static final String MODEL = "model";
-	protected static final String CONTROLLER_BARCODE = "controller_barcode";
-	protected static final String CURRENT_STATION = "current_station";
-	protected static final String TIME_RECEIVED = "time_received";
-	protected static final String TIME_START_ASSEMBLY = "time_start_assembly";
-	protected static final String TIME_START_RE_ASSEMBLY = "time_start_re_assembly";
-	protected static final String TIME_START_BURN_IN = "time_start_burn_in";
-	protected static final String TIME_FINISH_BURN_IN = "time_finish_burn_in";
-	protected static final String TIME_PACKED = "time_packed";
-	protected static final String TIME_SHIPPED = "time_shipped";
-	protected static final String IS_RECEIVED = "Is_Received";
-	protected static final String IS_ASSEMBLED = "Is_Assembled";
-	protected static final String IS_RE_ASSEMBLED = "Is_Re_Assembled";
-	protected static final String IS_BURN_IN_PROCESSING = "Is_Burn_In_Processing";
-	protected static final String IS_BURN_IN_DONE = "Is_Burn_In_Done";
-	protected static final String IS_PASSED = "Is_Passed";
-	protected static final String IS_REPAIRED = "Is_Repaired";
-	protected static final String IS_PACKED = "Is_Packed";
-	protected static final String IS_SHIPPED = "is_Shipped";
-
 	// History Table
 	protected static final String TABLE_HISTORY = "history";
 	protected static final String COL_QA_HISTORY = "QA";
@@ -161,20 +140,19 @@ public class Controller {
 	protected static final String COL_BURN_IN_RESULT_CONTROLER = "Burn_In_Result";
 	protected static final String COL_LOT_ID_CONTROLER = "Lot_ID";
 	protected static final String COL_IS_RECEIVIING_CONTROLER = "Is_Received";
-	protected static final String COL_IS_ASSEMBLY_DONE_CONTROLER = "Is_Assembly_Done";
+	protected static final String COL_ASSEMBLY_COUNT_CONTROLER = "Assembly_Count";
 	protected static final String COL_IS_RE_ASSEMBLY_DONE_CONTROLER = "Is_Re_Assembly_Done";
 	protected static final String COL_IS_BURIN_IN_DONE_CONTROLER = "Is_Burn_In_Done";
-	protected static final String COL_IS_BURIN_IN_PROCESSING_CONTROLER = "Is_Burn_In_Processing";
+	protected static final String COL_BURIN_IN_COUNT_CONTROLER = "Burn_In_Count";
 	protected static final String COL_IS_PACKING_DONE_CONTROLER = "Is_Packing_Done";
 	protected static final String COL_IS_SHIPPING_DONE_CONTROLER = "Is_Shipping_Done";
 	protected static final String COL_IS_REPAIR_DONE_CONTROLER = "Is_Repaired_Done";
 	protected static final String COL_IS_PASSED_CONTROLER = "Is_Passed";
-	protected static final String COL_IS_REWORK_CONTROLER = "Is_ReWork";
 
 	protected static final String COL_SYMPTOM_FAIL_CONTROLER = "Symptoms_Fail";
 	protected static final String COL_REWORK_COUNT_CONTROLER = "Re_Work_Count";
 	protected static final String COL_FIRMWARE_UPDATE_TIME_CONTROLER = "Firmware_Update_Time";
-	protected static final String COL_IS_FIRMWARE_UPDATED_CONTROLER = "Is_Firmware_Updated";
+	protected static final String COL_FIRMWARE_UPDATED_COUNT_CONTROLER = "Firmware_Updated_Count";
 
 	// User Table
 	protected static final String TABLE_USER = "users";
@@ -428,12 +406,15 @@ public class Controller {
 		date = new Date();
 		sqlTime = new java.sql.Timestamp(date.getTime());
 		return sqlTime.toString();
+
 	}
 
+	// TODO Implement check list Pattern Barcode / serial numbers
 	public boolean isBarcodeValid(String serialNumber) {
 		return serialNumber.matches(PATTERN_BARCODE);
 	}
 
+	// TODO Implement check list Pattern model
 	public boolean isModelValid(String model) {
 		return model.matches(PATTERN_MODEL);
 	}
@@ -448,6 +429,15 @@ public class Controller {
 
 	public void addBarcodeToTable(ObservableList<SMCController> barcode, String serialNumber, String model) {
 		barcode.add(new SMCController(serialNumber, model));
+	}
+	
+	public void removeBarcode(ObservableList<SMCController> barcode, String serialNumber) {
+		for(SMCController sss : barcode) {
+			if(sss.getSerialNumber().getValue().equalsIgnoreCase(serialNumber)) {
+				barcode.remove(sss);
+				break;
+			}
+		}
 	}
 
 	public void addBarcodeToTable(ObservableList<SMCController> barcode, String serialNumber, String model, int stt) {

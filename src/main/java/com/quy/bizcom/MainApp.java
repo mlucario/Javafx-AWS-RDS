@@ -13,9 +13,6 @@ public class MainApp extends Application {
 	public void start(Stage stage) throws Exception {
 
 		Parent root = FXMLLoader.load(getClass().getResource("/fxml/SignInScene.fxml"));
-//		Parent root = FXMLLoader.load(getClass().getResource("/fxml/AdminDashboardScene.fxml"));
-//		Parent root = FXMLLoader.load(getClass().getResource("/fxml/ui/admin/UsersManagementScene.fxml"));
-
 		Scene scene = new Scene(root);
 //		scene.getStylesheets().add(MainApp.class.getResource("/styles/fonts.css").toExternalForm());
 		scene.getStylesheets().add(MainApp.class.getResource("/styles/Styles.css").toExternalForm());

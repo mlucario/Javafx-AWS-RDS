@@ -14,12 +14,9 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
@@ -56,22 +53,18 @@ public class UserDashboardController extends Controller implements Initializable
 	private Text txtTitleStation;
 
 	@FXML
-	private StackPane paneIntro;
+	private StackPane panelShow;
 
-	@FXML
-	private ImageView imgIntro;
 	@FXML
 	private Text txtDate;
 
 	@FXML
 	private Text txtTime;
 
-	@FXML
-	private VBox vboxLoad;
-
 	private String currentStation;
 //	private double x, y;
-	private AnchorPane tempPane;
+	private HBox tempPane;
+
 //	private Executor exec;
 //	private DBHandler dbHandler;
 
@@ -148,8 +141,8 @@ public class UserDashboardController extends Controller implements Initializable
 		setUsername(SignInController.getInstance().username());
 
 		// Load Image Diagram
-		imgIntro.setImage(new Image(getClass().getResource(IMAGE_PATH + "diagram.png").toString()));
-		tempPane = new AnchorPane();
+//		imgIntro.setImage(new Image(getClass().getResource(IMAGE_PATH + "diagram.png").toString()));
+		tempPane = new HBox();
 
 		// Setup Date and Time
 		// =========================
@@ -163,8 +156,6 @@ public class UserDashboardController extends Controller implements Initializable
 		clock.setCycleCount(Animation.INDEFINITE);
 		clock.play();
 		// =========================
-//		System.err.println("ss" + MainApp.window.heightProperty().multiply(0.8).getValue().doubleValue());
-//		vboxLoad.prefHeightProperty().bind(MainApp.window.heightProperty().multiply(0.8));
 
 	}
 
@@ -172,25 +163,27 @@ public class UserDashboardController extends Controller implements Initializable
 		txtUsername.setText("Current user: " + username.toUpperCase());
 
 	}
-
-	public void hideIntroView() {
-		imgIntro.setVisible(false);
-	}
+//
+//	public void hideIntroView() {
+//		imgIntro.setVisible(false);
+//	}
 
 	// Switch to scene when user click on button
 	public void switchScence(String scene, String station) {
 		if (!currentStation.equalsIgnoreCase(station)) {
 //			System.out.println("Show " + station);
-			txtTitleStation.setText(station);
+//			txtTitleStation.setText(station);
 			// Hide diagram and view
-			hideIntroView();
+//			hideIntroView();
 			tempPane.getChildren().clear();
+
 			// Load fxml into loadPane
 			try {
 				tempPane = FXMLLoader.load(getClass().getResource(scene));
-				vboxLoad.getChildren().clear();
-				vboxLoad.getChildren().add(txtTitleStation);
-				vboxLoad.getChildren().add(tempPane);
+
+				panelShow.getChildren().clear();
+//				vboxShow.getChildren().add(txtTitleStation);
+				panelShow.getChildren().add(tempPane);
 
 				currentStation = station;
 			} catch (IOException e) {

@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXTextArea;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.controls.JFXTreeTableView;
 import com.quy.bizcom.SMCController;
@@ -33,10 +34,13 @@ public class FirmwareUpdateController extends Controller implements Initializabl
 	@FXML
 	private Text txtCounter;
 
+	@FXML
+	private JFXTextArea txtNote;
+	@FXML
+	private JFXTextField txtSN;
 	private DBHandler dbHandler;
 	private String currentUser = SignInController.getInstance().username();
 	private ObservableList<SMCController> barcode = FXCollections.observableArrayList();
-
 
 	@FXML
 	void keyPressValidate() {
@@ -58,6 +62,25 @@ public class FirmwareUpdateController extends Controller implements Initializabl
 			} else {
 				if (currentStatus.equalsIgnoreCase(SHIPPING_STATION)) {
 					result = "\r\n Controller has been shipped. Please ask manager intermediately.";
+				} else {
+					switch (currentStatus) {
+					case RECEIVING_STATION:
+						result = "Controller doesn't pass Assembly Station!. Please Add to Assembly Station now.";
+						break;
+					case ASSEMBLY_STATION:
+					case FIRMWARE_UPDATE_STATION:
+					case WAIT_TO_BURN_IN:
+					case RE_WORK_STATION:
+					case BURN_IN_STATION:
+					case RESULT_STATION:
+					case REPAIR_STATION:
+					case PACKING_STATION:
+						result = "";
+						break;
+					default:
+						result = "Something was wrong!";
+						break;
+					}
 				}
 			}
 		}
@@ -69,41 +92,23 @@ public class FirmwareUpdateController extends Controller implements Initializabl
 	void submit() {
 		if (isValidInput().isEmpty()) {
 			String serialNumber = getStringJFXTextField(txtControllerBarcode);
-			String currentLastestStation = dbHandler.getStatusDone(COL_CURRENT_STATION_CONTROLER, serialNumber);
 			String timestamp = getCurrentTimeStamp();
 			String model = dbHandler.getStatusDone(COL_MODEL_CONTROLER, serialNumber);
-			if (currentLastestStation.equalsIgnoreCase(ASSEMBLY_STATION)) {
-				String result = dbHandler.firmwareUpdate(serialNumber, timestamp);
-				if (result.equalsIgnoreCase(serialNumber)) {
-					addBarcodeToTable(barcode, serialNumber, model);
-					String history = dbHandler.addToHistoryRecord(currentUser, FIRMWARE_UPDATE_STATION, timestamp,
-							serialNumber, "Firmware updated SN: " + serialNumber, false);
-					if (!history.equalsIgnoreCase(serialNumber)) {
-						warningAlert(history);
-					} else {
-						notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null,
-								"Firmware Update Successfully", 2);
-						notification.showInformation();
-					}
+			int count = Integer.parseInt(dbHandler.getStatusDone(COL_FIRMWARE_UPDATED_COUNT_CONTROLER, serialNumber));
+			String result = dbHandler.firmwareUpdate(serialNumber, timestamp, count);			
+			if (result.equalsIgnoreCase(serialNumber)) {
+				addBarcodeToTable(barcode, serialNumber, model);
+				String history = dbHandler.addToHistoryRecord(currentUser, FIRMWARE_UPDATE_STATION, timestamp,
+						serialNumber, "Firmware updated SN: " + serialNumber + ". " + txtNote.getText(),false);
+				if (!history.equalsIgnoreCase(serialNumber)) {
+					warningAlert(history);
 				} else {
-					warningAlert(result);
+					notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null, "Firmware Update Successfully",
+							2);
+					notification.showInformation();
 				}
-
-			}
-
-			else {
-				// Check if it is updated
-				boolean isFirmwareUpdated = dbHandler.getStatusDone(COL_IS_FIRMWARE_UPDATED_CONTROLER, serialNumber)
-						.equalsIgnoreCase("1");
-				if (isFirmwareUpdated) {
-					warningAlert("Controller (SN: " + serialNumber
-							+ ") was updated firmware. Please use re-work to re_update!");
-				} else if (!currentLastestStation.equalsIgnoreCase(ASSEMBLY_STATION)) {
-					warningAlert(ASSEMBLY_STATION + " is required!");
-				} else {
-					warningAlert("WRONG STATION");
-				}
-
+			} else {
+				warningAlert(result);
 			}
 
 		} else
@@ -132,6 +137,14 @@ public class FirmwareUpdateController extends Controller implements Initializabl
 		barcode.addAll(dbHandler.getAllFirmwareUpdated());
 		treeviewTableBuilder(treeView, barcode);
 		txtCounter.textProperty().bind(Bindings.format("%d", barcode.size()));
+		txtSN.textProperty().addListener((o, oldVal, newVal) -> {
+			if (!oldVal.equalsIgnoreCase(newVal)) {
+				treeView.setPredicate(controller -> {
+					final SMCController aController = controller.getValue();
+					return aController.getSerialNumber().getValue().contains(newVal);
+				});
+			}
+		});
 	}
 
 }

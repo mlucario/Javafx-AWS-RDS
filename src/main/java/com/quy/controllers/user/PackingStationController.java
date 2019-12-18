@@ -17,6 +17,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.text.Text;
 
 public class PackingStationController extends Controller implements Initializable {
 	@FXML
@@ -30,6 +31,12 @@ public class PackingStationController extends Controller implements Initializabl
 	private DBHandler dbHandler;
 	private String currentUser = SignInController.getInstance().username();
 	private ObservableList<SMCController> barcode = FXCollections.observableArrayList();
+	@FXML
+	private JFXTextField txtSN;
+	@FXML
+	private Text txtCounter;
+	
+	private int count;
 
 	@FXML
 	void keyPressValidate() {
@@ -85,13 +92,15 @@ public class PackingStationController extends Controller implements Initializabl
 			boolean isBurnInDone = dbHandler.getStatusDone(COL_IS_BURIN_IN_DONE_CONTROLER, serialNumber)
 					.equalsIgnoreCase("1");
 			String timestamp = getCurrentTimeStamp();
+			String model = dbHandler.getStatusDone(COL_MODEL_CONTROLER, serialNumber);
 
 			if (isBurnInDone) {
 				String result = dbHandler.packed(serialNumber, timestamp);
 				if (result.equalsIgnoreCase(serialNumber)) {
-					addBarcodeToTable(barcode, serialNumber);
+					addBarcodeToTable(barcode, serialNumber, model);
+					count ++;
 					String history = dbHandler.addToHistoryRecord(currentUser, PACKING_STATION, timestamp, serialNumber,
-							"Package is ready!", false);
+							"Package is ready!",false);
 					if (!history.equalsIgnoreCase(serialNumber)) {
 						warningAlert(history);
 					} else {
@@ -107,6 +116,8 @@ public class PackingStationController extends Controller implements Initializabl
 			warningAlert(isValidInput());
 
 		}
+		
+		txtCounter.setText(count+"");
 		txtControllerBarcode.clear();
 		txtControllerBarcode.requestFocus();
 	}
@@ -127,9 +138,20 @@ public class PackingStationController extends Controller implements Initializabl
 			submit();
 
 		});
-
+		barcode.addAll(dbHandler.getAllPacked());
+		count = barcode.size();
+		txtCounter.setText(count + "");
 		treeviewTableBuilder(treeView, barcode);
 
+		txtSN.textProperty().addListener((o, oldVal, newVal) -> {
+			if (!oldVal.equalsIgnoreCase(newVal)) {
+				treeView.setPredicate(controller -> {
+					final SMCController aController = controller.getValue();
+					return aController.getSerialNumber().getValue().contains(newVal);
+				});
+			}
+		});
+		
 	}
 
 }

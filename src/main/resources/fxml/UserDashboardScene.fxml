@@ -15,7 +15,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="1.7976931348623157E308" onMouseDragged="#dragged" onMousePressed="#pressed" style="-fx-background-color: transparent;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.quy.controllers.UserDashboardController">
+<AnchorPane maxHeight="1.7976931348623157E308" minHeight="550.0" minWidth="950.0" onMouseDragged="#dragged" onMousePressed="#pressed" style="-fx-background-color: transparent;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.quy.controllers.UserDashboardController">
 	<children>
 		<StackPane alignment="TOP_CENTER" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
 			<children>
@@ -207,31 +207,18 @@
 										<Insets left="10.0" />
 									</HBox.margin>
 								</VBox>
-								<AnchorPane maxHeight="1.7976931348623157E308" HBox.hgrow="ALWAYS">
-									<children>
-										<StackPane fx:id="paneIntro" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="0.0">
-											<children>
-												<VBox fx:id="vboxLoad" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308">
-													<children>
-														<Text id="sampleLabel" fx:id="txtTitleStation" fill="#0033ff" strokeType="OUTSIDE" strokeWidth="0.0" text="Title Station" textAlignment="CENTER">
-															<font>
-																<Font name="Roboto Black" size="45.0" />
-															</font>
-                                             <VBox.margin>
-                                                <Insets top="20.0" />
-                                             </VBox.margin>
-														</Text>
-													</children>
-												</VBox>
-												<ImageView fx:id="imgIntro" fitHeight="482.0" fitWidth="830.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
-													<image>
-														<Image url="@../images/diagram.png" />
-													</image>
-												</ImageView>
-											</children>
-										</StackPane>
-									</children>
-								</AnchorPane>
+                        <HBox HBox.hgrow="ALWAYS">
+                           <children>
+                              <AnchorPane HBox.hgrow="ALWAYS">
+                                 <HBox.margin>
+                                    <Insets left="5.0" right="5.0" />
+                                 </HBox.margin>
+                                 <children>
+                                    <StackPane fx:id="panelShow" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                 </children>
+                              </AnchorPane>
+                           </children>
+                        </HBox>
 							</children>
 							<VBox.margin>
 								<Insets top="20.0" />
