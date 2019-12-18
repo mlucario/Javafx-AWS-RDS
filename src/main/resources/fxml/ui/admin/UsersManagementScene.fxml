@@ -10,96 +10,112 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<HBox alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.quy.controllers.admin.UsersManagementController">
-   <children>
-      <VBox HBox.hgrow="ALWAYS">
-         <children>
-            <HBox alignment="CENTER" VBox.vgrow="NEVER">
-               <children>
-                  <Label alignment="CENTER" text="User Management" textFill="#3700ff">
-                     <font>
-                        <Font name="Roboto Medium" size="30.0" />
-                     </font>
-                     <HBox.margin>
-                        <Insets bottom="20.0" />
-                     </HBox.margin>
-                  </Label>
-               </children>
-            </HBox>
-            <HBox alignment="CENTER_RIGHT">
-               <children>
-                  <Label text="Search">
-                     <font>
-                        <Font name="Roboto Medium" size="14.0" />
-                     </font>
-                  </Label>
-                  <JFXTextField fx:id="txtUser" prefWidth="250.0">
-                     <font>
-                        <Font name="Roboto Medium Italic" size="14.0" />
-                     </font>
-                     <HBox.margin>
-                        <Insets left="20.0" />
-                     </HBox.margin>
-                  </JFXTextField>
-                  <FontAwesomeIconView fill="DODGERBLUE" glyphName="SEARCH" size="20" />
-               </children>
-               <VBox.margin>
-                  <Insets right="25.0" />
-               </VBox.margin>
-            </HBox>
-            <JFXTreeTableView fx:id="treetableUsers" VBox.vgrow="ALWAYS">
-               <VBox.margin>
-                  <Insets top="10.0" />
-               </VBox.margin>
-            </JFXTreeTableView>
-            <HBox alignment="TOP_CENTER" VBox.vgrow="NEVER">
-               <children>
-                  <VBox fx:id="vBoxuserPanel">
-                     <children>
-                        <HBox alignment="TOP_CENTER">
-                           <children>
-                              <JFXButton fx:id="btnActivate" style="-fx-background-color: #33691E;" text="Activate Account" textFill="WHITE">
-                                 <font>
-                                    <Font name="Roboto Medium" size="17.0" />
-                                 </font>
-                                 <HBox.margin>
-                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                 </HBox.margin>
-                              </JFXButton>
-                              <JFXButton fx:id="btnLock" layoutX="10.0" layoutY="10.0" style="-fx-background-color: Red;" text="Lock Account" textFill="WHITE">
-                                 <font>
-                                    <Font name="Roboto Medium" size="17.0" />
-                                 </font>
-                                 <HBox.margin>
-                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                 </HBox.margin>
-                              </JFXButton>
-                           </children>
-                        </HBox>
-                        <HBox>
-                           <children>
-                              <JFXTextField fx:id="txtNewPassword" onKeyReleased="#keyPressed" prefHeight="25.0" prefWidth="237.0" />
-                              <JFXButton fx:id="btnChangePass" style="-fx-background-color: #2B98C6;" text="Change Password" textFill="WHITE">
-                                 <font>
-                                    <Font name="Roboto Medium" size="15.0" />
-                                 </font>
-                                 <HBox.margin>
-                                    <Insets left="40.0" />
-                                 </HBox.margin>
-                              </JFXButton>
-                           </children>
-                        </HBox>
-                     </children>
-                  </VBox>
-               </children>
-               <VBox.margin>
-                  <Insets bottom="30.0" top="30.0" />
-               </VBox.margin>
-            </HBox>
-         </children>
-      </VBox>
-   </children>
-   <padding>
-      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-   </padding>
+<HBox alignment="TOP_CENTER"
+	xmlns="http://javafx.com/javafx/8.0.171"
+	xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="com.quy.controllers.admin.UsersManagementController">
+	<children>
+		<VBox HBox.hgrow="ALWAYS">
+			<children>
+				<HBox alignment="CENTER" VBox.vgrow="NEVER">
+					<children>
+						<Label alignment="CENTER" text="User Management"
+							textFill="#3700ff">
+							<font>
+								<Font name="Roboto Medium" size="30.0" />
+							</font>
+							<HBox.margin>
+								<Insets bottom="20.0" />
+							</HBox.margin>
+						</Label>
+					</children>
+				</HBox>
+				<HBox alignment="CENTER_RIGHT">
+					<children>
+						<Label text="Search">
+							<font>
+								<Font name="Roboto Medium" size="14.0" />
+							</font>
+						</Label>
+						<JFXTextField fx:id="txtUser" prefWidth="250.0">
+							<font>
+								<Font name="Roboto Medium Italic" size="14.0" />
+							</font>
+							<HBox.margin>
+								<Insets left="20.0" />
+							</HBox.margin>
+						</JFXTextField>
+						<FontAwesomeIconView fill="DODGERBLUE"
+							glyphName="SEARCH" size="20" />
+					</children>
+					<VBox.margin>
+						<Insets right="25.0" />
+					</VBox.margin>
+				</HBox>
+				<JFXTreeTableView fx:id="treetableUsers"
+					VBox.vgrow="ALWAYS">
+					<VBox.margin>
+						<Insets top="10.0" />
+					</VBox.margin>
+				</JFXTreeTableView>
+				<HBox alignment="TOP_CENTER" VBox.vgrow="NEVER">
+					<children>
+						<VBox fx:id="vBoxuserPanel">
+							<children>
+								<HBox alignment="TOP_CENTER">
+									<children>
+										<JFXButton fx:id="btnActivate"
+											style="-fx-background-color: #33691E;"
+											text="Activate Account" textFill="WHITE">
+											<font>
+												<Font name="Roboto Medium" size="17.0" />
+											</font>
+											<HBox.margin>
+												<Insets bottom="10.0" left="10.0" right="10.0"
+													top="10.0" />
+											</HBox.margin>
+										</JFXButton>
+										<JFXButton fx:id="btnLock" layoutX="10.0"
+											layoutY="10.0" style="-fx-background-color: Red;"
+											text="Lock Account" textFill="WHITE">
+											<font>
+												<Font name="Roboto Medium" size="17.0" />
+											</font>
+											<HBox.margin>
+												<Insets bottom="10.0" left="10.0" right="10.0"
+													top="10.0" />
+											</HBox.margin>
+										</JFXButton>
+									</children>
+								</HBox>
+								<HBox>
+									<children>
+										<JFXTextField fx:id="txtNewPassword"
+											onKeyReleased="#keyPressed" prefHeight="25.0"
+											prefWidth="237.0" />
+										<JFXButton fx:id="btnChangePass"
+											style="-fx-background-color: #2B98C6;" text="Change Password"
+											textFill="WHITE">
+											<font>
+												<Font name="Roboto Medium" size="15.0" />
+											</font>
+											<HBox.margin>
+												<Insets left="40.0" />
+											</HBox.margin>
+										</JFXButton>
+									</children>
+								</HBox>
+							</children>
+						</VBox>
+					</children>
+					<VBox.margin>
+						<Insets bottom="30.0" top="30.0" />
+					</VBox.margin>
+				</HBox>
+			</children>
+		</VBox>
+	</children>
+	<padding>
+		<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+	</padding>
 </HBox>

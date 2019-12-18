@@ -15,11 +15,19 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="1.7976931348623157E308" minHeight="550.0" minWidth="950.0" onMouseDragged="#dragged" onMousePressed="#pressed" style="-fx-background-color: transparent;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.quy.controllers.UserDashboardController">
+<AnchorPane maxHeight="1.7976931348623157E308"
+	minHeight="550.0" minWidth="950.0" onMouseDragged="#dragged"
+	onMousePressed="#pressed" style="-fx-background-color: transparent;"
+	xmlns="http://javafx.com/javafx/8.0.171"
+	xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="com.quy.controllers.UserDashboardController">
 	<children>
-		<StackPane alignment="TOP_CENTER" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+		<StackPane alignment="TOP_CENTER"
+			AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0"
+			AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
 			<children>
-				<VBox alignment="TOP_RIGHT" prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: white;">
+				<VBox alignment="TOP_RIGHT" prefHeight="200.0"
+					prefWidth="100.0" style="-fx-background-color: white;">
 					<children>
 						<JFXToolbar>
 							<right>
@@ -27,7 +35,9 @@
 								<fx:include source="TitleBar.fxml" />
 							</right>
 							<left>
-								<Text fill="#0051ff" strokeType="OUTSIDE" strokeWidth="0.0" text="Bizcom Electronics Inc" translateX="20.0" BorderPane.alignment="CENTER">
+								<Text fill="#0051ff" strokeType="OUTSIDE" strokeWidth="0.0"
+									text="Bizcom Electronics Inc" translateX="20.0"
+									BorderPane.alignment="CENTER">
 									<font>
 										<Font name="Roboto Bold Italic" size="25.0" />
 									</font>
@@ -36,8 +46,10 @@
 							<center>
 								<HBox alignment="CENTER" BorderPane.alignment="CENTER">
 									<children>
-										<FontAwesomeIconView glyphName="USER" size="30" />
-										<Text fx:id="txtUsername" fill="#e00000" strokeType="OUTSIDE" strokeWidth="0.0" text="Current user: A">
+										<FontAwesomeIconView glyphName="USER"
+											size="30" />
+										<Text fx:id="txtUsername" fill="#e00000"
+											strokeType="OUTSIDE" strokeWidth="0.0" text="Current user: A">
 											<font>
 												<Font name="Roboto Bold" size="20.0" />
 											</font>
@@ -51,11 +63,17 @@
 						</JFXToolbar>
 						<HBox VBox.vgrow="ALWAYS">
 							<children>
-								<VBox alignment="TOP_CENTER" prefWidth="200.0" style="-fx-background-color: white;">
+								<VBox alignment="TOP_CENTER" prefWidth="200.0"
+									style="-fx-background-color: white;">
 									<children>
-										<JFXButton fx:id="btnReceiving" onAction="#receivingOnClick" prefHeight="40.0" prefWidth="252.0" ripplerFill="#105c82" style="-fx-background-color: #2B98C6; -fx-background-radius: 0;" text="Receiving" textFill="WHITE">
+										<JFXButton fx:id="btnReceiving"
+											onAction="#receivingOnClick" prefHeight="40.0"
+											prefWidth="252.0" ripplerFill="#105c82"
+											style="-fx-background-color: #2B98C6; -fx-background-radius: 0;"
+											text="Receiving" textFill="WHITE">
 											<graphic>
-												<FontAwesomeIconView fill="WHITE" glyphName="CART_PLUS" size="35" textOrigin="CENTER" />
+												<FontAwesomeIconView fill="WHITE"
+													glyphName="CART_PLUS" size="35" textOrigin="CENTER" />
 											</graphic>
 											<font>
 												<Font name="Roboto Medium" size="20.0" />
@@ -67,9 +85,14 @@
 												<Cursor fx:constant="HAND" />
 											</cursor>
 										</JFXButton>
-										<JFXButton fx:id="btnAssembly" onAction="#assemblyOnClick" prefHeight="40.0" prefWidth="252.0" ripplerFill="#105c82" style="-fx-background-color: #2B98C6; -fx-background-radius: 0;" text="Assembly" textFill="WHITE">
+										<JFXButton fx:id="btnAssembly"
+											onAction="#assemblyOnClick" prefHeight="40.0"
+											prefWidth="252.0" ripplerFill="#105c82"
+											style="-fx-background-color: #2B98C6; -fx-background-radius: 0;"
+											text="Assembly" textFill="WHITE">
 											<graphic>
-												<FontAwesomeIconView fill="WHITE" glyphName="COGS" size="35" textOrigin="CENTER" />
+												<FontAwesomeIconView fill="WHITE"
+													glyphName="COGS" size="35" textOrigin="CENTER" />
 											</graphic>
 											<font>
 												<Font name="Roboto Medium" size="20.0" />
@@ -81,9 +104,14 @@
 												<Cursor fx:constant="HAND" />
 											</cursor>
 										</JFXButton>
-										<JFXButton fx:id="btnPacking1" layoutX="10.0" layoutY="280.0" onAction="#firmwareOnClick" prefHeight="40.0" prefWidth="252.0" ripplerFill="#105c82" style="-fx-background-color: #2B98C6; -fx-background-radius: 0;" text="Firmware" textFill="WHITE">
+										<JFXButton fx:id="btnPacking1" layoutX="10.0"
+											layoutY="280.0" onAction="#firmwareOnClick" prefHeight="40.0"
+											prefWidth="252.0" ripplerFill="#105c82"
+											style="-fx-background-color: #2B98C6; -fx-background-radius: 0;"
+											text="Firmware" textFill="WHITE">
 											<graphic>
-												<FontAwesomeIconView fill="WHITE" glyphName="USB" size="35" textOrigin="CENTER" />
+												<FontAwesomeIconView fill="WHITE"
+													glyphName="USB" size="35" textOrigin="CENTER" />
 											</graphic>
 											<font>
 												<Font name="Roboto Medium" size="20.0" />
@@ -95,9 +123,14 @@
 												<Insets bottom="5.0" />
 											</VBox.margin>
 										</JFXButton>
-										<JFXButton fx:id="btnBurnIn" onAction="#burnInOnClick" prefHeight="40.0" prefWidth="252.0" ripplerFill="#105c82" style="-fx-background-color: #2B98C6; -fx-background-radius: 0;" text="Burn-In" textFill="WHITE">
+										<JFXButton fx:id="btnBurnIn"
+											onAction="#burnInOnClick" prefHeight="40.0" prefWidth="252.0"
+											ripplerFill="#105c82"
+											style="-fx-background-color: #2B98C6; -fx-background-radius: 0;"
+											text="Burn-In" textFill="WHITE">
 											<graphic>
-												<FontAwesomeIconView fill="WHITE" glyphName="FIRE" size="35" textOrigin="CENTER" />
+												<FontAwesomeIconView fill="WHITE"
+													glyphName="FIRE" size="35" textOrigin="CENTER" />
 											</graphic>
 											<font>
 												<Font name="Roboto Medium" size="20.0" />
@@ -109,9 +142,14 @@
 												<Cursor fx:constant="HAND" />
 											</cursor>
 										</JFXButton>
-										<JFXButton fx:id="btnResult" onAction="#resultOnClick" prefHeight="40.0" prefWidth="252.0" ripplerFill="#105c82" style="-fx-background-color: #2B98C6; -fx-background-radius: 0;" text="Result" textFill="WHITE">
+										<JFXButton fx:id="btnResult"
+											onAction="#resultOnClick" prefHeight="40.0" prefWidth="252.0"
+											ripplerFill="#105c82"
+											style="-fx-background-color: #2B98C6; -fx-background-radius: 0;"
+											text="Result" textFill="WHITE">
 											<graphic>
-												<FontAwesomeIconView fill="WHITE" glyphName="CHECK_SQUARE_ALT" size="35" textOrigin="CENTER" />
+												<FontAwesomeIconView fill="WHITE"
+													glyphName="CHECK_SQUARE_ALT" size="35" textOrigin="CENTER" />
 											</graphic>
 											<font>
 												<Font name="Roboto Medium" size="20.0" />
@@ -123,9 +161,14 @@
 												<Cursor fx:constant="HAND" />
 											</cursor>
 										</JFXButton>
-										<JFXButton fx:id="btnRepair" onAction="#repairOnClick" prefHeight="40.0" prefWidth="252.0" ripplerFill="#105c82" style="-fx-background-color: #2B98C6; -fx-background-radius: 0;" text="Repair" textFill="WHITE">
+										<JFXButton fx:id="btnRepair"
+											onAction="#repairOnClick" prefHeight="40.0" prefWidth="252.0"
+											ripplerFill="#105c82"
+											style="-fx-background-color: #2B98C6; -fx-background-radius: 0;"
+											text="Repair" textFill="WHITE">
 											<graphic>
-												<FontAwesomeIconView fill="WHITE" glyphName="WRENCH" size="35" textOrigin="CENTER" />
+												<FontAwesomeIconView fill="WHITE"
+													glyphName="WRENCH" size="35" textOrigin="CENTER" />
 											</graphic>
 											<font>
 												<Font name="Roboto Medium" size="20.0" />
@@ -137,9 +180,14 @@
 												<Cursor fx:constant="HAND" />
 											</cursor>
 										</JFXButton>
-										<JFXButton fx:id="btnPacking" onAction="#packingOnClick" prefHeight="40.0" prefWidth="252.0" ripplerFill="#105c82" style="-fx-background-color: #2B98C6; -fx-background-radius: 0;" text="Packing" textFill="WHITE">
+										<JFXButton fx:id="btnPacking"
+											onAction="#packingOnClick" prefHeight="40.0"
+											prefWidth="252.0" ripplerFill="#105c82"
+											style="-fx-background-color: #2B98C6; -fx-background-radius: 0;"
+											text="Packing" textFill="WHITE">
 											<graphic>
-												<FontAwesomeIconView fill="WHITE" glyphName="CODEPEN" size="35" textOrigin="CENTER" />
+												<FontAwesomeIconView fill="WHITE"
+													glyphName="CODEPEN" size="35" textOrigin="CENTER" />
 											</graphic>
 											<font>
 												<Font name="Roboto Medium" size="20.0" />
@@ -151,9 +199,14 @@
 												<Cursor fx:constant="HAND" />
 											</cursor>
 										</JFXButton>
-										<JFXButton fx:id="btnShipping" onAction="#shippingOnClick" prefHeight="40.0" prefWidth="252.0" ripplerFill="#105c82" style="-fx-background-color: #2B98C6; -fx-background-radius: 0;" text="Shipping" textFill="WHITE">
+										<JFXButton fx:id="btnShipping"
+											onAction="#shippingOnClick" prefHeight="40.0"
+											prefWidth="252.0" ripplerFill="#105c82"
+											style="-fx-background-color: #2B98C6; -fx-background-radius: 0;"
+											text="Shipping" textFill="WHITE">
 											<graphic>
-												<FontAwesomeIconView fill="WHITE" glyphName="TRUCK" size="35" textOrigin="CENTER" />
+												<FontAwesomeIconView fill="WHITE"
+													glyphName="TRUCK" size="35" textOrigin="CENTER" />
 											</graphic>
 											<font>
 												<Font name="Roboto Medium" size="20.0" />
@@ -165,9 +218,14 @@
 												<Cursor fx:constant="HAND" />
 											</cursor>
 										</JFXButton>
-										<JFXButton fx:id="btnRework" onAction="#reWorkOnClick" prefHeight="40.0" prefWidth="252.0" ripplerFill="#dbb313" style="-fx-background-color: #FFE066; -fx-background-radius: 100;" text="RE-WORK" textFill="RED">
+										<JFXButton fx:id="btnRework"
+											onAction="#reWorkOnClick" prefHeight="40.0" prefWidth="252.0"
+											ripplerFill="#dbb313"
+											style="-fx-background-color: #FFE066; -fx-background-radius: 100;"
+											text="RE-WORK" textFill="RED">
 											<graphic>
-												<FontAwesomeIconView fill="RED" glyphName="UNDO" size="35" textOrigin="CENTER" />
+												<FontAwesomeIconView fill="RED"
+													glyphName="UNDO" size="35" textOrigin="CENTER" />
 											</graphic>
 											<font>
 												<Font name="Roboto Medium" size="20.0" />
@@ -179,16 +237,20 @@
 												<Insets bottom="35.0" />
 											</VBox.margin>
 										</JFXButton>
-										<StackPane alignment="BOTTOM_CENTER" VBox.vgrow="ALWAYS">
+										<StackPane alignment="BOTTOM_CENTER"
+											VBox.vgrow="ALWAYS">
 											<children>
-												<VBox alignment="BOTTOM_CENTER" StackPane.alignment="BOTTOM_CENTER">
+												<VBox alignment="BOTTOM_CENTER"
+													StackPane.alignment="BOTTOM_CENTER">
 													<children>
-														<Text fx:id="txtDate" fill="#d04848" strokeType="OUTSIDE" strokeWidth="0.0" text="12/10/2019">
+														<Text fx:id="txtDate" fill="#d04848"
+															strokeType="OUTSIDE" strokeWidth="0.0" text="12/10/2019">
 															<font>
 																<Font name="System Bold" size="25.0" />
 															</font>
 														</Text>
-														<Text fx:id="txtTime" fill="#d04848" strokeType="OUTSIDE" strokeWidth="0.0" text="12:00:00">
+														<Text fx:id="txtTime" fill="#d04848"
+															strokeType="OUTSIDE" strokeWidth="0.0" text="12:00:00">
 															<font>
 																<Font name="System Bold" size="25.0" />
 															</font>
@@ -197,7 +259,8 @@
 												</VBox>
 											</children>
 										</StackPane>
-										<ImageView fitHeight="55.0" fitWidth="142.0" pickOnBounds="true" preserveRatio="true">
+										<ImageView fitHeight="55.0" fitWidth="142.0"
+											pickOnBounds="true" preserveRatio="true">
 											<image>
 												<Image url="@../images/bizcomwebheader.png" />
 											</image>
@@ -207,18 +270,20 @@
 										<Insets left="10.0" />
 									</HBox.margin>
 								</VBox>
-                        <HBox HBox.hgrow="ALWAYS">
-                           <children>
-                              <AnchorPane HBox.hgrow="ALWAYS">
-                                 <HBox.margin>
-                                    <Insets left="5.0" right="5.0" />
-                                 </HBox.margin>
-                                 <children>
-                                    <StackPane fx:id="panelShow" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                 </children>
-                              </AnchorPane>
-                           </children>
-                        </HBox>
+								<HBox HBox.hgrow="ALWAYS">
+									<children>
+										<AnchorPane HBox.hgrow="ALWAYS">
+											<HBox.margin>
+												<Insets left="5.0" right="5.0" />
+											</HBox.margin>
+											<children>
+												<StackPane fx:id="panelShow"
+													AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+													AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+											</children>
+										</AnchorPane>
+									</children>
+								</HBox>
 							</children>
 							<VBox.margin>
 								<Insets top="20.0" />
