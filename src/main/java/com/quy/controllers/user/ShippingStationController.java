@@ -56,7 +56,8 @@ public class ShippingStationController extends Controller implements Initializab
 	private String listSerialNumber = "";
 	private String listWork = "";
 	private int count;
-
+	private String aString = "";
+	private boolean flag = true;
 	@FXML
 	void addToList() {
 		if (isValidInput().isEmpty()) {
@@ -65,11 +66,20 @@ public class ShippingStationController extends Controller implements Initializab
 			String model = dbHandler.getStatusDone(COL_MODEL_CONTROLER, serialNumber);
 
 			if (currentLastestStation.equalsIgnoreCase(PACKING_STATION)) {
-//				String result = dbHandler.shipping(serialNumber, timestamp);
 				
-				addBarcodeToTable(barcode, serialNumber, model);
-				count++;
-				shippingList.put(serialNumber, dbHandler.getWork(serialNumber));
+				barcode.forEach((obj) -> {
+					if (obj.getSerialNumber().getValue().equalsIgnoreCase(serialNumber)) {
+						flag = false;
+					}
+				});
+				if (flag) {
+
+					addBarcodeToTable(barcode, serialNumber, model);
+					count++;
+					shippingList.put(serialNumber, dbHandler.getWork(serialNumber));
+				} else {
+					warningAlert("Serial Number is in the list!");
+				}
 			} else {
 				warningAlert("Shipping Fail. Please check with MANAGER");
 			}
@@ -82,6 +92,7 @@ public class ShippingStationController extends Controller implements Initializab
 		txtControllerBarcode.requestFocus();
 		txtCounter.setText(count + "");
 		btnSubmit.setDisable(false);
+		flag = true;
 	}
 
 	@FXML
@@ -133,41 +144,17 @@ public class ShippingStationController extends Controller implements Initializab
 
 	@FXML
 	void submit() {
-//		String timestamp = getCurrentTimeStamp();
-//		String today = getCurrentTimeStamp();
-//
-//		if (!listSerialNumber.isEmpty()) {
-//			int quality = listSerialNumber.size();
-//
-//			String listStringSN = "";
-//			for (String s : listSerialNumber) {
-//				listStringSN += s + ";";
-//				String result = dbHandler.shipping(s, timestamp);
-//				if (!result.equalsIgnoreCase(s)) {
-//					warningAlert("Fail to update Shippng to database");
-//					break;
-//				}
-//			}
-//			String info = "";
-//			for (String ss : listWork) {
-//				info += ss;
-//			}
-//
-//			String result = "";
-//		} else {
-//			warningAlert("No any controller to shipping list");
-//		}
-//		
-//		btnSubmit.setDisable(true);
-
 		if (!shippingList.isEmpty()) {
 			shippingList.forEach((serialNumber, v) -> {
 				String result = dbHandler.shipping(serialNumber, getCurrentTimeStamp());
 				listSerialNumber += serialNumber + ";";
 				for (String w : v) {
+					if (w.equalsIgnoreCase("Added to waiting list burn in")) {
+						continue;
+					}
 					listWork += w + ",";
 				}
-				listWork += ";";
+				listWork += SHIPPING_STATION + ";";
 				if (result.equalsIgnoreCase(serialNumber)) {
 					dbHandler.addToHistoryRecord(currentUser, SHIPPING_STATION, getCurrentTimeStamp(), serialNumber,
 							"Shipped!", true);
@@ -176,10 +163,31 @@ public class ShippingStationController extends Controller implements Initializab
 
 			listSerialNumber = listSerialNumber.substring(0, listSerialNumber.length() - 1);
 
-			listWork = listWork.substring(0, listWork.length() - 2);
+			listWork = listWork.substring(0, listWork.length() - 1);
+
+			HashMap<String, Integer> mapWorks = new HashMap<>();
+			String[] tempString = listWork.split(";");
+			for (String s : tempString) {
+				s = s.trim();
+				if ((s.charAt(s.length() - 1)) == ';' || (s.charAt(s.length() - 1)) == ',') {
+					s = s.substring(0, s.length() - 1);
+				}
+				if (s.charAt(0) == ' ') {
+					s = s.substring(1, s.length());
+				}
+				if (mapWorks.containsKey(s)) {
+					mapWorks.put(s, mapWorks.get(s) + 1);
+				} else {
+					mapWorks.put(s, 1);
+				}
+			}
+
+			mapWorks.forEach((aKey, aValue) -> {
+				aString += String.format("%s : %d\r\n", aKey, aValue);
+			});
 
 			boolean rs = dbHandler.finishShipping(generatorLotId(), getCurrentTimeStamp(), barcode.size(), currentUser,
-					listSerialNumber, listWork, txtInfo.getText());
+					listSerialNumber, aString, txtInfo.getText());
 
 			if (rs) {
 				notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null, "Ship Successfully", 2);

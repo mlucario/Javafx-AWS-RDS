@@ -315,19 +315,19 @@ public class DBHandler {
 
 	public int getCurrentInventoryPassed(boolean option) {
 		int result = 0;
-		String query = "SELECT COUNT(Serial_Number) FROM controllers WHERE Is_Shipping_Done=? AND Is_Passed=? AND Burn_In_Result=?";	
+		String query = "SELECT COUNT(Serial_Number) FROM controllers WHERE Is_Shipping_Done=? AND Is_Passed=? AND Burn_In_Result=?";
 		try {
 			dbconnection = getConnection();
 			pst = dbconnection.prepareStatement(query);
-			pst.setBoolean(1,false);
-			if(option) {
-				pst.setBoolean(2,true);
-				pst.setString(3, "PASS");	
-			}else {
-				pst.setBoolean(2,false);
-				pst.setString(3, "FAIL");	
+			pst.setBoolean(1, false);
+			if (option) {
+				pst.setBoolean(2, true);
+				pst.setString(3, "PASS");
+			} else {
+				pst.setBoolean(2, false);
+				pst.setString(3, "FAIL");
 			}
-			
+
 			rs = pst.executeQuery();
 			if (rs.next()) {
 				result = rs.getInt(1);
@@ -401,6 +401,84 @@ public class DBHandler {
 			pst = dbconnection.prepareStatement(query);
 			pst.setBoolean(1, false);
 			pst.setBoolean(2, true);
+			rs = pst.executeQuery();
+			while (rs.next()) {
+				String model = rs.getString("Model");
+				String lotID = rs.getString("Lot_ID");
+				String sn = rs.getString("Serial_Number");
+				String currentStation = rs.getString("Current_Station");
+				String burnInResult = rs.getString("Burn_In_Result");
+				int reWorkCount = rs.getInt("Re_Work_Count");
+				result.add(new SMCController(model, lotID, sn, currentStation, burnInResult, reWorkCount));
+			}
+
+		} catch (SQLException e) {
+			LOGGER.error(" getAllUsers " + CONNECTION_FAIL, e.getMessage());
+		} finally {
+
+			try {
+				if (pst != null) {
+					pst.close();
+				}
+
+				if (rs != null) {
+					rs.close();
+				}
+				shutdown();
+			} catch (SQLException e) {
+				LOGGER.error(" getAllUsers " + CLOSE_CONNECTION_FAIL, e.getMessage());
+			}
+
+		}
+
+		return result;
+	}
+
+	public List<String> getAllModelInventory(){
+		ArrayList<String> result = new ArrayList<>();
+		String query = "SELECT MIN(Model) AS Model FROM controllers GROUP BY Model";
+
+		try {
+			dbconnection = getConnection();
+			pst = dbconnection.prepareStatement(query);		
+			rs = pst.executeQuery();
+			while (rs.next()) {
+				result.add(rs.getString("Model"));
+			}
+
+		} catch (SQLException e) {
+			LOGGER.error(" getAllUsers " + CONNECTION_FAIL, e.getMessage());
+		} finally {
+
+			try {
+				if (pst != null) {
+					pst.close();
+				}
+
+				if (rs != null) {
+					rs.close();
+				}
+				shutdown();
+			} catch (SQLException e) {
+				LOGGER.error(" getAllUsers " + CLOSE_CONNECTION_FAIL, e.getMessage());
+			}
+
+		}
+
+		
+		return result;
+	}
+	public List<SMCController> getAllControllers(String aModel) {
+
+		ArrayList<SMCController> result = new ArrayList<>();
+		String query = "SELECT Model,Lot_ID,Serial_Number,Current_Station,Burn_In_Result,Re_Work_Count FROM controllers WHERE Is_Shipping_Done=? and Is_Received=? and Model=? ORDER BY ID";
+
+		try {
+			dbconnection = getConnection();
+			pst = dbconnection.prepareStatement(query);
+			pst.setBoolean(1, false);
+			pst.setBoolean(2, true);
+			pst.setString(3, aModel);
 			rs = pst.executeQuery();
 			while (rs.next()) {
 				String model = rs.getString("Model");

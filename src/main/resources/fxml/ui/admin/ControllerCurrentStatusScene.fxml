@@ -95,7 +95,7 @@
                                           </VBox>
                                           <VBox alignment="TOP_CENTER">
                                              <children>
-                                                <JFXComboBox fx:id="cbModel" prefHeight="28.0" prefWidth="155.0" promptText="Choice a model" style="-fx-font-size: 1.5em; -fx-font-weight: Bold;" />
+                                                <JFXComboBox fx:id="cbModel" prefHeight="28.0" prefWidth="250.0" promptText="Select a controller model" style="-fx-font-size: 1.5em; -fx-font-weight: Bold;" />
                                                 <Label fx:id="txtCBCount" text="0">
                                                    <font>
                                                       <Font name="Roboto Medium" size="30.0" />

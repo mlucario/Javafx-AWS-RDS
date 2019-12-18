@@ -1,6 +1,8 @@
 package com.quy.controllers.admin;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import com.quy.controllers.Controller;
@@ -12,6 +14,9 @@ import com.jfoenix.controls.JFXTreeTableView;
 import com.jfoenix.controls.RecursiveTreeItem;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import com.quy.bizcom.SMCController;
+
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -36,13 +41,24 @@ public class ManagementControllers extends Controller implements Initializable {
 	@FXML
 	private JFXTextField txtSN1;
 
-    @FXML
-    private JFXComboBox<String> cbModel;
-    @FXML
-    private Label txtCBCount;
-    
-	
+	@FXML
+	private JFXComboBox<String> cbModel;
+	@FXML
+	private Label txtCBCount;
+
 	private DBHandler dbHandler;
+
+	public void updateInventory(String aModel) {
+		listAllControllers.clear();
+		if (aModel.equalsIgnoreCase("ALL")) {
+			listAllControllers.addAll(dbHandler.getAllControllers());
+			txtCBCount.setText(listAllControllers.size() + "");
+		} else {
+			listAllControllers.addAll(dbHandler.getAllControllers(aModel));
+			txtCBCount.setText(listAllControllers.size() + "");
+		}
+
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -57,7 +73,8 @@ public class ManagementControllers extends Controller implements Initializable {
 			if (sttCol.validateValue(param))
 				return param.getValue().getValue().getSTT();
 			else
-				return sttCol.getComputedValue(param);
+				;
+			return sttCol.getComputedValue(param);
 		});
 
 		JFXTreeTableColumn<SMCController, String> serialNumberCol = new JFXTreeTableColumn<>("Serial Number");
@@ -100,9 +117,9 @@ public class ManagementControllers extends Controller implements Initializable {
 		tableViewInventory.setShowRoot(false);
 		tableViewInventory.getColumns().setAll(sttCol, serialNumberCol, modelCol, burnInResultCol);
 
-		txtTotalInven.setText(listAllControllers.size()+"");
-		txtPassed.setText(dbHandler.getCurrentInventoryPassed(true)+"");
-		txtfail.setText(dbHandler.getCurrentInventoryPassed(false)+"");
+		txtTotalInven.setText(listAllControllers.size() + "");
+		txtPassed.setText(dbHandler.getCurrentInventoryPassed(true) + "");
+		txtfail.setText(dbHandler.getCurrentInventoryPassed(false) + "");
 
 		txtSN1.textProperty().addListener((o, oldVal, newVal) -> {
 			if (!oldVal.equalsIgnoreCase(newVal)) {
@@ -111,6 +128,34 @@ public class ManagementControllers extends Controller implements Initializable {
 					return aController.getSerialNumber().getValue().contains(newVal);
 				});
 			}
+		});
+
+		ArrayList<String> listModel = new ArrayList<String>();
+		listModel.addAll(dbHandler.getAllModelInventory());
+
+		for (String s : listModel) {
+			cbModel.getItems().add(s);
+		}
+		cbModel.getItems().add("ALL");
+
+		cbModel.valueProperty().addListener(new ChangeListener<String>() {
+
+			@Override
+			public void changed(@SuppressWarnings("rawtypes") ObservableValue observable, String oldValue,
+					String newValue) {
+				if (oldValue == null) {
+					updateInventory(newValue);
+				}
+
+				else if (!oldValue.equalsIgnoreCase(newValue) && newValue != null) {
+					updateInventory(newValue);
+				} else if (newValue.equalsIgnoreCase("ALL")) {
+					updateInventory("ALL");
+				} else {
+
+				}
+			}
+
 		});
 	}
 
