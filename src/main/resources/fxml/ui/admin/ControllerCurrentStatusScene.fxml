@@ -13,6 +13,7 @@
 <?import javafx.scene.text.Font?>
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 <HBox xmlns="http://javafx.com/javafx/8.0.171"
 	xmlns:fx="http://javafx.com/fxml/1"
 	fx:controller="com.quy.controllers.admin.ManagementControllers">
@@ -156,6 +157,8 @@
 		</JFXTabPane>
 	</children>
 =======
+=======
+>>>>>>> parent of 813eeb7... back
 <HBox xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.quy.controllers.admin.ManagementControllers">
    <children>
       <JFXTabPane HBox.hgrow="ALWAYS">
@@ -175,7 +178,11 @@
                                                 <Font name="Roboto" size="20.0" />
                                              </font>
                                           </Label>
+<<<<<<< HEAD
                                           <JFXTextField fx:id="txtSN1" prefHeight="35.0" prefWidth="260.0" style="-fx-font-size: 1.3em;">
+=======
+                                          <JFXTextField fx:id="txtSN1" prefHeight="35.0" prefWidth="270.0" style="-fx-font-size: 1.3em;">
+>>>>>>> parent of 813eeb7... back
                                              <HBox.margin>
                                                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                              </HBox.margin>
@@ -236,6 +243,22 @@
                                                 <Insets bottom="5.0" left="15.0" right="15.0" top="5.0" />
                                              </HBox.margin>
                                           </VBox>
+<<<<<<< HEAD
+=======
+                                          <VBox alignment="TOP_CENTER">
+                                             <children>
+                                                <JFXComboBox fx:id="cbModel" prefHeight="28.0" prefWidth="155.0" promptText="Choice a model" style="-fx-font-size: 1.5em; -fx-font-weight: Bold;" />
+                                                <Label fx:id="txtCBCount" text="0">
+                                                   <font>
+                                                      <Font name="Roboto Medium" size="30.0" />
+                                                   </font>
+                                                </Label>
+                                             </children>
+                                             <HBox.margin>
+                                                <Insets left="50.0" />
+                                             </HBox.margin>
+                                          </VBox>
+>>>>>>> parent of 813eeb7... back
                                        </children>
                                     </HBox>
                                  </children>
@@ -265,5 +288,8 @@
          </padding>
       </JFXTabPane>
    </children>
+<<<<<<< HEAD
 >>>>>>> parent of 4b73660... new db
+=======
+>>>>>>> parent of 813eeb7... back
 </HBox>

@@ -13,15 +13,9 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefWidth="750.0"
-	style="-fx-background-color: transparent;"
-	xmlns="http://javafx.com/javafx/8.0.171"
-	xmlns:fx="http://javafx.com/fxml/1"
-	fx:controller="com.quy.controllers.AdminDashboardController">
+<AnchorPane prefWidth="750.0" style="-fx-background-color: transparent;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.quy.controllers.AdminDashboardController">
 	<children>
-		<StackPane alignment="TOP_CENTER"
-			AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0"
-			AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+		<StackPane alignment="TOP_CENTER" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
 			<children>
 				<VBox>
 					<children>
@@ -30,22 +24,17 @@
 								<fx:include source="TitleBar.fxml" />
 							</right>
 							<left>
-								<Text fill="#0051ff" strokeType="OUTSIDE" strokeWidth="0.0"
-									text="Bizcom Electronics Inc" translateX="20.0"
-									BorderPane.alignment="CENTER">
+								<Text fill="#0051ff" strokeType="OUTSIDE" strokeWidth="0.0" text="Bizcom Electronics Inc" translateX="20.0" BorderPane.alignment="CENTER">
 									<font>
 										<Font name="Roboto Bold Italic" size="25.0" />
 									</font>
 								</Text>
 							</left>
 							<center>
-								<HBox alignment="CENTER" visible="false"
-									BorderPane.alignment="CENTER">
+								<HBox alignment="CENTER" visible="false" BorderPane.alignment="CENTER">
 									<children>
-										<FontAwesomeIconView glyphName="USER"
-											size="30" />
-										<Text fx:id="txtUsername" fill="#e00000"
-											strokeType="OUTSIDE" strokeWidth="0.0" text="Current user: A">
+										<FontAwesomeIconView glyphName="USER" size="30" />
+										<Text fx:id="txtUsername" fill="#e00000" strokeType="OUTSIDE" strokeWidth="0.0" text="Current user: A">
 											<font>
 												<Font name="Roboto Bold" size="20.0" />
 											</font>
@@ -59,8 +48,7 @@
 						</JFXToolbar>
 						<HBox VBox.vgrow="ALWAYS">
 							<children>
-								<VBox alignment="TOP_CENTER" prefHeight="600.0"
-									prefWidth="255.0">
+								<VBox alignment="TOP_CENTER" prefHeight="600.0" prefWidth="255.0">
 									<children>
 										<Label text="Management Panel" textFill="RED">
 											<font>
@@ -70,13 +58,9 @@
 												<Insets bottom="10.0" top="10.0" />
 											</VBox.margin>
 										</Label>
-										<JFXButton fx:id="btnUsers" lineSpacing="1.0"
-											onAction="#usersManagemenOnClick" prefHeight="100.0"
-											prefWidth="250.0" style="-fx-background-color: #81D4FA;"
-											text="Users" textFill="#4e342e">
+										<JFXButton fx:id="btnUsers" lineSpacing="1.0" onAction="#usersManagemenOnClick" prefHeight="100.0" prefWidth="250.0" style="-fx-background-color: #81D4FA;" text="Users" textFill="#4e342e">
 											<graphic>
-												<FontAwesomeIconView fill="#4e342e"
-													glyphName="USERS" size="45" />
+												<FontAwesomeIconView fill="#4e342e" glyphName="USERS" size="45" />
 											</graphic>
 											<font>
 												<Font name="Roboto Medium" size="25.0" />
@@ -85,14 +69,9 @@
 												<Insets top="5.0" />
 											</VBox.margin>
 										</JFXButton>
-										<JFXButton layoutX="15.0" layoutY="10.0"
-											lineSpacing="1.0" onAction="#controllersManagementOnlClick"
-											prefHeight="100.0" prefWidth="250.0"
-											style="-fx-background-color: #81D4FA;" text="Controllers "
-											textFill="#4e342e">
+										<JFXButton layoutX="15.0" layoutY="10.0" lineSpacing="1.0" onAction="#controllersManagementOnlClick" prefHeight="100.0" prefWidth="250.0" style="-fx-background-color: #81D4FA;" text="Controllers " textFill="#4e342e">
 											<graphic>
-												<FontAwesomeIconView fill="#4e342e"
-													glyphName="USB" size="45" />
+												<FontAwesomeIconView fill="#4e342e" glyphName="USB" size="45" />
 											</graphic>
 											<font>
 												<Font name="Roboto Medium" size="25.0" />
@@ -101,13 +80,9 @@
 												<Insets top="5.0" />
 											</VBox.margin>
 										</JFXButton>
-										<JFXButton layoutX="15.0" layoutY="110.0"
-											lineSpacing="1.0" prefHeight="100.0" prefWidth="250.0"
-											style="-fx-background-color: #81D4FA;" text="User Management"
-											textFill="WHITE">
+										<JFXButton layoutX="15.0" layoutY="110.0" lineSpacing="1.0" prefHeight="100.0" prefWidth="250.0" style="-fx-background-color: #81D4FA;" text="User Management" textFill="WHITE">
 											<graphic>
-												<FontAwesomeIconView fill="WHITE"
-													glyphName="USER" size="35" />
+												<FontAwesomeIconView fill="WHITE" glyphName="USER" size="35" />
 											</graphic>
 											<font>
 												<Font name="Roboto Medium" size="15.0" />
@@ -116,13 +91,9 @@
 												<Insets top="5.0" />
 											</VBox.margin>
 										</JFXButton>
-										<JFXButton layoutX="15.0" layoutY="210.0"
-											lineSpacing="1.0" prefHeight="100.0" prefWidth="250.0"
-											style="-fx-background-color: #81D4FA;" text="User Management"
-											textFill="WHITE">
+										<JFXButton layoutX="15.0" layoutY="210.0" lineSpacing="1.0" prefHeight="100.0" prefWidth="250.0" style="-fx-background-color: #81D4FA;" text="User Management" textFill="WHITE">
 											<graphic>
-												<FontAwesomeIconView fill="WHITE"
-													glyphName="USER" size="35" />
+												<FontAwesomeIconView fill="WHITE" glyphName="USER" size="35" />
 											</graphic>
 											<font>
 												<Font name="Roboto Medium" size="15.0" />
@@ -133,21 +104,18 @@
 										</JFXButton>
 									</children>
 								</VBox>
-								<HBox HBox.hgrow="ALWAYS">
-									<HBox.margin>
-										<Insets />
-									</HBox.margin>
-									<children>
-										<AnchorPane HBox.hgrow="ALWAYS">
-											<children>
-												<StackPane fx:id="panelAdmin"
-													alignment="TOP_CENTER" AnchorPane.bottomAnchor="5.0"
-													AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0"
-													AnchorPane.topAnchor="5.0" />
-											</children>
-										</AnchorPane>
-									</children>
-								</HBox>
+                        <HBox HBox.hgrow="ALWAYS">
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                           <children>
+      								<AnchorPane HBox.hgrow="ALWAYS">
+      									<children>
+      										<StackPane fx:id="panelAdmin" alignment="TOP_CENTER" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0" />
+      									</children>
+      								</AnchorPane>
+                           </children>
+                        </HBox>
 							</children>
 							<VBox.margin>
 								<Insets top="20.0" />

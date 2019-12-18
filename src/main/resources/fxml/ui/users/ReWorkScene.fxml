@@ -12,102 +12,82 @@
 <?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
 
-<HBox alignment="TOP_CENTER"
-	xmlns="http://javafx.com/javafx/8.0.171"
-	xmlns:fx="http://javafx.com/fxml/1"
-	fx:controller="com.quy.controllers.user.ReWorkController">
-	<children>
-		<VBox alignment="CENTER" prefWidth="546.0" HBox.hgrow="ALWAYS">
-			<children>
-				<Label text="Please Use for Re-Work Controller Only!"
-					textFill="RED">
-					<font>
-						<Font name="Roboto Black" size="30.0" />
-					</font>
-				</Label>
-				<HBox alignment="TOP_CENTER">
-					<children>
-						<JFXTextField fx:id="txtControllerBarcode"
-							focusColor="#105c82" labelFloat="true" onAction="#reWorkAction"
-							onKeyReleased="#keyPressValidate" prefHeight="60.0"
-							prefWidth="400.0" promptText="Enter Controller Barcode"
-							style="-fx-font-size: 2em; -fx-font-family: Roboto; -fx-font-weight: Bold;"
-							unFocusColor="#50514f">
-							<HBox.margin>
-								<Insets />
-							</HBox.margin>
-						</JFXTextField>
-						<FontAwesomeIconView fill="#105c82"
-							glyphName="BARCODE" size="55" />
-					</children>
-					<VBox.margin>
-						<Insets top="50.0" />
-					</VBox.margin>
-				</HBox>
-				<HBox>
-					<children>
-						<JFXTextArea fx:id="txtInfo" prefHeight="250.0"
-							prefWidth="650.0" promptText="Enter re_work information"
-							HBox.hgrow="ALWAYS">
-							<HBox.margin>
-								<Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
-							</HBox.margin>
-							<font>
-								<Font name="Roboto" size="15.0" />
-							</font>
-							<padding>
-								<Insets bottom="50.0" left="50.0" right="50.0" top="50.0" />
-							</padding>
-						</JFXTextArea>
-					</children>
-				</HBox>
-				<HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
-					<children>
-						<JFXTextField fx:id="txtMins" prefHeight="41.0"
-							prefWidth="266.0" promptText="Time (minutes)">
-							<font>
-								<Font name="Roboto" size="36.0" />
-							</font>
-						</JFXTextField>
-						<FontAwesomeIconView glyphName="CLOCK_ALT"
-							size="35">
-							<fill>
-								<RadialGradient centerX="0.5333333333333333"
-									centerY="0.5" radius="0.5">
-									<stops>
-										<Stop color="#00ff22" />
-										<Stop color="#00ff22" offset="0.007662835249042145" />
-										<Stop color="#a18f8f" offset="1.0" />
-									</stops>
-								</RadialGradient>
-							</fill>
-							<HBox.margin>
-								<Insets left="25.0" />
-							</HBox.margin>
-						</FontAwesomeIconView>
-					</children>
-					<VBox.margin>
-						<Insets />
-					</VBox.margin>
-				</HBox>
-				<JFXButton fx:id="btnRework" buttonType="RAISED"
-					onAction="#reWorkAction" ripplerFill="#16abe6"
-					style="-fx-background-color: #16abe6;" text="RE-WORK"
-					textFill="WHITE">
-					<font>
-						<Font name="Roboto Medium" size="30.0" />
-					</font>
-					<VBox.margin>
-						<Insets bottom="25.0" top="50.0" />
-					</VBox.margin>
-				</JFXButton>
-			</children>
-			<HBox.margin>
-				<Insets />
-			</HBox.margin>
-		</VBox>
-	</children>
-	<padding>
-		<Insets top="50.0" />
-	</padding>
+<HBox alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.quy.controllers.user.ReWorkController">
+   <children>
+      <VBox alignment="CENTER" prefWidth="546.0" HBox.hgrow="ALWAYS">
+         <children>
+            <Label text="Please Use for Re-Work Controller Only!" textFill="RED">
+               <font>
+                  <Font name="Roboto Black" size="30.0" />
+               </font>
+            </Label>
+            <HBox alignment="TOP_CENTER">
+               <children>
+                  <JFXTextField fx:id="txtControllerBarcode" focusColor="#105c82" labelFloat="true" onAction="#reWorkAction" onKeyReleased="#keyPressValidate" prefHeight="60.0" prefWidth="400.0" promptText="Enter Controller Barcode" style="-fx-font-size: 2em; -fx-font-family: Roboto; -fx-font-weight: Bold;" unFocusColor="#50514f">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </JFXTextField>
+                  <FontAwesomeIconView fill="#105c82" glyphName="BARCODE" size="55" />
+               </children>
+               <VBox.margin>
+                  <Insets top="50.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox>
+               <children>
+                  <JFXTextArea fx:id="txtInfo" prefHeight="250.0" prefWidth="650.0" promptText="Enter re_work information" HBox.hgrow="ALWAYS">
+                     <HBox.margin>
+                        <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
+                     </HBox.margin>
+                     <font>
+                        <Font name="Roboto" size="15.0" />
+                     </font>
+                     <padding>
+                        <Insets bottom="50.0" left="50.0" right="50.0" top="50.0" />
+                     </padding>
+                  </JFXTextArea>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <JFXTextField fx:id="txtMins" prefHeight="41.0" prefWidth="266.0" promptText="Time (minutes)">
+                     <font>
+                        <Font name="Roboto" size="36.0" />
+                     </font></JFXTextField>
+                  <FontAwesomeIconView glyphName="CLOCK_ALT" size="35">
+                     <fill>
+                        <RadialGradient centerX="0.5333333333333333" centerY="0.5" radius="0.5">
+                           <stops>
+                              <Stop color="#00ff22" />
+                              <Stop color="#00ff22" offset="0.007662835249042145" />
+                              <Stop color="#a18f8f" offset="1.0" />
+                           </stops>
+                        </RadialGradient>
+                     </fill>
+                     <HBox.margin>
+                        <Insets left="25.0" />
+                     </HBox.margin></FontAwesomeIconView>
+               </children>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </HBox>
+            <JFXButton fx:id="btnRework" buttonType="RAISED" onAction="#reWorkAction" ripplerFill="#16abe6" style="-fx-background-color: #16abe6;" text="RE-WORK" textFill="WHITE">
+               <font>
+                  <Font name="Roboto Medium" size="30.0" />
+               </font>
+               <VBox.margin>
+                  <Insets bottom="25.0" top="50.0" />
+               </VBox.margin>
+            </JFXButton>
+         </children>
+         <HBox.margin>
+            <Insets />
+         </HBox.margin>
+      </VBox>
+   </children>
+   <padding>
+      <Insets top="50.0" />
+   </padding>
 </HBox>

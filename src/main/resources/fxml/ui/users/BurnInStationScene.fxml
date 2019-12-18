@@ -13,149 +13,122 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<HBox xmlns="http://javafx.com/javafx/8.0.171"
-	xmlns:fx="http://javafx.com/fxml/1"
-	fx:controller="com.quy.controllers.user.BurnInController">
-	<children>
-		<VBox alignment="TOP_CENTER" HBox.hgrow="NEVER">
-			<children>
-				<HBox alignment="CENTER">
-					<children>
-						<Text fill="#549400" lineSpacing="2.0" strokeType="OUTSIDE"
-							strokeWidth="0.0"
-							text="1. Add all serial number&#10;2. Click Start to begin burn-in"
-							wrappingWidth="373.3154296875">
-							<font>
-								<Font name="Roboto Bold" size="25.0" />
-							</font>
-							<HBox.margin>
-								<Insets />
-							</HBox.margin>
-						</Text>
-					</children>
-					<VBox.margin>
-						<Insets top="50.0" />
-					</VBox.margin>
-				</HBox>
-				<HBox alignment="CENTER">
-					<children>
-						<JFXTextField fx:id="txtControllerBarcode"
-							focusColor="#105c82" labelFloat="true"
-							onAction="#addToBurnInList" onKeyReleased="#keyPressValidate"
-							prefHeight="60.0" prefWidth="400.0"
-							promptText="Enter Controller Barcode"
-							style="-fx-font-size: 2em; -fx-font-family: Roboto; -fx-font-weight: Bold;"
-							unFocusColor="#50514f" />
-						<FontAwesomeIconView fill="#105c82"
-							glyphName="BARCODE" size="55" />
-					</children>
-					<VBox.margin>
-						<Insets top="50.0" />
-					</VBox.margin>
-					<padding>
-						<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-					</padding>
-				</HBox>
-				<HBox alignment="TOP_CENTER">
-					<children>
-						<JFXTextArea fx:id="txtNote" prefHeight="80.0"
-							prefRowCount="3" prefWidth="350.0" promptText="Note"
-							HBox.hgrow="NEVER">
-							<font>
-								<Font name="Roboto Bold Italic" size="17.0" />
-							</font>
-							<cursor>
-								<Cursor fx:constant="HAND" />
-							</cursor>
-						</JFXTextArea>
-					</children>
-					<VBox.margin>
-						<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-					</VBox.margin>
-				</HBox>
-				<JFXButton fx:id="btnAdd" onAction="#addToBurnInList"
-					prefHeight="60.0" prefWidth="300.0" ripplerFill="#105c82"
-					style="-fx-font-size: 2em; -fx-font-family: Roboto; -fx-font-weight: Bold; -fx-background-color: #2B98C6; -fx-background-radius: 100px;"
-					text="ADD" textFill="WHITE" VBox.vgrow="NEVER">
-					<VBox.margin>
-						<Insets top="20.0" />
-					</VBox.margin>
-					<padding>
-						<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-					</padding>
-				</JFXButton>
-				<HBox alignment="CENTER" layoutX="10.0" layoutY="183.0">
-					<children>
-						<Label text="Total Added: " textFill="RED">
-							<font>
-								<Font name="Roboto Bold" size="40.0" />
-							</font>
-						</Label>
-						<Text fx:id="txtNumber" fill="BLUE" strokeType="OUTSIDE"
-							strokeWidth="0.0" text="0">
-							<font>
-								<Font name="Roboto Bold" size="40.0" />
-							</font>
-						</Text>
-					</children>
-					<VBox.margin>
-						<Insets top="20.0" />
-					</VBox.margin>
-				</HBox>
-				<HBox alignment="BOTTOM_CENTER" layoutX="15.0" layoutY="468.0"
-					VBox.vgrow="ALWAYS">
-					<children>
-						<Label text="ID: ">
-							<font>
-								<Font name="Roboto Bold" size="25.0" />
-							</font>
-						</Label>
-						<Text fx:id="txtID" fontSmoothingType="LCD"
-							strokeType="OUTSIDE" strokeWidth="0.0" text="0">
-							<font>
-								<Font name="Roboto Bold" size="25.0" />
-							</font>
-						</Text>
-					</children>
-				</HBox>
-			</children>
-			<padding>
-				<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-			</padding>
-		</VBox>
-		<VBox alignment="TOP_CENTER" HBox.hgrow="ALWAYS">
-			<children>
-				<HBox alignment="CENTER_RIGHT">
-					<children>
-						<Label text="Search" textFill="#0011ff">
-							<font>
-								<Font name="Roboto" size="20.0" />
-							</font>
-						</Label>
-						<JFXTextField fx:id="txtSN" prefHeight="35.0"
-							prefWidth="260.0" style="-fx-font-size: 1.3em;">
-							<HBox.margin>
-								<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-							</HBox.margin>
-						</JFXTextField>
-					</children>
-				</HBox>
-				<JFXTreeTableView fx:id="treeview"
-					maxHeight="1.7976931348623157E308"
-					style="-fx-font-size: 1.2em; -fx-font-family: Roboto; -fx-border-color: Black; -fx-alignment: Center; -fx-border-width: 1;"
-					VBox.vgrow="ALWAYS" />
-				<JFXButton fx:id="btnStart" onAction="#startBurnIn"
-					prefHeight="60.0" prefWidth="200.0" ripplerFill="#105c82"
-					style="-fx-background-color: #2B98C6; -fx-background-radius: 100; -fx-font-family: Roboto; -fx-font-weight: Bold; -fx-font-size: 2em;"
-					text="Start" textFill="WHITE">
-					<VBox.margin>
-						<Insets top="30.0" />
-					</VBox.margin>
-				</JFXButton>
-			</children>
-			<HBox.margin>
-				<Insets bottom="30.0" left="30.0" right="30.0" top="50.0" />
-			</HBox.margin>
-		</VBox>
-	</children>
+<HBox xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.quy.controllers.user.BurnInController">
+   <children>
+      <VBox alignment="TOP_CENTER" HBox.hgrow="NEVER">
+         <children>
+            <HBox alignment="CENTER">
+               <children>
+                  <Text fill="#549400" lineSpacing="2.0" strokeType="OUTSIDE" strokeWidth="0.0" text="1. Add all serial number&#10;2. Click Start to begin burn-in" wrappingWidth="373.3154296875">
+                     <font>
+                        <Font name="Roboto Bold" size="25.0" />
+                     </font>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </Text>
+               </children>
+               <VBox.margin>
+                  <Insets top="50.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox alignment="CENTER">
+               <children>
+                  <JFXTextField fx:id="txtControllerBarcode" focusColor="#105c82" labelFloat="true" onAction="#addToBurnInList" onKeyReleased="#keyPressValidate" prefHeight="60.0" prefWidth="400.0" promptText="Enter Controller Barcode" style="-fx-font-size: 2em; -fx-font-family: Roboto; -fx-font-weight: Bold;" unFocusColor="#50514f" />
+                  <FontAwesomeIconView fill="#105c82" glyphName="BARCODE" size="55" />
+               </children>
+               <VBox.margin>
+                  <Insets top="50.0" />
+               </VBox.margin>
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+            </HBox>
+            <HBox alignment="TOP_CENTER">
+               <children>
+                  <JFXTextArea fx:id="txtNote" prefHeight="80.0" prefRowCount="3" prefWidth="350.0" promptText="Note" HBox.hgrow="NEVER">
+                     <font>
+                        <Font name="Roboto Bold Italic" size="17.0" />
+                     </font>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </JFXTextArea>
+               </children>
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </VBox.margin>
+            </HBox>
+            <JFXButton fx:id="btnAdd" onAction="#addToBurnInList" prefHeight="60.0" prefWidth="300.0" ripplerFill="#105c82" style="-fx-font-size: 2em; -fx-font-family: Roboto; -fx-font-weight: Bold; -fx-background-color: #2B98C6; -fx-background-radius: 100px;" text="ADD" textFill="WHITE" VBox.vgrow="NEVER">
+               <VBox.margin>
+                  <Insets top="20.0" />
+               </VBox.margin>
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+            </JFXButton>
+            <HBox alignment="CENTER" layoutX="10.0" layoutY="183.0">
+               <children>
+                  <Label text="Total Added: " textFill="RED">
+                     <font>
+                        <Font name="Roboto Bold" size="40.0" />
+                     </font>
+                  </Label>
+                  <Text fx:id="txtNumber" fill="BLUE" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
+                     <font>
+                        <Font name="Roboto Bold" size="40.0" />
+                     </font>
+                  </Text>
+               </children>
+               <VBox.margin>
+                  <Insets top="20.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox alignment="BOTTOM_CENTER" layoutX="15.0" layoutY="468.0" VBox.vgrow="ALWAYS">
+               <children>
+                  <Label text="ID: ">
+                     <font>
+                        <Font name="Roboto Bold" size="25.0" />
+                     </font>
+                  </Label>
+                  <Text fx:id="txtID" fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
+                     <font>
+                        <Font name="Roboto Bold" size="25.0" />
+                     </font>
+                  </Text>
+               </children>
+            </HBox>
+         </children>
+         <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </padding>
+      </VBox>
+      <VBox alignment="TOP_CENTER" HBox.hgrow="ALWAYS">
+         <children>
+            <HBox alignment="CENTER_RIGHT">
+               <children>
+                  <Label text="Search" textFill="#0011ff">
+                     <font>
+                        <Font name="Roboto" size="20.0" />
+                     </font>
+                  </Label>
+                  <JFXTextField fx:id="txtSN" prefHeight="35.0" prefWidth="260.0" style="-fx-font-size: 1.3em;">
+                     <HBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </HBox.margin>
+                  </JFXTextField>
+               </children>
+            </HBox>
+            <JFXTreeTableView fx:id="treeview" maxHeight="1.7976931348623157E308" style="-fx-font-size: 1.2em; -fx-font-family: Roboto; -fx-border-color: Black; -fx-alignment: Center; -fx-border-width: 1;" VBox.vgrow="ALWAYS" />
+            <JFXButton fx:id="btnStart" onAction="#startBurnIn" prefHeight="60.0" prefWidth="200.0" ripplerFill="#105c82" style="-fx-background-color: #2B98C6; -fx-background-radius: 100; -fx-font-family: Roboto; -fx-font-weight: Bold; -fx-font-size: 2em;" text="Start" textFill="WHITE">
+               <VBox.margin>
+                  <Insets top="30.0" />
+               </VBox.margin>
+            </JFXButton>
+         </children>
+         <HBox.margin>
+            <Insets bottom="30.0" left="30.0" right="30.0" top="50.0" />
+         </HBox.margin>
+      </VBox>
+   </children>
 </HBox>
