@@ -69,6 +69,7 @@ public class PackingStationController extends Controller implements Initializabl
 					case FIRMWARE_UPDATE_STATION:
 						result = "\r\n Controller is not ready to pack. Check with manager";
 						break;
+//					case ASSEMBLY_STATION:
 					case REPAIR_STATION:
 					case "UNREPAIRABLE":
 					case BURN_IN_STATION:

@@ -173,6 +173,7 @@ public class ResultStationController extends Controller implements Initializable
 					case BURN_IN_STATION:
 					case RESULT_STATION:
 					case RE_WORK_STATION:
+					case REPAIR_STATION:
 						resultInput = "";
 						break;
 //					case RESULT_STATION:
@@ -184,7 +185,7 @@ public class ResultStationController extends Controller implements Initializable
 						break;
 					case WAIT_TO_BURN_IN:
 					case PACKING_STATION:
-					case REPAIR_STATION:
+
 						resultInput = "\r\n Cannot set result this controller. Please check with manager.";
 						break;
 
@@ -198,13 +199,46 @@ public class ResultStationController extends Controller implements Initializable
 		return resultInput;
 	}
 
+	public void setFail(String serialNumber) {
+		if (!txtSymptoms.getText().isEmpty()) {
+			String tempText = "Fail at " + stationFail + " (" + txtSymptoms.getText() + ")";
+			String model = dbHandler.getStatusDone(COL_MODEL_CONTROLER, serialNumber);
+			currentFail++;
+			String resultQuery = "";
+			resultQuery = dbHandler.setResultFail(serialNumber, null, false, false, tempText);
+
+			if (resultQuery.equals(serialNumber)) {
+
+				addBarcodeToTable(barcodeFail, serialNumber, model, currentFail);
+
+				txtFail.textProperty().bind(Bindings.format("FAIL : %d", barcodeFail.size()));
+				String history = dbHandler.addToHistoryRecord(currentUser, RESULT_STATION, getCurrentTimeStamp(),
+						serialNumber, "Marked Fail: " + tempText, false);
+				if (!history.equalsIgnoreCase(serialNumber)) {
+					warningAlert(history);
+				} else {
+					notification = notificatioBuilder(Pos.BOTTOM_RIGHT, graphic, null,
+
+							"Set Result FAIL Successfully", 2);
+					notification.showInformation();
+
+				}
+			} else {
+				warningAlert(resultQuery);
+			}
+		} else {
+			warningAlert("PLEASE ENTER SYMPTOMS");
+			txtSymptoms.clear();
+			txtSymptoms.requestFocus();
+		}
+	}
+
 	@FXML
 	void resultAction(ActionEvent event) {
-
+		String serialNumber = getStringJFXTextField(txtControllerBarcode);
 		if (isValidInput().isEmpty()) {
 			String timeStamp = getCurrentTimeStamp();
 			resultChoosen = result.getSelectedToggle().getUserData().toString().equalsIgnoreCase("PASSED");
-			String serialNumber = getStringJFXTextField(txtControllerBarcode);
 			String model = dbHandler.getStatusDone(COL_MODEL_CONTROLER, serialNumber);
 			String getResult = dbHandler.getStatusDone(COL_BURN_IN_RESULT_CONTROLER, serialNumber);
 			// RESULT PASSED
@@ -221,7 +255,7 @@ public class ResultStationController extends Controller implements Initializable
 
 						txtPass.textProperty().bind(Bindings.format("PASSED : %d", barcodePassed.size()));
 						String history = dbHandler.addToHistoryRecord(currentUser, RESULT_STATION, timeStamp,
-								serialNumber, "Marked Passed!",false);
+								serialNumber, "Marked Passed!", false);
 						if (!history.equalsIgnoreCase(serialNumber)) {
 							warningAlert(history);
 						} else {
@@ -288,7 +322,7 @@ public class ResultStationController extends Controller implements Initializable
 
 							txtFail.textProperty().bind(Bindings.format("FAIL : %d", barcodeFail.size()));
 							String history = dbHandler.addToHistoryRecord(currentUser, RESULT_STATION, timeStamp,
-									serialNumber, "Marked Fail: " + tempText,false);
+									serialNumber, "Marked Fail: " + tempText, false);
 							if (!history.equalsIgnoreCase(serialNumber)) {
 								warningAlert(history);
 							} else {
@@ -310,7 +344,14 @@ public class ResultStationController extends Controller implements Initializable
 			}
 
 		} else {
-			warningAlert(isValidInput());
+			if (stationFail.equalsIgnoreCase(ASSEMBLY_STATION)) {
+				setFail(serialNumber);
+			} else if (stationFail.equalsIgnoreCase(FIRMWARE_UPDATE_STATION)) {
+				setFail(serialNumber);
+			} else {
+				warningAlert(isValidInput());
+			}
+
 		}
 
 //		txtRemain.textProperty().bind(Bindings.format("%d", currentRemainBurnIn));
